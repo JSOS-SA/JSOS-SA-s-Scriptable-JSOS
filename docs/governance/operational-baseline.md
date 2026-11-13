@@ -129,3 +129,7 @@ The owner must revoke or rotate the affected credentials with Google. After revo
 CodeQL also reports two open high-severity incomplete-string-escaping findings in src/fq_add_airport.js. The implementation does not escape backslash characters before interpolating city and country values into JavaScript string literals. A reviewed source fix and regression tests are outstanding.
 
 The governance pull request must remain draft and must not merge until credential revocation, source remediation, regression verification, and the physical-device evidence requirements are completed. The successful CI and CodeQL runs recorded above do not close these findings.
+
+## 10. Governance draft status
+
+The governance pull request contains Constitution draft 0.1.0-draft.1, a catalogue of 34 structured Policy Rules, and a decision register for all 78 approved decisions. The associated policy, standards, and records indexes are also present. These documents remain drafts until the pull request is reviewed and merged.
