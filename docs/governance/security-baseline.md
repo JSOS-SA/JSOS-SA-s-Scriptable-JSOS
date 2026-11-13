@@ -1,6 +1,6 @@
 # Security Baseline
 
-**Assessment date:** 2026-11-13  
+**Assessment date:** 2026-11-13
 **Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS
 
 ## Enabled repository controls
