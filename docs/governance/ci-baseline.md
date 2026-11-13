@@ -81,3 +81,5 @@ The required approval count is zero because the repository currently has one col
 The latest successful quality-gates run is 43447658633. It passed patch hygiene, parsed the current JavaScript source set, verified the constitution, policy, standards, records, security, and probe files, enforced the no-em-dash rule for governance prose, and checked probe isolation.
 
 A previous run, 43447542579, failed on trailing whitespace in the new policy catalogue and decision register. The formatting was corrected before the successful run.
+
+The latest complete governance-draft checks are quality-gates run 43448002839 and CodeQL run 43447998338. Both completed successfully on the same pull-request revision.
