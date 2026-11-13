@@ -135,3 +135,11 @@ The governance pull request must remain draft and must not merge until credentia
 The governance pull request contains Constitution draft 0.1.0-draft.1, a catalogue of 34 structured Policy Rules, and a decision register for all 78 approved decisions. The associated policy, standards, and records indexes are also present. These documents remain drafts until the pull request is reviewed and merged.
 
 The latest complete governance-draft validation passed quality-gates run 43448002839 and CodeQL run 43447998338. Both checks are required by main branch protection.
+
+## 11. Latest security remediation status
+
+The two high-severity CodeQL findings in src/fq_add_airport.js are fixed on the governance pull-request head. The shared pure serializer is src/fq_airport_serialization.js. Its regression test passes in CI. The initial test implementation's dynamic VM execution produced a critical CodeQL finding; that test was replaced with non-executing assertions over JSON string literals. The latest CodeQL analysis reports all three findings fixed on refs/pull/1/head. The two original main-branch alerts remain open until the reviewed change is merged.
+
+The latest pull-request checks all pass: quality-gates, CodeQL, and Analyze (javascript-typescript). The quality-gates run parsed 146 JavaScript source files and ran the airport serialization regression test successfully.
+
+The three open Google credential alerts remain the primary repository security blocker. Their validity is unknown, and they must be treated as exposed because their locations are in commits on the public main branch. Revoke or rotate them with Google and then remove the exposed material through a controlled remediation. The governance pull request remains draft until that work and physical-device evidence are complete.
