@@ -3,7 +3,7 @@
 **Assessment date:** 2026-11-13  
 **Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS
 
-This register records evidence without treating a source's scope as broader than the source supports.
+This register records evidence without treating a source's scope as broader than the source supports. Conflicting or failed evidence is retained with its resolution.
 
 | ID | Evidence class | Source | Supported assertion | Limitation |
 |---|---|---|---|---|
@@ -14,13 +14,19 @@ This register records evidence without treating a source's scope as broader than
 | E-005 | Apple Developer release information | https://developer.apple.com/news/releases/ | Apple published iOS 27.2.1 and iPadOS 27.2.1 on 2026-11-09. | Establishes release availability, not application compatibility. |
 | E-006 | Apple security release information | https://support.apple.com/en-sa/100100 | Apple's iOS 27 device list includes iPhone 11 and later; its iPadOS 27 list includes iPad 9th generation and later, plus supported Pro, Air, and mini models. | Device support must still be checked against the exact OS release and hardware model. |
 | E-007 | GitHub repository metadata | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS | Identifies the repository and its default branch. | Repository metadata does not prove runtime compatibility. |
-| E-008 | GitHub branch metadata | https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/branches/main | The inspected main branch reported protected: false at assessment time. | This is a point-in-time observation and must be rechecked after settings changes. |
-| E-009 | GitHub rulesets metadata | https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/rulesets | The inspected repository rulesets endpoint returned an empty list. | Does not replace a fresh check of all repository settings. |
+| E-008 | GitHub branch metadata | https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/branches/main | The main branch was initially unprotected. Classic branch protection was subsequently enabled and the branch now reports protected: true. | Point-in-time configuration. Recheck after settings changes. |
+| E-009 | GitHub rulesets metadata | https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/rulesets | The inspected repository rulesets endpoint returned an empty list. | Classic branch protection is configured separately. |
 | E-010 | GitHub repository tree and source inspection | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/tree/main/src | The inspected tree contains application modules, fq_main.js, fq_widget.js, selftest.js, and selftest_cases.js. | Source inspection is not a device execution result. |
 | E-011 | Node.js official release schedule | https://nodejs.org/en/about/previous-releases | Node.js 26.x is Active LTS and Node.js 24.x is Maintenance LTS at the assessment date. | Node.js is a tooling runtime, not Scriptable's JavaScriptCore runtime. |
 | E-012 | Remote host observation | Remote Desktop Commander, read-only system metadata | The connected Linux ARM64 host reported Git 2.52.0, Node.js 24.22.0, and npm 11.19.1. | This is not the project's CI runner or an Apple device. No local project, Scriptable, Python, document, or memory files were read. |
 | E-013 | Source safety review | src/selftest.js and src/selftest_cases.js on the GitHub main branch | The existing self-test loads application modules that reach Keychain reads and copies the report to Pasteboard. | The test was not executed. This is a source-level side-effect finding, not a runtime test result. |
 | E-014 | Dedicated device probes | src/compatibility_probe.js and src/async_runtime_probe.js | Provides a minimal procedure for collecting device/runtime evidence without reading application data. | No device result exists until a human runs the probes on the target device and records the output. |
+| E-015 | Failed CI run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43444099883 | The first workflow attempt failed in the probe-isolation check because a broad pattern matched the word Pasteboard in a comment. | This was a false positive in the check, not evidence that the probe accessed Pasteboard. The failed run is retained. |
+| E-016 | Successful CI run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43444228577 | The corrected workflow passed and parsed 143 JavaScript source files, verified governance artifacts, and passed the probe-isolation check. | This run used ubuntu-latest before the runner was pinned. It proves only the listed Node.js and repository checks. |
+| E-017 | Successful CI run on pinned runner | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43444464454 | The workflow passed on ubuntu-24.04 using Node.js 26.x. All three workflow steps passed. | It does not prove Scriptable JavaScriptCore, WebView, widget, or physical-device compatibility. |
+| E-018 | Branch protection configuration | https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/branches/main/protection | Main requires pull requests and the strict quality-gates status check, enforces admins, blocks force pushes and deletion, and requires conversation resolution. | Required approval count is zero because only one collaborator is currently available. |
+| E-019 | Collaborator count | GitHub collaborators API, inspected 2026-11-13 | The repository currently has one collaborator. | No collaborator identity is recorded here. |
+| E-020 | Draft pull request | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1 | Holds the operational baseline, glossary, compatibility matrix, evidence register, CI workflow, and device probes for review. | It has not been merged. |
 
 ## Evidence handling
 
