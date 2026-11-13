@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessmentDate": "2026-11-13",
-  "count": 52,
+  "count": 54,
   "records": [
     {
       "id": "E-001",
@@ -417,6 +417,22 @@
       "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43451394102",
       "assertion": "CodeQL analysis completed successfully on pull-request head 63e5528357529610bcc98b3f547b38727872086f.",
       "limitations": "The two original CodeQL alerts remain open on main until the reviewed change is merged. The three Secret Scanning alerts remain open.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-053",
+      "evidenceClass": "Successful quality-gates run after canonical evidence synchronization",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43451772370",
+      "assertion": "The quality-gates workflow passed after the canonical evidence register reached 52 records, including unique-ID validation and cross-reference checks.",
+      "limitations": "Node.js/CI evidence only. No physical Scriptable runtime test is implied.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-054",
+      "evidenceClass": "Successful CodeQL pull-request analysis after canonical evidence synchronization",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43451769039",
+      "assertion": "CodeQL completed successfully on pull-request head 55916df4815037796adadb237108fae9ce8e80cf.",
+      "limitations": "The two original CodeQL alerts remain open on main until merge. Three Secret Scanning alerts remain open.",
       "recordedAt": "2026-11-13"
     }
   ]
