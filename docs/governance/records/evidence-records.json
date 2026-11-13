@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessmentDate": "2026-11-13",
-  "count": 50,
+  "count": 51,
   "records": [
     {
       "id": "E-001",
@@ -252,54 +252,6 @@
       "recordedAt": "2026-11-13"
     },
     {
-      "id": "E-045",
-      "evidenceClass": "Secret Scanning alert inventory",
-      "source": "GitHub Secret Scanning API and alert-location endpoints, inspected 2026-11-13",
-      "assertion": "Three open alerts exist: two Google API Key alerts and one Google Cloud Service Account Credentials alert. Validity is unknown. All are tied to commits on the public main branch; one location is a service-account JSON file still present on main.",
-      "limitations": "Secret values and credential contents were not retrieved. The credentials must be treated as exposed until revoked or rotated by the issuing provider.",
-      "recordedAt": "2026-11-13"
-    },
-    {
-      "id": "E-046",
-      "evidenceClass": "CodeQL alert inventory",
-      "source": "GitHub Code Scanning API, inspected 2026-11-13",
-      "assertion": "Two high-severity js/incomplete-sanitization alerts on main identify incomplete string escaping in src/fq_add_airport.js. Both are fixed on the governance pull-request head.",
-      "limitations": "The source fix and regression test pass on the governance pull-request head. Main remains open until merge.",
-      "recordedAt": "2026-11-13"
-    },
-    {
-      "id": "E-047",
-      "evidenceClass": "Current PR check rollup",
-      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1",
-      "assertion": "The latest quality-gates, CodeQL, and Analyze (javascript-typescript) checks all completed successfully on the governance pull request after the serializer refactor.",
-      "limitations": "These checks do not resolve the open security alerts or prove Scriptable device compatibility.",
-      "recordedAt": "2026-11-13"
-    },
-    {
-      "id": "E-048",
-      "evidenceClass": "Successful quality-gates run with regression test",
-      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43449061757",
-      "assertion": "The workflow parsed 146 JavaScript source files, ran the airport serialization regression test successfully, verified governance/security artifacts, and passed probe isolation and patch hygiene.",
-      "limitations": "Node.js tooling test only; not Scriptable JavaScriptCore or physical-device evidence.",
-      "recordedAt": "2026-11-13"
-    },
-    {
-      "id": "E-049",
-      "evidenceClass": "Successful CodeQL pull-request analysis",
-      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43449057010",
-      "assertion": "The latest CodeQL analysis reports the two incomplete-string-escaping alerts and the temporary dynamic-test alert fixed on refs/pull/1/head.",
-      "limitations": "The two original alerts remain open on main until merge. The three Secret Scanning alerts remain open.",
-      "recordedAt": "2026-11-13"
-    },
-    {
-      "id": "E-050",
-      "evidenceClass": "Regression-test source review",
-      "source": "tools/tests/fq-add-airport-serialization.test.js on the governance pull-request head",
-      "assertion": "The test uses the pure serializer module and JSON.parse assertions, with no dynamic code execution. It covers backslashes, quotes, line breaks, Unicode separators, and injection-shaped text.",
-      "limitations": "This validates source-literal serialization, not the full Scriptable FileManager write lifecycle.",
-      "recordedAt": "2026-11-13"
-    },
-    {
       "id": "E-032",
       "evidenceClass": "Failed patch hygiene check",
       "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446493409",
@@ -401,6 +353,62 @@
       "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447998338",
       "assertion": "CodeQL JavaScript/TypeScript analysis completed successfully on the same governance draft revision.",
       "limitations": "The code-scanning alert inventory was not inspected.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-045",
+      "evidenceClass": "Secret Scanning alert inventory",
+      "source": "GitHub Secret Scanning API and alert-location endpoints, inspected 2026-11-13",
+      "assertion": "Three open alerts exist: two Google API Key alerts and one Google Cloud Service Account Credentials alert. Validity is unknown. All are tied to commits on the public main branch; one location is a service-account JSON file still present on main.",
+      "limitations": "Secret values and credential contents were not retrieved. The credentials must be treated as exposed until revoked or rotated by the issuing provider.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-046",
+      "evidenceClass": "CodeQL alert inventory",
+      "source": "GitHub Code Scanning API, inspected 2026-11-13",
+      "assertion": "Two high-severity js/incomplete-sanitization alerts on main identify incomplete string escaping in src/fq_add_airport.js. Both are fixed on the governance pull-request head.",
+      "limitations": "The source fix and regression test pass on the governance pull-request head. Main remains open until merge.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-047",
+      "evidenceClass": "Current PR check rollup",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1",
+      "assertion": "The latest quality-gates, CodeQL, and Analyze (javascript-typescript) checks all completed successfully on the governance pull request after the serializer refactor.",
+      "limitations": "These checks do not resolve the open security alerts or prove Scriptable device compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-048",
+      "evidenceClass": "Successful quality-gates run with regression test",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43449061757",
+      "assertion": "The workflow parsed 146 JavaScript source files, ran the airport serialization regression test successfully, verified governance/security artifacts, and passed probe isolation and patch hygiene.",
+      "limitations": "Node.js tooling test only; not Scriptable JavaScriptCore or physical-device evidence.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-049",
+      "evidenceClass": "Successful CodeQL pull-request analysis",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43449057010",
+      "assertion": "The latest CodeQL analysis reports the two incomplete-string-escaping alerts and the temporary dynamic-test alert fixed on refs/pull/1/head.",
+      "limitations": "The two original alerts remain open on main until merge. The three Secret Scanning alerts remain open.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-050",
+      "evidenceClass": "Regression-test source review",
+      "source": "tools/tests/fq-add-airport-serialization.test.js on the governance pull-request head",
+      "assertion": "The test uses the pure serializer module and JSON.parse assertions, with no dynamic code execution. It covers backslashes, quotes, line breaks, Unicode separators, and injection-shaped text.",
+      "limitations": "This validates source-literal serialization, not the full Scriptable FileManager write lifecycle.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-051",
+      "evidenceClass": "Proposed security rule refinement",
+      "source": "docs/governance/policy-rules.md and docs/governance/policies/security-and-dependencies.md on the governance pull-request branch",
+      "assertion": "Adds proposed SCR-SEC-004 requiring context-appropriate serialization of untrusted input and regression coverage for injection-shaped strings.",
+      "limitations": "Proposed rule only; it does not become Active until approved through a constitutional release.",
       "recordedAt": "2026-11-13"
     }
   ]
