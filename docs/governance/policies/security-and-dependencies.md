@@ -1,6 +1,6 @@
 # Security and Dependencies Policy
 
-**Rules:** SCR-DEP-001, SCR-DEP-002, SCR-SEC-001 through SCR-SEC-003, SCR-REPO-003.
+**Rules:** SCR-DEP-001, SCR-DEP-002, SCR-SEC-001 through SCR-SEC-004, SCR-REPO-003.
 
 ## Dependency admission
 
