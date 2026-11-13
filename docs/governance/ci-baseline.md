@@ -21,16 +21,17 @@ The initial quality-gates workflow runs on pull requests targeting main and on p
 ## Checks currently enforced
 
 1. Parse every JavaScript file under src/ using Node.js module syntax checking.
-2. Verify the existence of the approved glossary and initial governance records.
-3. Check that the two dedicated device probes do not invoke selected private host APIs such as Keychain, FileManager, Pasteboard, Request, Notification, or Location.
+2. Verify the existence of the approved glossary, operational baseline, evidence register, compatibility matrix, CI baseline, and all four device probes.
+3. Check that the four dedicated device probes do not invoke selected private host APIs such as Keychain, FileManager, Pasteboard, Request, Notification, or Location.
 
-The successful run parsed 143 JavaScript source files.
+The latest successful run parsed the JavaScript source set and passed all workflow steps.
 
 ## Recorded runs
 
 - Run 43444099883 failed because the first probe-isolation regular expression matched the word Pasteboard in a comment. The failed result is retained as evidence E-015.
 - Run 43444228577 passed after narrowing the check to API-call patterns. It parsed 143 JavaScript files.
 - Run 43444464454 passed on the pinned ubuntu-24.04 runner using Node.js 26.x.
+- Run 43444830645 passed after the main-runtime, WebView, and widget probes were separated and included in the isolation check.
 
 ## Explicit limitations
 
