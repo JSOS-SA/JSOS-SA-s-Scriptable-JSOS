@@ -133,3 +133,5 @@ The governance pull request must remain draft and must not merge until credentia
 ## 10. Governance draft status
 
 The governance pull request contains Constitution draft 0.1.0-draft.1, a catalogue of 34 structured Policy Rules, and a decision register for all 78 approved decisions. The associated policy, standards, and records indexes are also present. These documents remain drafts until the pull request is reviewed and merged.
+
+The latest complete governance-draft validation passed quality-gates run 43448002839 and CodeQL run 43447998338. Both checks are required by main branch protection.
