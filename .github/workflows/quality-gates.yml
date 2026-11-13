@@ -51,20 +51,43 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -s README.md
-          test -s GLOSSARY.md
-          test -s SECURITY.md
-          test -s docs/governance/operational-baseline.md
-          test -s docs/governance/security-baseline.md
-          test -s docs/governance/evidence-register.md
-          test -s docs/governance/compatibility-matrix.md
-          test -s docs/governance/ci-baseline.md
-          test -s docs/governance/device-test-procedure.md
-          test -s .github/dependabot.yml
-          test -s src/compatibility_probe.js
-          test -s src/async_runtime_probe.js
-          test -s src/webview_context_probe.js
-          test -s src/widget_context_probe.js
+          for file in \
+            README.md GLOSSARY.md CONSTITUTION.md SECURITY.md \
+            docs/governance/policy-rules.md \
+            docs/governance/operational-baseline.md \
+            docs/governance/security-baseline.md \
+            docs/governance/evidence-register.md \
+            docs/governance/compatibility-matrix.md \
+            docs/governance/ci-baseline.md \
+            docs/governance/device-test-procedure.md \
+            docs/governance/policies/README.md \
+            docs/governance/policies/runtime-compatibility.md \
+            docs/governance/policies/security-and-dependencies.md \
+            docs/governance/policies/testing-and-enforcement.md \
+            docs/governance/policies/evidence-and-exceptions.md \
+            docs/governance/policies/change-management.md \
+            docs/governance/standards/README.md \
+            docs/governance/standards/architecture.md \
+            docs/governance/standards/javascript.md \
+            docs/governance/standards/repository-and-ci.md \
+            docs/governance/records/README.md \
+            docs/governance/records/decision-register.md \
+            docs/governance/records/exception-register.md \
+            docs/governance/records/violation-register.md \
+            .github/dependabot.yml \
+            src/compatibility_probe.js src/async_runtime_probe.js \
+            src/webview_context_probe.js src/widget_context_probe.js; do
+            test -s "$file"
+          done
+
+      - name: Enforce governance prose punctuation
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RIn $'\u2014' README.md GLOSSARY.md CONSTITUTION.md SECURITY.md docs/governance; then
+            echo "Use punctuation other than an em dash in governance prose." >&2
+            exit 1
+          fi
 
       - name: Keep device probes isolated
         shell: bash
