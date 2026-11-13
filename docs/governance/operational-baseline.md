@@ -1,8 +1,8 @@
 # Operational Baseline
 
-**Assessment date:** 2026-11-13  
-**Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS  
-**Default branch:** main  
+**Assessment date:** 2026-11-13
+**Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS
+**Default branch:** main
 **Assessment status:** Initial operational controls are established. Physical-device execution remains unverified.
 
 ## 1. Repository identity and controls
