@@ -3,23 +3,29 @@
 **Assessment date:** 2026-11-13  
 **Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS  
 **Default branch:** main  
-**Assessment status:** Initial evidence captured. Device execution has not yet been performed.
+**Assessment status:** Initial operational controls are established. Physical-device execution remains unverified.
 
 ## 1. Repository identity and controls
 
 The repository contains the Scriptable application source under src/. The inspected source includes a main application entry point, a widget entry point, reusable modules, and manual self-test files.
 
-The following facts were observed from the GitHub repository and its current default branch:
+Current repository facts:
 
 - The default branch is main.
-- The branch was reported as unprotected by the GitHub branch endpoint.
-- The repository rulesets endpoint returned an empty list.
-- No .github/workflows directory was present.
-- No root package.json was present.
-- tools/test/harness.js, referenced by comments in the self-test source, was not present at the inspected revision.
+- The main branch is protected.
+- The main branch requires a pull request and the quality-gates status check.
+- Required status checks are strict.
+- Admin enforcement is enabled.
+- Force pushes and branch deletion are disabled.
+- Conversation resolution is required.
+- Required approving reviews are set to zero because the repository currently has one collaborator. This preserves the pull-request gate without making merging impossible for the sole collaborator.
+- The repository rulesets endpoint is empty. Protection is configured through classic branch protection.
+- The initial quality-gates workflow is present on the governance/operational-baseline pull request branch. It becomes part of main only after that pull request is merged.
+- No root package.json is present.
+- tools/test/harness.js, referenced by comments in the self-test source, is not present at the inspected revision.
 - The GitHub connection reports repository-owner permissions including Admin and Push.
 
-These facts mean the repository currently has no verified GitHub Actions workflow and no active branch protection or repository ruleset. They do not imply that the application itself has no tests.
+The draft pull request is https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1.
 
 ## 2. Scriptable and operating-system baseline
 
@@ -45,7 +51,7 @@ The inspected application source establishes these project contexts:
 - **Widget context:** src/fq_widget.js creates ListWidget instances and calls Script.setWidget.
 - **Manual test context:** src/selftest.js checks config.runsInApp.
 
-The production source uses async functions and await. These are newer than the documented ECMAScript 2015 baseline. They must remain an explicit compatibility exception until the dedicated on-device probe passes on the selected Scriptable/iOS/device tuples. A passing Node.js check is not proof of JavaScriptCore support.
+The production source uses async functions and await. These are newer than the documented ECMAScript 2015 baseline. They remain an explicit compatibility exception until the dedicated on-device probe passes on the selected Scriptable/iOS/device tuples. A passing Node.js check is not proof of JavaScriptCore support.
 
 ## 4. Device test targets
 
@@ -70,24 +76,26 @@ The test source therefore has side effects that must be reviewed before it is us
 
 The remote development host reported Git 2.52.0, Node.js 24.22.0, and npm 11.19.1. This host is not the Scriptable runtime and was not treated as a project CI runner.
 
-The Node.js release schedule identifies Node.js 26.x as Active LTS as of 2026-11-13, while 24.x is in Maintenance LTS. Use Node.js 26.x as the proposed GitHub Actions toolchain for project checks. The Scriptable compatibility policy must not equate Node.js/V8 results with JavaScriptCore results.
+The Node.js release schedule identifies Node.js 26.x as Active LTS as of 2026-11-13, while 24.x is in Maintenance LTS. The initial GitHub Actions workflow uses Node.js 26.x.
 
-No workflow or package manifest was present at the inspected revision. CI must be added explicitly and must separate static checks from device-only runtime evidence.
+The quality-gates workflow runs on pull requests to main and pushes to main. It uses a pinned GitHub Actions checkout and setup-node release, and an Ubuntu 24.04 runner. The current gate parses 143 JavaScript source files, verifies the governance artifacts, and checks that the dedicated probes do not call selected private host APIs.
+
+The successful CI run proves syntax parsing under Node.js and the limited checks listed above. It does not enforce the ES2015 syntax ceiling, perform type checking or full linting, execute application unit tests, or prove Scriptable JavaScriptCore, WebView, or widget compatibility. Those checks must be added as separate gates when their implementation and evidence are ready.
 
 ## 7. Role mapping
 
-The repository-owner permission is verified. The role model is:
+The repository currently has one collaborator. The role model is:
 
 - **Constitution Owner:** Repository Owner.
 - **Exception Approver:** Repository Owner, unless a formally delegated approver is recorded.
 - **Release Approver:** Repository Owner.
 - **Change Author:** The contributor proposing the change.
-- **Reviewer:** A maintainer other than the author where another qualified maintainer is available.
+- **Reviewer:** The Repository Owner performs the review checklist when acting as author, because no independent collaborator is currently available.
 - **Compatibility Register Steward:** A role assigned by the Constitution Owner.
 
-This maps responsibilities to verified repository authority without inventing personal names or assuming that additional collaborators are available.
+The role names remain distinct in the governance model even where one person performs multiple roles. The branch protection configuration requires a pull request and successful CI, but does not require an approval that the sole collaborator cannot provide.
 
-## 8. Immediate verification procedure
+## 8. Immediate device verification
 
 1. Run src/compatibility_probe.js manually in Scriptable in-app.
 2. Run src/async_runtime_probe.js manually in Scriptable in-app.
@@ -98,4 +106,4 @@ This maps responsibilities to verified repository authority without inventing pe
 
 ## Sources
 
-See evidence-register.md for source URLs, evidence identifiers, scope, and limitations.
+See evidence-register.md and ci-baseline.md for source URLs, evidence identifiers, scope, and limitations.
