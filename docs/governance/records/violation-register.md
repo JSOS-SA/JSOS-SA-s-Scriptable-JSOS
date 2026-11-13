@@ -2,6 +2,13 @@
 
 This register records policy violations and their remediation without duplicating sensitive security-alert details.
 
+## Current violations
+
+| Violation ID | Policy Rule | Status | Severity | Scope | Evidence |
+|---|---|---|---|---|---|
+| V-2026-001 | SCR-SEC-001 | Assigned | Critical | Exposed Google API and service-account credentials in the public repository history/current tree | E-045 |
+| V-2026-002 | SCR-SEC-004 | Remediated on pull-request branch | High | Incomplete escaping when generating airport JavaScript source | E-046, E-048, E-049, E-050 |
+
 ## Required workflow
 
 Detected -> Classified -> Assigned -> Remediated or Exception Requested -> Verified -> Closed.
