@@ -69,3 +69,9 @@ The main branch is protected with:
 - Required conversation resolution.
 
 The required approval count is zero because the repository currently has one collaborator. This keeps the pull-request gate usable while the role model permits one person to perform multiple roles. Reassess the approval count when another qualified maintainer becomes available.
+
+## Latest verification
+
+- Run 43446493409 failed because a documentation rewrite reintroduced trailing whitespace in metadata lines. The whitespace was removed.
+- Run 43446642015 passed after the correction and parsed 145 JavaScript source files.
+- CodeQL run 43446636909 passed on the latest governance pull-request revision.
