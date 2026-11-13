@@ -46,3 +46,12 @@ This register records evidence without treating a source's scope as broader than
 - A Node.js or WebView result must not be substituted for a JavaScriptCore result.
 - A documentation source supports a documented claim, not a tested or compatible claim.
 - Do not store device names, serial numbers, UDIDs, Apple IDs, tokens, or other personal identifiers in this register.
+
+## Additional evidence
+
+| ID | Evidence class | Source | Supported assertion | Limitation |
+|---|---|---|---|---|
+| E-032 | Failed patch hygiene check | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446493409 | The patch hygiene gate found trailing whitespace in metadata lines after a documentation rewrite. The whitespace was removed and the workflow rerun. | Documentation formatting issue only. |
+| E-033 | Latest successful quality-gates run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446642015 | The latest quality-gates run passed patch hygiene, parsed 145 JavaScript source files, verified governance/security artifacts, and passed probe isolation. | It does not establish Scriptable runtime compatibility. |
+| E-034 | Latest CodeQL pull-request run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446636909 | CodeQL JavaScript/TypeScript analysis completed successfully on the latest governance pull-request revision. | The alert inventory was not inspected in this assessment. |
+| E-035 | Security baseline document | docs/governance/security-baseline.md on the governance pull request branch | Records enabled security settings, CodeQL scope, Dependabot maintenance, and private reporting. | It is not part of main until the pull request is merged. |
