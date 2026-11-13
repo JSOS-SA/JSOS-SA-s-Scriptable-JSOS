@@ -80,6 +80,12 @@ jobs:
             docs/governance/records/decision-register.md \
             docs/governance/records/exception-register.md \
             docs/governance/records/violation-register.md \
+            docs/governance/records/decision-register.json \
+            docs/governance/records/compatibility-records.json \
+            docs/governance/records/evidence-records.json \
+            docs/governance/records/exception-register.json \
+            docs/governance/records/violation-register.json \
+            tools/governance/validate-records.js \
             .github/dependabot.yml \
             src/compatibility_probe.js src/async_runtime_probe.js \
             src/webview_context_probe.js src/widget_context_probe.js; do
