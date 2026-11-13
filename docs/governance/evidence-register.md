@@ -93,3 +93,10 @@ This Markdown table is the human-readable view of the canonical evidence data in
 |---|---|---|---|---|
 | E-043 | Latest quality-gates run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43448002839 | The complete governance draft passed patch hygiene, JavaScript syntax parsing, required artifact checks, no-em-dash validation, and device probe isolation. | Node.js parsing does not prove Scriptable Runtime compatibility. |
 | E-044 | Latest CodeQL pull-request run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447998338 | CodeQL JavaScript/TypeScript analysis completed successfully on the same governance draft revision. | The code-scanning alert inventory was not inspected. |
+
+## Latest canonical-record and security workflow evidence
+
+| ID | Evidence class | Source | Supported assertion | Limitation |
+|---|---|---|---|---|
+| E-051 | Successful quality-gates run with canonical record validation | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43451399883 | The workflow validated 78 approved decision records, 50 evidence records, four device targets, 16 compatibility records, zero exceptions, and two violation records. It also passed source parsing, airport serialization regression, governance artifact checks, punctuation checks, and device-probe isolation. | CI validation and Node.js tests only. It does not establish Scriptable runtime compatibility on physical devices. |
+| E-052 | Successful CodeQL pull-request analysis | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43451394102 | CodeQL analysis completed successfully on pull-request head 63e5528357529610bcc98b3f547b38727872086f. | The two original CodeQL alerts remain open on main until the reviewed change is merged. The three Secret Scanning alerts remain open. |
