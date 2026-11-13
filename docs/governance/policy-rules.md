@@ -4,7 +4,7 @@
 **Rule identifiers:** Stable and never reused
 **Enforcement:** BLOCK, WARN, GUIDE
 
-Every rule below includes its scope, severity, rationale, source, verification method, exception conditions, and owner. The decision register maps the approved decisions to these rules.
+All rules are Proposed while this catalogue remains Draft for review. A rule becomes Active only through an approved constitutional release. Every rule below includes its scope, severity, rationale, source, verification method, exception conditions, and owner. The decision register maps the approved decisions to these rules.
 
 ## Runtime and compatibility
 
@@ -222,6 +222,18 @@ Every rule below includes its scope, severity, rationale, source, verification m
 **Verification:** Change review, approval record, and execution evidence.
 **Exception:** Only through the approved Exception lifecycle with compensating controls and expiry.
 **Owner:** Exception Approver.
+
+### SCR-SEC-004: Safe serialization of untrusted input
+
+**Status:** Proposed.
+**Statement:** Untrusted values MUST be serialized using context-appropriate encoders. Code MUST NOT be constructed by manually escaping only a subset of string metacharacters. Generated source MUST preserve input as data and MUST NOT allow input to alter executable syntax.
+**Scope:** Dynamic source generation, JavaScript string literals, HTML, URLs, and other generated executable or structured text.
+**Severity / Enforcement:** High / BLOCK.
+**Rationale:** Partial escaping can permit code or data injection, corrupt generated files, or alter application behavior.
+**Source:** Q7, Q43, Q51, Q63.
+**Verification:** Static analysis, CodeQL, and regression tests covering quotes, backslashes, control characters, line breaks, Unicode separators, and injection-shaped input.
+**Exception:** No exception for executable code injection. Other encoding exceptions require a narrow, documented, approved exception.
+**Owner:** Security Owner.
 
 ## Evidence, risk, and exceptions
 
