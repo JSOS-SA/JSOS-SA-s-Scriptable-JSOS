@@ -1,0 +1,12 @@
+HTTP/2 200 
+server: nginx/1.24.0 (Ubuntu)
+date: Sun, 04 Oct 2026 23:07:52 GMT
+content-type: application/json
+content-length: 1294
+vary: Accept-Encoding
+access-control-allow-origin: *
+access-control-allow-headers: Authorization, Content-Type
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-expose-headers: X-FN-Credits
+x-fn-credits: 1
+

@@ -1,0 +1,17 @@
+[Unit]
+Description=جامع رحلات المغادرة لصالات مطار جدة (الشمالية وصالة ١ وصالة ٤)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=opc
+Group=opc
+WorkingDirectory=/home/opc/Desktop/رحلات_صالات_جدة
+ExecStart=/usr/bin/python3 /home/opc/Desktop/رحلات_صالات_جدة/collector.py
+Restart=always
+RestartSec=10
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

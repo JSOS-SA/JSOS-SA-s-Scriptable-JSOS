@@ -1,0 +1,33 @@
+HTTP/2 200 
+date: Mon, 05 Oct 2026 00:16:40 GMT
+content-type: application/json; charset=utf-8
+vary: Accept-Encoding
+cache-control: private,max-age=60
+strict-transport-security: max-age=2592000; preload
+server-timing: total;dur=11.1
+cf-cache-status: BYPASS
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+x-robots-tag: none
+x-tier: Tier 2
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=r23G%2Baj7ggrlz6jckOtKdczu3gUctb7wBUzPZ7J8M8iHmAn52SmxHgqniQZM1ePGD4xBaZeebTSi7n46stV3J%2FURCkwkq6hHFOzVdS3fN1XFMOE72IBCzdH8WLkPzCAf1ruhru4%2F"}]}
+alt-svc: h3=":443"; ma=86400
+x-content-type-options: nosniff
+cf-ray: a4583d2d4e4c3808-FRA
+vary: Accept, Accept-Language, Accept-Encoding
+x-ratelimit-rapid-free-plans-hard-limit-limit: 500000
+x-ratelimit-rapid-free-plans-hard-limit-remaining: 499998
+x-ratelimit-rapid-free-plans-hard-limit-reset: 2677894
+x-ratelimit-api-units-limit: 400
+x-ratelimit-api-units-remaining: 398
+x-ratelimit-api-units-reset: 2677894
+x-ratelimit-requests-limit: 1600
+x-ratelimit-requests-remaining: 1598
+x-ratelimit-requests-reset: 2677894
+server: RapidAPI-0.0.45
+x-rapidapi-version: 0.0.45
+x-rapidapi-region: AWS - eu-central-1
+x-rapidapi-request-id: e25520f92a6bb49b4a4a777b98792c07455947a931eb095639988061c772e91d
+x-content-type-options: nosniff
+x-frame-options: DENY
+referrer-policy: strict-origin-when-cross-origin
+
