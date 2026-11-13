@@ -42,3 +42,13 @@ Never put credential values in repository documentation, issues, pull requests, 
 ## Latest analysis evidence
 
 The latest CodeQL pull-request analysis completed successfully on run 43446636909. This records analysis completion only. The code-scanning alert inventory must still be reviewed separately.
+
+## Current open findings, inspected 2026-11-13
+
+Secret Scanning reports three open alerts: two Google API Key alerts and one Google Cloud Service Account Credentials alert. GitHub reports validity as unknown for all three. The alert-location endpoint ties the findings to commits on the public main branch. One finding is located in a service-account JSON file that is still present on main.
+
+Treat all three credentials as exposed. No secret values, key material, or credential contents were retrieved or copied during this assessment. Revoke or rotate the affected credentials with Google immediately. Do not treat deletion from the current tree as revocation, and do not close alerts until the issuing provider confirms revocation or rotation.
+
+CodeQL reports two open high-severity alerts for incomplete string escaping in src/fq_add_airport.js, at the city and country serialization statements. The current implementation escapes quotation marks but does not escape backslashes. This can produce malformed or altered JavaScript string literals for crafted input. The issue remains open and requires a reviewed fix plus regression tests.
+
+These findings are blockers for declaring the security baseline complete and for merging this governance pull request. A successful CodeQL analysis run means analysis completed, not that no alerts exist.
