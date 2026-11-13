@@ -1,0 +1,112 @@
+name: quality-gates
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gates:
+    name: quality-gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 26
+          package-manager-cache: false
+
+      - name: Check patch hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check "origin/main...HEAD"
+
+      - name: Parse Scriptable JavaScript sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            node --input-type=module --check < "$file"
+            count=$((count + 1))
+          done < <(find src -type f -name '*.js' -print0)
+          test "$count" -gt 0
+          echo "Parsed $count JavaScript source files."
+
+      - name: Test airport string serialization
+        run: node tools/tests/fq-add-airport-serialization.test.js
+
+      - name: Validate canonical governance records
+        run: node tools/governance/validate-records.js
+
+      - name: Verify governance and security artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            README.md GLOSSARY.md CONSTITUTION.md SECURITY.md \
+            docs/governance/policy-rules.md \
+            docs/governance/operational-baseline.md \
+            docs/governance/security-baseline.md \
+            docs/governance/evidence-register.md \
+            docs/governance/compatibility-matrix.md \
+            docs/governance/ci-baseline.md \
+            docs/governance/device-test-procedure.md \
+            docs/governance/policies/README.md \
+            docs/governance/policies/runtime-compatibility.md \
+            docs/governance/policies/security-and-dependencies.md \
+            docs/governance/policies/testing-and-enforcement.md \
+            docs/governance/policies/evidence-and-exceptions.md \
+            docs/governance/policies/change-management.md \
+            docs/governance/standards/README.md \
+            docs/governance/standards/architecture.md \
+            docs/governance/standards/javascript.md \
+            docs/governance/standards/repository-and-ci.md \
+            docs/governance/records/README.md \
+            docs/governance/records/decision-register.md \
+            docs/governance/records/exception-register.md \
+            docs/governance/records/violation-register.md \
+            docs/governance/records/decision-register.json \
+            docs/governance/records/compatibility-records.json \
+            docs/governance/records/evidence-records.json \
+            docs/governance/records/exception-register.json \
+            docs/governance/records/violation-register.json \
+            tools/governance/validate-records.js \
+            .github/dependabot.yml \
+            src/compatibility_probe.js src/async_runtime_probe.js \
+            src/webview_context_probe.js src/widget_context_probe.js; do
+            test -s "$file"
+          done
+
+      - name: Enforce governance prose punctuation
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RIn $'\u2014' README.md GLOSSARY.md CONSTITUTION.md SECURITY.md docs/governance; then
+            echo "Use punctuation other than an em dash in governance prose." >&2
+            exit 1
+          fi
+
+      - name: Keep device probes isolated
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -En 'Keychain\.(get|set|contains|remove)|FileManager\.(local|iCloud|documents)|Pasteboard\.(copy|paste)|new[[:space:]]+Request|new[[:space:]]+Notification|Location\.(current|reverseGeocode)' \
+            src/compatibility_probe.js src/async_runtime_probe.js src/webview_context_probe.js src/widget_context_probe.js; then
+            echo "Device probes must not access private host data or services." >&2
+            exit 1
+          fi

@@ -2,6 +2,7 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: teal; icon-glyph: building;
 // FQ-RELEASE: 2026.08.26.1-audit.fixes | BASELINE: f62e516841fbceed | FILE: fq_add_airport.js
+const airportSerialization = importModule("fq_airport_serialization");
 
 /**
  * @module fq_add_airport
@@ -61,9 +62,7 @@ function _insertAirportEntry(content, entry) {
   const anchor = "};\n\nmodule.exports = { AIRPORTS };";
   const anchorIndex = content.lastIndexOf(anchor);
   if (anchorIndex === -1) return null;
-  const cSafe = String(entry.city).replace(/"/g, '\\"');
-  const dSafe = String(entry.country).replace(/"/g, '\\"');
-  const newLine = `  ${entry.code}: { d: "${dSafe}", c: "${cSafe}" },\n`;
+  const newLine = airportSerialization.airportEntrySourceLine(entry);
   return content.slice(0, anchorIndex) + newLine + content.slice(anchorIndex);
 }
 
