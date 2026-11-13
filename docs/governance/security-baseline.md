@@ -56,3 +56,5 @@ These findings are blockers for declaring the security baseline complete and for
 ## CodeQL language scope
 
 The configured CodeQL language set is JavaScript and TypeScript variants only. Python is not configured for CodeQL in this repository. The latest pull-request analysis completed successfully on run 43447654951. The alert inventory remains a separate review task.
+
+The latest CodeQL analysis of the complete governance pull-request revision passed on run 43447998338. The analysis covered JavaScript/TypeScript. The alert inventory remains a separate review task.
