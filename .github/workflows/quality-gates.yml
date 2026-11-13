@@ -53,6 +53,9 @@ jobs:
       - name: Validate canonical governance records
         run: node tools/governance/validate-records.js
 
+      - name: Test compatibility record lifecycle validation
+        run: node tools/tests/validate-records-compatibility.test.js
+
       - name: Verify governance and security artifacts
         shell: bash
         run: |
