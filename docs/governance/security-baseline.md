@@ -68,3 +68,9 @@ The first version of that regression test used dynamic VM execution and produced
 The latest governance pull-request checks are all successful: quality-gates, CodeQL, and Analyze (javascript-typescript). The quality-gates run executed the new regression test successfully and parsed 146 JavaScript source files.
 
 The three Secret Scanning alerts remain open. Credential revocation/rotation and controlled removal of exposed credential material are still outstanding.
+
+## Latest verification, 2026-11-13
+
+The current pull-request head 63e5528357529610bcc98b3f547b38727872086f passes all three checks: quality-gates, CodeQL, and Analyze (javascript-typescript). The canonical-record validator passes with 78 approved decisions, 50 evidence records, four device targets, 16 compatibility records, zero exceptions, and two violations. See E-051 and E-052.
+
+The two high-severity CodeQL alerts remain open on main until merge. Three Secret Scanning alerts remain open. No credential values were accessed or copied into governance records. Credential revocation/rotation must be confirmed by the issuing provider before the credential exposure violation can be closed.
