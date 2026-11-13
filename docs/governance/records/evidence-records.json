@@ -1,0 +1,407 @@
+{
+  "schemaVersion": 1,
+  "assessmentDate": "2026-11-13",
+  "count": 50,
+  "records": [
+    {
+      "id": "E-001",
+      "evidenceClass": "Official App Store listing",
+      "source": "https://apps.apple.com/us/app/scriptable/id1405459188?platform=ipad",
+      "assertion": "Scriptable is listed for iPhone and iPad; latest displayed app version is 1.7.19; minimum OS is iOS/iPadOS 15.5.",
+      "limitations": "Does not establish the installed version on a particular device or prove every API works on every supported OS.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-002",
+      "evidenceClass": "Official Scriptable documentation",
+      "source": "https://docs.scriptable.app/",
+      "assertion": "Scriptable uses JavaScriptCore and documents ECMAScript 6 support; the main runtime is not a browser runtime.",
+      "limitations": "Does not establish support for later ECMAScript features without runtime tests.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-003",
+      "evidenceClass": "Official Scriptable Device API documentation",
+      "source": "https://docs.scriptable.app/device/",
+      "assertion": "Documents Device.model, Device.systemVersion, Device.isPhone, Device.isPad, Device.screenResolution, and Device.screenScale.",
+      "limitations": "The documented Device API page does not expose an installed Scriptable app-version getter or a unique hardware model identifier.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-004",
+      "evidenceClass": "Apple security documentation",
+      "source": "https://support.apple.com/en-sa/120323",
+      "assertion": "iOS/iPadOS 15.5 compatibility includes iPhone 6s and later, iPad Pro models, iPad Air 2 and later, iPad 5th generation and later, and iPad mini 4 and later.",
+      "limitations": "Establishes OS compatibility, not Scriptable runtime behavior.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-005",
+      "evidenceClass": "Apple Developer release information",
+      "source": "https://developer.apple.com/news/releases/",
+      "assertion": "Apple published iOS 27.2.1 and iPadOS 27.2.1 on 2026-11-09.",
+      "limitations": "Establishes release availability, not application compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-006",
+      "evidenceClass": "Apple security release information",
+      "source": "https://support.apple.com/en-sa/100100",
+      "assertion": "Apple's iOS 27 device list includes iPhone 11 and later; its iPadOS 27 list includes iPad 9th generation and later, plus supported Pro, Air, and mini models.",
+      "limitations": "Device support must still be checked against the exact OS release and hardware model.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-007",
+      "evidenceClass": "GitHub repository metadata",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS",
+      "assertion": "Identifies the repository and its default branch.",
+      "limitations": "Repository metadata does not prove runtime compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-008",
+      "evidenceClass": "GitHub branch metadata",
+      "source": "https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/branches/main",
+      "assertion": "The main branch was initially unprotected. Classic branch protection was subsequently enabled and now requires quality-gates and CodeQL.",
+      "limitations": "Point-in-time configuration. Recheck after settings changes.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-009",
+      "evidenceClass": "GitHub rulesets metadata",
+      "source": "https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/rulesets",
+      "assertion": "The inspected repository rulesets endpoint returned an empty list.",
+      "limitations": "Classic branch protection is configured separately.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-010",
+      "evidenceClass": "GitHub repository tree and source inspection",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/tree/main/src",
+      "assertion": "The inspected tree contains application modules, fq_main.js, fq_widget.js, selftest.js, and selftest_cases.js.",
+      "limitations": "Source inspection is not a device execution result.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-011",
+      "evidenceClass": "Node.js official release schedule",
+      "source": "https://nodejs.org/en/about/previous-releases",
+      "assertion": "Node.js 26.x is Active LTS and Node.js 24.x is Maintenance LTS at the assessment date.",
+      "limitations": "Node.js is a tooling runtime, not Scriptable's JavaScriptCore runtime.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-012",
+      "evidenceClass": "Remote host observation",
+      "source": "Remote Desktop Commander, read-only system metadata",
+      "assertion": "The connected Linux ARM64 host reported Git 2.52.0, Node.js 24.22.0, and npm 11.19.1.",
+      "limitations": "This is not the project's CI runner or an Apple device. No local project, Scriptable, Python, document, or memory files were read.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-013",
+      "evidenceClass": "Source safety review",
+      "source": "src/selftest.js and src/selftest_cases.js on the GitHub main branch",
+      "assertion": "The existing self-test loads application modules that reach Keychain reads and copies the report to Pasteboard.",
+      "limitations": "The test was not executed. This is a source-level side-effect finding, not a runtime test result.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-014",
+      "evidenceClass": "Dedicated device probes",
+      "source": "src/compatibility_probe.js, src/async_runtime_probe.js, src/webview_context_probe.js, and src/widget_context_probe.js",
+      "assertion": "Provides separate manual procedures for main runtime, async/await, WebView, and widget contexts without importing application data.",
+      "limitations": "No device result exists until a human runs the probes on the target device and records the output.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-015",
+      "evidenceClass": "Failed CI run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43444099883",
+      "assertion": "The first workflow attempt failed in the probe-isolation check because a broad pattern matched the word Pasteboard in a comment.",
+      "limitations": "This was a false positive in the check, not evidence that the probe accessed Pasteboard. The failed run is retained.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-016",
+      "evidenceClass": "Successful CI run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43444228577",
+      "assertion": "The corrected workflow passed and parsed 143 JavaScript source files, verified governance artifacts, and passed the probe-isolation check.",
+      "limitations": "This run used ubuntu-latest before the runner was pinned. It proves only the listed Node.js and repository checks.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-017",
+      "evidenceClass": "Successful CI run on pinned runner",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43444464454",
+      "assertion": "The workflow passed on ubuntu-24.04 using Node.js 26.x.",
+      "limitations": "It does not prove Scriptable JavaScriptCore, WebView, widget, or physical-device compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-018",
+      "evidenceClass": "Branch protection configuration",
+      "source": "https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/branches/main/protection",
+      "assertion": "Main requires pull requests and the strict quality-gates and CodeQL status checks, enforces admins, blocks force pushes and deletion, and requires conversation resolution.",
+      "limitations": "Required approval count is zero because only one collaborator is currently available.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-019",
+      "evidenceClass": "Collaborator count",
+      "source": "GitHub collaborators API, inspected 2026-11-13",
+      "assertion": "The repository currently has one collaborator.",
+      "limitations": "No collaborator identity is recorded here.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-020",
+      "evidenceClass": "Draft pull request",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1",
+      "assertion": "Holds the operational baseline, glossary, compatibility matrix, evidence register, CI workflow, device probes, and security policy for review.",
+      "limitations": "It has not been merged.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-021",
+      "evidenceClass": "Successful CI run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43444830645",
+      "assertion": "The workflow passed after the main-runtime, WebView, and widget probes were separated and included in the isolation check.",
+      "limitations": "This is Node.js syntax and repository validation, not a Scriptable device result.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-022",
+      "evidenceClass": "Failed patch hygiene check",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43445821718",
+      "assertion": "The patch hygiene gate detected trailing whitespace in Markdown metadata lines. The whitespace was removed and the workflow rerun.",
+      "limitations": "This was a documentation formatting defect, not an application runtime defect.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-023",
+      "evidenceClass": "Latest successful quality-gates run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446108143",
+      "assertion": "The workflow passed patch hygiene, parsed 145 JavaScript source files, verified governance/security artifacts, and passed the probe-isolation check.",
+      "limitations": "It does not establish Scriptable runtime compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-024",
+      "evidenceClass": "GitHub security settings",
+      "source": "GitHub repository security settings, inspected 2026-11-13",
+      "assertion": "Secret Scanning, Push Protection, Dependabot Alerts, and Dependabot Security Updates are enabled.",
+      "limitations": "Secret values and alert details are intentionally not copied into repository documentation.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-025",
+      "evidenceClass": "Private vulnerability reporting",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/security/advisories/new",
+      "assertion": "Private vulnerability reporting is enabled for the repository.",
+      "limitations": "Does not establish that every report has been reviewed.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-026",
+      "evidenceClass": "CodeQL default setup",
+      "source": "https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/code-scanning/default-setup",
+      "assertion": "CodeQL default setup is configured for JavaScript/TypeScript, with the default query suite and remote_and_local threat model. Python is not in the configured language set.",
+      "limitations": "Analysis completion does not mean the alert inventory is empty.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-027",
+      "evidenceClass": "CodeQL main-branch run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43445460446",
+      "assertion": "CodeQL JavaScript/TypeScript analysis completed successfully on main.",
+      "limitations": "Analysis completion does not imply a clean alert inventory.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-028",
+      "evidenceClass": "CodeQL pull-request run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446104838",
+      "assertion": "CodeQL JavaScript/TypeScript analysis completed successfully on the governance pull request.",
+      "limitations": "Analysis completion does not imply a clean alert inventory.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-029",
+      "evidenceClass": "Dependabot status",
+      "source": "GitHub Dependabot API, inspected 2026-11-13",
+      "assertion": "Dependabot Alerts and Security Updates are enabled; the alert count was zero at inspection time.",
+      "limitations": "The repository has no root package.json. The Dependabot configuration in the pull request targets GitHub Actions.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-030",
+      "evidenceClass": "Private security policy",
+      "source": "SECURITY.md on the governance pull request branch",
+      "assertion": "Defines private reporting and safe secret-handling requirements.",
+      "limitations": "It is not part of main until the pull request is merged.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-031",
+      "evidenceClass": "Dependabot configuration",
+      "source": ".github/dependabot.yml on the governance pull request branch",
+      "assertion": "Configures monthly updates for GitHub Actions dependencies.",
+      "limitations": "It is not active on main until the pull request is merged.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-036",
+      "evidenceClass": "Secret Scanning alert inventory",
+      "source": "GitHub Secret Scanning API and alert-location endpoints, inspected 2026-11-13",
+      "assertion": "Three open alerts exist: two Google API Key alerts and one Google Cloud Service Account Credentials alert. Validity is unknown. All are tied to commits on the public main branch; one location is a service-account JSON file still present on main.",
+      "limitations": "Secret values and credential contents were not retrieved. The credentials must be treated as exposed until revoked or rotated by the issuing provider.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-037",
+      "evidenceClass": "CodeQL alert inventory",
+      "source": "GitHub Code Scanning API, inspected 2026-11-13",
+      "assertion": "Two open high-severity js/incomplete-sanitization alerts identify incomplete string escaping in src/fq_add_airport.js at the city and country serialization statements.",
+      "limitations": "Analysis completion is not remediation. A source fix and regression tests remain outstanding.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-038",
+      "evidenceClass": "Current PR check rollup",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1",
+      "assertion": "The latest quality-gates, CodeQL, and Analyze (javascript-typescript) checks all completed successfully on the governance pull request.",
+      "limitations": "These checks do not resolve the open security alerts or prove Scriptable device compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-039",
+      "evidenceClass": "Successful quality-gates run with regression test",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43449061757",
+      "assertion": "The workflow parsed 146 JavaScript source files, ran the airport serialization regression test successfully, verified governance/security artifacts, and passed probe isolation and patch hygiene.",
+      "limitations": "Node.js tooling test only; not Scriptable JavaScriptCore or physical-device evidence.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-040",
+      "evidenceClass": "Successful CodeQL pull-request analysis",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43449057010",
+      "assertion": "The latest CodeQL analysis reports the two incomplete-string-escaping alerts and the temporary dynamic-test alert fixed on refs/pull/1/head.",
+      "limitations": "The two original alerts remain open on main until merge. The three Secret Scanning alerts remain open.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-041",
+      "evidenceClass": "Regression-test source review",
+      "source": "tools/tests/fq-add-airport-serialization.test.js on the governance pull-request head",
+      "assertion": "The test uses the pure serializer module and JSON.parse assertions, with no dynamic code execution. It covers backslashes, quotes, line breaks, Unicode separators, and injection-shaped text.",
+      "limitations": "This validates source-literal serialization, not the full Scriptable FileManager write lifecycle.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-032",
+      "evidenceClass": "Failed patch hygiene check",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446493409",
+      "assertion": "The patch hygiene gate found trailing whitespace in metadata lines after a documentation rewrite. The whitespace was removed and the workflow rerun.",
+      "limitations": "Documentation formatting issue only.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-033",
+      "evidenceClass": "Latest successful quality-gates run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446642015",
+      "assertion": "The latest quality-gates run passed patch hygiene, parsed 145 JavaScript source files, verified governance/security artifacts, and passed probe isolation.",
+      "limitations": "It does not establish Scriptable runtime compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-034",
+      "evidenceClass": "Latest CodeQL pull-request run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446636909",
+      "assertion": "CodeQL JavaScript/TypeScript analysis completed successfully on the latest governance pull-request revision.",
+      "limitations": "The alert inventory was not inspected in this assessment.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-035",
+      "evidenceClass": "Security baseline document",
+      "source": "docs/governance/security-baseline.md on the governance pull request branch",
+      "assertion": "Records enabled security settings, CodeQL scope, Dependabot maintenance, and private reporting.",
+      "limitations": "It is not part of main until the pull request is merged.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-036",
+      "evidenceClass": "Failed CI run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447542579",
+      "assertion": "Patch hygiene detected trailing whitespace in the newly added policy rule catalogue and decision register. The whitespace was removed.",
+      "limitations": "Documentation formatting issue only.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-037",
+      "evidenceClass": "Latest quality-gates run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447658633",
+      "assertion": "Patch hygiene, JavaScript syntax parsing, governance artifact checks, punctuation checks, and probe isolation all passed on the latest revision.",
+      "limitations": "Node.js checks do not prove Scriptable runtime compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-038",
+      "evidenceClass": "Latest CodeQL pull-request run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447654951",
+      "assertion": "CodeQL JavaScript/TypeScript analysis completed successfully on the latest revision.",
+      "limitations": "Analysis completion does not mean the alert inventory is empty.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-039",
+      "evidenceClass": "Constitution and policy draft",
+      "source": "CONSTITUTION.md and docs/governance/policy-rules.md on the governance pull request branch",
+      "assertion": "Draft Constitution 0.1.0-draft.1 and 34 structured Policy Rules were created.",
+      "limitations": "Draft text is not effective until approval and merge.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-040",
+      "evidenceClass": "Approved decision register",
+      "source": "docs/governance/records/decision-register.md on the governance pull request branch",
+      "assertion": "Records G1-G3 and Q1-Q75, 78 approved decisions in total, mapped to Policy Rule IDs.",
+      "limitations": "It is not part of main until the pull request is merged.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-041",
+      "evidenceClass": "Policy, standards, and register set",
+      "source": "docs/governance/policies, docs/governance/standards, and docs/governance/records on the governance pull request branch",
+      "assertion": "Adds the policy and standard indexes, architecture/JavaScript/repository standards, and exception/violation register templates.",
+      "limitations": "Draft artifacts remain in the open pull request.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-042",
+      "evidenceClass": "Current required status checks",
+      "source": "GitHub main branch protection API, inspected 2026-11-13",
+      "assertion": "Main requires quality-gates and CodeQL, with strict checks enabled.",
+      "limitations": "Required approval count remains zero because only one collaborator is available.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-043",
+      "evidenceClass": "Latest quality-gates run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43448002839",
+      "assertion": "The complete governance draft passed patch hygiene, JavaScript syntax parsing, required artifact checks, no-em-dash validation, and device probe isolation.",
+      "limitations": "Node.js parsing does not prove Scriptable Runtime compatibility.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-044",
+      "evidenceClass": "Latest CodeQL pull-request run",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447998338",
+      "assertion": "CodeQL JavaScript/TypeScript analysis completed successfully on the same governance draft revision.",
+      "limitations": "The code-scanning alert inventory was not inspected.",
+      "recordedAt": "2026-11-13"
+    }
+  ]
+}
