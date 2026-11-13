@@ -41,3 +41,9 @@ Destructive actions, credential changes, data deletion, privileged automation, a
 ## Repository controls
 
 Secret Scanning, Push Protection, Dependabot Alerts, Dependabot Security Updates, and CodeQL must remain enabled. Private vulnerability reporting is enabled. Security findings and credential values remain in GitHub's private Security interface and must not be copied into public project records.
+
+## Safe serialization and output encoding
+
+**Rule:** SCR-SEC-004.
+
+Untrusted values MUST be serialized with a context-appropriate encoder. Do not construct executable source by manually escaping only quotation marks or another subset of special characters. Prefer established serializers such as JSON.stringify for JavaScript string literals, then apply any additional escaping required by the target runtime. Regression tests must cover backslashes, quotes, control characters, line breaks, Unicode line separators, and injection-shaped input.
