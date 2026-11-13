@@ -119,3 +119,13 @@ Follow docs/governance/device-test-procedure.md:
 ## Sources
 
 See evidence-register.md, ci-baseline.md, and security-baseline.md for source URLs, evidence identifiers, scope, and limitations.
+
+## 10. Security findings and merge blockers
+
+The security inventory inspected on 2026-11-13 contains three open Secret Scanning alerts: two Google API Key findings and one Google Cloud Service Account Credentials finding. GitHub reports unknown validity. The findings are associated with commits on the public main branch, and one service-account JSON file remains present in the current main tree. Treat every affected credential as exposed. The credential values were not retrieved or copied.
+
+The owner must revoke or rotate the affected credentials with Google. After revocation, remove the exposed credential material from the current tree and coordinate any Git-history rewrite as a separate controlled operation. A history rewrite must not be treated as a substitute for revocation.
+
+CodeQL also reports two open high-severity incomplete-string-escaping findings in src/fq_add_airport.js. The implementation does not escape backslash characters before interpolating city and country values into JavaScript string literals. A reviewed source fix and regression tests are outstanding.
+
+The governance pull request must remain draft and must not merge until credential revocation, source remediation, regression verification, and the physical-device evidence requirements are completed. The successful CI and CodeQL runs recorded above do not close these findings.
