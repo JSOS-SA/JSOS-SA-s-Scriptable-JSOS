@@ -49,7 +49,8 @@
         "E-049",
         "E-050",
         "E-053",
-        "E-052"
+        "E-052",
+        "E-054"
       ],
       "verification": {
         "status": "Verified on pull-request head",
