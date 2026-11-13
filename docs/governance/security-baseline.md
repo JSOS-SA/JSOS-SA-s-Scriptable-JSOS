@@ -49,7 +49,7 @@ Secret Scanning reports three open alerts: two Google API Key alerts and one Goo
 
 Treat all three credentials as exposed. No secret values, key material, or credential contents were retrieved or copied during this assessment. Revoke or rotate the affected credentials with Google immediately. Do not treat deletion from the current tree as revocation, and do not close alerts until the issuing provider confirms revocation or rotation.
 
-CodeQL reports two open high-severity alerts for incomplete string escaping in src/fq_add_airport.js, at the city and country serialization statements. The current implementation escapes quotation marks but does not escape backslashes. This can produce malformed or altered JavaScript string literals for crafted input. The issue remains open and requires a reviewed fix plus regression tests.
+CodeQL reports two open high-severity alerts for incomplete string escaping in src/fq_add_airport.js, at the city and country serialization statements. The current implementation escapes quotation marks but does not escape backslashes. This can produce malformed or altered JavaScript string literals for crafted input. The two main-branch alerts remain open until merge. The reviewed fix and regression test are now present on the governance pull-request head and pass the latest CI and CodeQL checks.
 
 These findings are blockers for declaring the security baseline complete and for merging this governance pull request. A successful CodeQL analysis run means analysis completed, not that no alerts exist.
 
