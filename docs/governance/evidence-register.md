@@ -63,3 +63,15 @@ This register records evidence without treating a source's scope as broader than
 | E-033 | Latest successful quality-gates run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446642015 | The latest quality-gates run passed patch hygiene, parsed 145 JavaScript source files, verified governance/security artifacts, and passed probe isolation. | It does not establish Scriptable runtime compatibility. |
 | E-034 | Latest CodeQL pull-request run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446636909 | CodeQL JavaScript/TypeScript analysis completed successfully on the latest governance pull-request revision. | The alert inventory was not inspected in this assessment. |
 | E-035 | Security baseline document | docs/governance/security-baseline.md on the governance pull request branch | Records enabled security settings, CodeQL scope, Dependabot maintenance, and private reporting. | It is not part of main until the pull request is merged. |
+
+## Constitution and policy drafting evidence
+
+| ID | Evidence class | Source | Supported assertion | Limitation |
+|---|---|---|---|---|
+| E-036 | Failed CI run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447542579 | Patch hygiene detected trailing whitespace in the newly added policy rule catalogue and decision register. The whitespace was removed. | Documentation formatting issue only. |
+| E-037 | Latest quality-gates run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447658633 | Patch hygiene, JavaScript syntax parsing, governance artifact checks, punctuation checks, and probe isolation all passed on the latest revision. | Node.js checks do not prove Scriptable runtime compatibility. |
+| E-038 | Latest CodeQL pull-request run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447654951 | CodeQL JavaScript/TypeScript analysis completed successfully on the latest revision. | Analysis completion does not mean the alert inventory is empty. |
+| E-039 | Constitution and policy draft | CONSTITUTION.md and docs/governance/policy-rules.md on the governance pull request branch | Draft Constitution 0.1.0-draft.1 and 34 structured Policy Rules were created. | Draft text is not effective until approval and merge. |
+| E-040 | Approved decision register | docs/governance/records/decision-register.md on the governance pull request branch | Records G1-G3 and Q1-Q75, 78 approved decisions in total, mapped to Policy Rule IDs. | It is not part of main until the pull request is merged. |
+| E-041 | Policy, standards, and register set | docs/governance/policies, docs/governance/standards, and docs/governance/records on the governance pull request branch | Adds the policy and standard indexes, architecture/JavaScript/repository standards, and exception/violation register templates. | Draft artifacts remain in the open pull request. |
+| E-042 | Current required status checks | GitHub main branch protection API, inspected 2026-11-13 | Main requires quality-gates and CodeQL, with strict checks enabled. | Required approval count remains zero because only one collaborator is available. |
