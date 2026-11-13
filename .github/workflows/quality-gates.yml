@@ -47,6 +47,9 @@ jobs:
           test "$count" -gt 0
           echo "Parsed $count JavaScript source files."
 
+      - name: Test airport string serialization
+        run: node tools/tests/fq-add-airport-serialization.test.js
+
       - name: Verify governance and security artifacts
         shell: bash
         run: |
