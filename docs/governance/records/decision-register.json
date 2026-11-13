@@ -1,0 +1,646 @@
+{
+  "schemaVersion": 1,
+  "status": "Approved",
+  "source": "User-approved governance decisions",
+  "count": 78,
+  "decisions": [
+    {
+      "id": "G1",
+      "decision": "The Constitution has absolute normative authority.",
+      "policyRuleIds": [
+        "SCR-GOV-001",
+        "SCR-CHG-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "G2",
+      "decision": "The Constitution applies to the entire project.",
+      "policyRuleIds": [
+        "SCR-RUN-002",
+        "SCR-ARCH-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "G3",
+      "decision": "GitHub protection applies to policy files and code alike.",
+      "policyRuleIds": [
+        "SCR-REPO-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q1",
+      "decision": "ECMAScript 2015 is the baseline; newer features require proof.",
+      "policyRuleIds": [
+        "SCR-RUN-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q2",
+      "decision": "Execution contexts are explicitly separated.",
+      "policyRuleIds": [
+        "SCR-RUN-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q3",
+      "decision": "Official documentation defines the documented contract; reproducible tests establish observed behavior.",
+      "policyRuleIds": [
+        "SCR-COMP-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q4",
+      "decision": "TypeScript and ESLint are supporting checks, not sources of truth; no DOM or Node globals in the main runtime; target and lib remain separate.",
+      "policyRuleIds": [
+        "SCR-RUN-001",
+        "SCR-RUN-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q5",
+      "decision": "External libraries are denied by default until reviewed.",
+      "policyRuleIds": [
+        "SCR-DEP-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q6",
+      "decision": "Layered verification and automated gates block on failure.",
+      "policyRuleIds": [
+        "SCR-TEST-001",
+        "SCR-TEST-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q7",
+      "decision": "High-risk operations are blocked by default and require approved exceptions.",
+      "policyRuleIds": [
+        "SCR-SEC-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q8",
+      "decision": "Unverified memory limits are not treated as official limits; measurements require evidence.",
+      "policyRuleIds": [
+        "SCR-EVID-001",
+        "SCR-EVID-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q9",
+      "decision": "Components declare supported contexts explicitly.",
+      "policyRuleIds": [
+        "SCR-RUN-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q10",
+      "decision": "Documented, Tested, Compatible, Incompatible, and Not Verified are distinct assessment dimensions.",
+      "policyRuleIds": [
+        "SCR-COMP-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q11",
+      "decision": "Source hierarchy is explicit, with Scriptable official documentation first.",
+      "policyRuleIds": [
+        "SCR-COMP-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q12",
+      "decision": "GitHub Actions is the mandatory CI gate, separate from device testing.",
+      "policyRuleIds": [
+        "SCR-TEST-002",
+        "SCR-REPO-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q13",
+      "decision": "Exceptions require approval and documented scope, reason, risk, and controls.",
+      "policyRuleIds": [
+        "SCR-EXC-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q14",
+      "decision": "Architecture uses Core, Data, Services, Features, and UI layers with Scriptable Host APIs.",
+      "policyRuleIds": [
+        "SCR-ARCH-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q15",
+      "decision": "A central compatibility register records each API or feature assessment.",
+      "policyRuleIds": [
+        "SCR-COMP-001",
+        "SCR-GOV-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q16",
+      "decision": "Minimum Scriptable and iOS versions are evidence-based, not guessed.",
+      "policyRuleIds": [
+        "SCR-COMP-004",
+        "SCR-COMP-005"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q17",
+      "decision": "The device matrix includes iPhone and iPad and records differences.",
+      "policyRuleIds": [
+        "SCR-COMP-005"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q18",
+      "decision": "New, changed, uncertain, or risky APIs require Scriptable Runtime proof.",
+      "policyRuleIds": [
+        "SCR-TEST-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q19",
+      "decision": "Backward compatibility and deprecation require reason, affected users, alternative, transition period, and records.",
+      "policyRuleIds": [
+        "SCR-CHG-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q20",
+      "decision": "Breaking changes include incompatible changes to scripts, API contracts, outputs, side effects, or runtime requirements.",
+      "policyRuleIds": [
+        "SCR-CHG-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q21",
+      "decision": "Enforcement uses BLOCK, WARN, and GUIDE.",
+      "policyRuleIds": [
+        "SCR-RISK-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q22",
+      "decision": "Author, reviewer, exception approver, register steward, and policy owner responsibilities are distinct, though one person may hold multiple roles.",
+      "policyRuleIds": [
+        "SCR-GOV-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q23",
+      "decision": "A central evidence register records evidence identifiers and metadata.",
+      "policyRuleIds": [
+        "SCR-EVID-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q24",
+      "decision": "Normative language uses MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY.",
+      "policyRuleIds": [
+        "SCR-GOV-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q25",
+      "decision": "Each rule has an ID, title, statement, scope, severity, rationale, source, verification, exception conditions, and owner.",
+      "policyRuleIds": [
+        "SCR-GOV-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q26",
+      "decision": "Explicit precedence prevents lower-level rules from overriding higher-level rules.",
+      "policyRuleIds": [
+        "SCR-CHG-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q27",
+      "decision": "Rules apply across scripts, modules, libraries, dependencies, settings, tests, tools, CI, and documentation, with applicability declared.",
+      "policyRuleIds": [
+        "SCR-ARCH-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q28",
+      "decision": "Evidence is valid only for its tested scope and must be rechecked after material changes.",
+      "policyRuleIds": [
+        "SCR-COMP-004"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q29",
+      "decision": "Exception lifecycle is Proposed, Reviewed, Approved, Active, Expired or Revoked.",
+      "policyRuleIds": [
+        "SCR-EXC-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q30",
+      "decision": "The Constitution uses Semantic Versioning with Major, Minor, and Patch changes.",
+      "policyRuleIds": [
+        "SCR-GOV-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q31",
+      "decision": "A compatibility proof unit is a component/API/version/device/context/result/evidence tuple.",
+      "policyRuleIds": [
+        "SCR-COMP-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q32",
+      "decision": "Script, Module, Library, and Dependency are distinct concepts.",
+      "policyRuleIds": [
+        "SCR-ARCH-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q33",
+      "decision": "Runtime, Execution Context, and Host API are distinct concepts.",
+      "policyRuleIds": [
+        "SCR-RUN-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q34",
+      "decision": "Compatibility assessment dimensions are independent, not mutually exclusive states.",
+      "policyRuleIds": [
+        "SCR-COMP-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q35",
+      "decision": "Incompatible, Not Verified, and Unsupported are distinct.",
+      "policyRuleIds": [
+        "SCR-COMP-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q36",
+      "decision": "Reference sources and proof sources are distinct.",
+      "policyRuleIds": [
+        "SCR-COMP-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q37",
+      "decision": "Policy Rule, Scope, Enforcement, Exception, Evidence, and Decision have explicit relationships.",
+      "policyRuleIds": [
+        "SCR-EXC-001",
+        "SCR-EVID-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q38",
+      "decision": "Each API/version/device/context combination has its own compatibility record.",
+      "policyRuleIds": [
+        "SCR-COMP-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q39",
+      "decision": "Evidence classes are explicitly categorized.",
+      "policyRuleIds": [
+        "SCR-EVID-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q40",
+      "decision": "Runtime test evidence includes reproduction steps, inputs, expected and actual results, and environment.",
+      "policyRuleIds": [
+        "SCR-EVID-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q41",
+      "decision": "Conflicting evidence is retained and analyzed, not deleted.",
+      "policyRuleIds": [
+        "SCR-EVID-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q42",
+      "decision": "Evidence is classified as valid for scope, requiring re-verification, or superseded.",
+      "policyRuleIds": [
+        "SCR-COMP-004"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q43",
+      "decision": "Risk uses impact, likelihood, and detection difficulty.",
+      "policyRuleIds": [
+        "SCR-EVID-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q44",
+      "decision": "Compatible requires sufficient, current evidence for the declared scope.",
+      "policyRuleIds": [
+        "SCR-COMP-002",
+        "SCR-COMP-004"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q45",
+      "decision": "Unknown supported versions are recorded as Pending Verification, not guessed.",
+      "policyRuleIds": [
+        "SCR-COMP-004"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q46",
+      "decision": "Device targets are listed and distinguished from tested devices.",
+      "policyRuleIds": [
+        "SCR-COMP-005"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q47",
+      "decision": "Role responsibilities are defined even if a person holds several roles.",
+      "policyRuleIds": [
+        "SCR-GOV-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q48",
+      "decision": "Evidence review is event- and risk-driven, not based on one universal expiry period.",
+      "policyRuleIds": [
+        "SCR-COMP-004"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q49",
+      "decision": "Risk considers likelihood, impact severity, and difficulty of detection.",
+      "policyRuleIds": [
+        "SCR-EVID-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q50",
+      "decision": "Every exception has an expiry date.",
+      "policyRuleIds": [
+        "SCR-EXC-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q51",
+      "decision": "Violation handling follows a recorded detect, classify, assign, remediate or request exception, verify, and close workflow.",
+      "policyRuleIds": [
+        "SCR-CHG-002",
+        "SCR-EVID-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q52",
+      "decision": "CI reruns relevant checks after dependency, tool, or governance changes and does not claim device proof.",
+      "policyRuleIds": [
+        "SCR-TEST-002",
+        "SCR-TEST-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q53",
+      "decision": "Unverified versions remain Not Verified until evidence exists.",
+      "policyRuleIds": [
+        "SCR-COMP-004"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q54",
+      "decision": "Device support is declared only with matrix coverage and evidence.",
+      "policyRuleIds": [
+        "SCR-COMP-005"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q55",
+      "decision": "Role names are defined first; personal assignments require verified authority.",
+      "policyRuleIds": [
+        "SCR-GOV-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q56",
+      "decision": "Exception renewal requires a new review and approval.",
+      "policyRuleIds": [
+        "SCR-EXC-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q57",
+      "decision": "Evidence review is triggered by material changes and risk.",
+      "policyRuleIds": [
+        "SCR-COMP-004"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q58",
+      "decision": "One structured canonical source holds compatibility records.",
+      "policyRuleIds": [
+        "SCR-GOV-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q59",
+      "decision": "CI success cannot replace physical-device or context-specific tests.",
+      "policyRuleIds": [
+        "SCR-TEST-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q60",
+      "decision": "Documents are layered into Constitution, Policies, Standards/Procedures, Records, and References.",
+      "policyRuleIds": [
+        "SCR-GOV-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q61",
+      "decision": "English is used for normative terms and technical fields, with Arabic explanation where useful.",
+      "policyRuleIds": [
+        "SCR-GOV-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q62",
+      "decision": "Rule IDs remain stable and are never reused.",
+      "policyRuleIds": [
+        "SCR-GOV-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q63",
+      "decision": "Every rule traces to scope, enforcement, checks, evidence, exceptions, and decisions.",
+      "policyRuleIds": [
+        "SCR-CHG-002",
+        "SCR-REPO-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q64",
+      "decision": "Constitutional changes follow proposal, impact, review, approval, release, and synchronization.",
+      "policyRuleIds": [
+        "SCR-CHG-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q65",
+      "decision": "Rules have Proposed, Active, Deprecated, and Retired lifecycle states.",
+      "policyRuleIds": [
+        "SCR-GOV-001"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q66",
+      "decision": "Human documents and structured canonical data are separated and linked.",
+      "policyRuleIds": [
+        "SCR-GOV-003"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q67",
+      "decision": "A constitutional release requires version classification, record integrity, CI, approval, and date.",
+      "policyRuleIds": [
+        "SCR-GOV-001",
+        "SCR-REPO-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q68",
+      "decision": "Rule conflicts are recorded and resolved by precedence.",
+      "policyRuleIds": [
+        "SCR-CHG-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q69",
+      "decision": "Wide-impact changes require documented impact analysis.",
+      "policyRuleIds": [
+        "SCR-CHG-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q70",
+      "decision": "Historical and conflicting evidence is retained.",
+      "policyRuleIds": [
+        "SCR-EVID-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q71",
+      "decision": "Failed or untrustworthy enforcement tools produce BLOCKED or INDETERMINATE, not success.",
+      "policyRuleIds": [
+        "SCR-GOV-004"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q72",
+      "decision": "Dependency review includes source, version, integrity, transitive dependencies, security, and license.",
+      "policyRuleIds": [
+        "SCR-DEP-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q73",
+      "decision": "A bad release is corrected through a later release with traceable rollback impact, not erased history.",
+      "policyRuleIds": [
+        "SCR-CHG-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q74",
+      "decision": "Drift between documentation, rules, tests, and actual behavior is recorded and remediated.",
+      "policyRuleIds": [
+        "SCR-CHG-002"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q75",
+      "decision": "The Constitution is reviewed after major platform, architecture, dependency, or threat-model changes.",
+      "policyRuleIds": [
+        "SCR-GOV-005"
+      ],
+      "status": "Approved"
+    }
+  ]
+}
