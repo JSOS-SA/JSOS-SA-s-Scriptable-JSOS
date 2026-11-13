@@ -75,3 +75,10 @@ This register records evidence without treating a source's scope as broader than
 | E-040 | Approved decision register | docs/governance/records/decision-register.md on the governance pull request branch | Records G1-G3 and Q1-Q75, 78 approved decisions in total, mapped to Policy Rule IDs. | It is not part of main until the pull request is merged. |
 | E-041 | Policy, standards, and register set | docs/governance/policies, docs/governance/standards, and docs/governance/records on the governance pull request branch | Adds the policy and standard indexes, architecture/JavaScript/repository standards, and exception/violation register templates. | Draft artifacts remain in the open pull request. |
 | E-042 | Current required status checks | GitHub main branch protection API, inspected 2026-11-13 | Main requires quality-gates and CodeQL, with strict checks enabled. | Required approval count remains zero because only one collaborator is available. |
+
+## Final draft verification
+
+| ID | Evidence class | Source | Supported assertion | Limitation |
+|---|---|---|---|---|
+| E-043 | Latest quality-gates run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43448002839 | The complete governance draft passed patch hygiene, JavaScript syntax parsing, required artifact checks, no-em-dash validation, and device probe isolation. | Node.js parsing does not prove Scriptable Runtime compatibility. |
+| E-044 | Latest CodeQL pull-request run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43447998338 | CodeQL JavaScript/TypeScript analysis completed successfully on the same governance draft revision. | The code-scanning alert inventory was not inspected. |
