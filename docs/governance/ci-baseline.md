@@ -75,3 +75,9 @@ The required approval count is zero because the repository currently has one col
 - Run 43446493409 failed because a documentation rewrite reintroduced trailing whitespace in metadata lines. The whitespace was removed.
 - Run 43446642015 passed after the correction and parsed 145 JavaScript source files.
 - CodeQL run 43446636909 passed on the latest governance pull-request revision.
+
+## Governance document validation
+
+The latest successful quality-gates run is 43447658633. It passed patch hygiene, parsed the current JavaScript source set, verified the constitution, policy, standards, records, security, and probe files, enforced the no-em-dash rule for governance prose, and checked probe isolation.
+
+A previous run, 43447542579, failed on trailing whitespace in the new policy catalogue and decision register. The formatting was corrected before the successful run.
