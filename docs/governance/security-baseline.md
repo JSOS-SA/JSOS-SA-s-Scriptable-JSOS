@@ -58,3 +58,13 @@ These findings are blockers for declaring the security baseline complete and for
 The configured CodeQL language set is JavaScript and TypeScript variants only. Python is not configured for CodeQL in this repository. The latest pull-request analysis completed successfully on run 43447654951. The alert inventory remains a separate review task.
 
 The latest CodeQL analysis of the complete governance pull-request revision passed on run 43447998338. The analysis covered JavaScript/TypeScript. The alert inventory remains a separate review task.
+
+## Remediation update, 2026-11-13
+
+The two high-severity incomplete-string-escaping findings in src/fq_add_airport.js are fixed on the governance pull-request head. The implementation now delegates source-literal generation to the pure src/fq_airport_serialization.js module, which uses JSON.stringify and explicitly escapes U+2028 and U+2029. A regression test covers backslashes, quotes, line breaks, Unicode separators, and injection-shaped text.
+
+The first version of that regression test used dynamic VM execution and produced a separate CodeQL critical alert. That test was replaced with a non-executing test that validates the generated JSON string literals. The latest CodeQL analysis reports all three findings fixed on refs/pull/1/head. The two original alerts remain open on main until the reviewed change is merged there.
+
+The latest governance pull-request checks are all successful: quality-gates, CodeQL, and Analyze (javascript-typescript). The quality-gates run executed the new regression test successfully and parsed 146 JavaScript source files.
+
+The three Secret Scanning alerts remain open. Credential revocation/rotation and controlled removal of exposed credential material are still outstanding.
