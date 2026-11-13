@@ -1,8 +1,8 @@
 # CI Baseline
 
-**Assessment date:** 2026-11-13
-**Workflow:** .github/workflows/quality-gates.yml
-**Required check:** quality-gates
+**Assessment date:** 2026-11-13  
+**Workflow:** .github/workflows/quality-gates.yml  
+**Required checks:** quality-gates and CodeQL  
 **Protected branch:** main
 
 ## Workflow contract
@@ -20,18 +20,27 @@ The initial quality-gates workflow runs on pull requests targeting main and on p
 
 ## Checks currently enforced
 
-1. Parse every JavaScript file under src/ using Node.js module syntax checking.
-2. Verify the existence of the approved glossary, operational baseline, evidence register, compatibility matrix, CI baseline, and all four device probes.
-3. Check that the four dedicated device probes do not invoke selected private host APIs such as Keychain, FileManager, Pasteboard, Request, Notification, or Location.
+1. Check patch hygiene with git diff --check against origin/main.
+2. Parse every JavaScript file under src/ using Node.js module syntax checking.
+3. Verify the existence of the approved glossary, security policy, operational baseline, evidence register, compatibility matrix, CI baseline, device test procedure, Dependabot configuration, and all four device probes.
+4. Check that the four dedicated device probes do not invoke selected private host APIs such as Keychain, FileManager, Pasteboard, Request, Notification, or Location.
 
-The latest successful run parsed 145 JavaScript source files and passed all workflow steps.
+The latest successful quality-gates run parsed 145 JavaScript source files and passed all workflow steps.
 
-## Recorded runs
+## CodeQL
 
-- Run 43444099883 failed because the first probe-isolation regular expression matched the word Pasteboard in a comment. The failed result is retained as evidence E-015.
+GitHub CodeQL default setup is enabled for JavaScript/TypeScript only. The configured query suite is default and the threat model includes remote and local sources. Python is not in the configured language set.
+
+CodeQL analysis completed successfully on main and on the governance pull request. The CodeQL status check is required for main. A successful analysis run does not mean the alert inventory is empty. Review code-scanning alerts separately in GitHub Security.
+
+## Recorded quality-gates runs
+
+- Run 43444099883 failed because the first probe-isolation regular expression matched the word Pasteboard in a comment. The failed result is retained as evidence.
 - Run 43444228577 passed after narrowing the check to API-call patterns. It parsed 143 JavaScript files.
 - Run 43444464454 passed on the pinned ubuntu-24.04 runner using Node.js 26.x.
-- Run 43444830645 passed after the main-runtime, WebView, and widget probes were separated and included in the isolation check. It parsed 145 JavaScript files.
+- Run 43444830645 passed after the main-runtime, WebView, and widget probes were separated and included in the isolation check.
+- Run 43445821718 failed because git diff --check found trailing whitespace used for Markdown hard line breaks. The whitespace was removed.
+- Run 43446108143 passed after the whitespace correction. It parsed 145 JavaScript source files and passed all workflow steps.
 
 ## Explicit limitations
 
@@ -53,7 +62,7 @@ These limitations are deliberate. The workflow must not claim evidence it does n
 The main branch is protected with:
 
 - Required pull requests.
-- Required strict status check: quality-gates.
+- Required strict status checks: quality-gates and CodeQL.
 - Admin enforcement.
 - No force pushes.
 - No branch deletion.
