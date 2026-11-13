@@ -50,6 +50,9 @@ jobs:
       - name: Test airport string serialization
         run: node tools/tests/fq-add-airport-serialization.test.js
 
+      - name: Validate canonical governance records
+        run: node tools/governance/validate-records.js
+
       - name: Verify governance and security artifacts
         shell: bash
         run: |
