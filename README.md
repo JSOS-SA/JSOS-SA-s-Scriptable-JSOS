@@ -22,3 +22,11 @@ Scriptable application source and project governance.
 - [CI Baseline](docs/governance/ci-baseline.md)
 - [Device Test Procedure](docs/governance/device-test-procedure.md)
 - [Security Policy](SECURITY.md)
+
+## Canonical structured records
+
+- [Decision data](docs/governance/records/decision-register.json)
+- [Compatibility records](docs/governance/records/compatibility-records.json)
+- [Evidence records](docs/governance/records/evidence-records.json)
+- [Exception records](docs/governance/records/exception-register.json)
+- [Violation records](docs/governance/records/violation-register.json)
