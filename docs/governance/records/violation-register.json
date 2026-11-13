@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "assessmentDate": "2026-11-13",
+  "records": [
+    {
+      "id": "V-2026-001",
+      "policyRuleIds": [
+        "SCR-SEC-001"
+      ],
+      "detectedAt": "2026-11-13",
+      "status": "Assigned",
+      "scope": "Public repository history and current main tree contain two Google API Key detections and one Google Cloud Service Account Credentials detection. One location is a service-account JSON file still present on main.",
+      "severity": "Critical",
+      "risk": {
+        "likelihood": "High",
+        "impactSeverity": "Critical",
+        "detectionDifficulty": "Low"
+      },
+      "ownerRole": "Repository Owner",
+      "remediation": "Revoke or rotate the affected credentials with Google, remove exposed credential material from the current tree, and coordinate any Git-history cleanup after revocation.",
+      "evidenceIds": [
+        "E-036"
+      ],
+      "verification": {
+        "status": "Pending",
+        "details": "Provider-side revocation or rotation has not been confirmed."
+      },
+      "closedAt": null
+    },
+    {
+      "id": "V-2026-002",
+      "policyRuleIds": [
+        "SCR-SEC-004"
+      ],
+      "detectedAt": "2026-11-13",
+      "status": "Remediated",
+      "scope": "Airport city and country values were inserted into generated JavaScript source using incomplete manual string escaping.",
+      "severity": "High",
+      "risk": {
+        "likelihood": "Medium",
+        "impactSeverity": "High",
+        "detectionDifficulty": "Medium"
+      },
+      "ownerRole": "Repository Owner",
+      "remediation": "Moved source-line generation to a pure serializer module using JSON.stringify with explicit U+2028 and U+2029 escaping. Added regression coverage for hostile strings.",
+      "evidenceIds": [
+        "E-037",
+        "E-039",
+        "E-040",
+        "E-041"
+      ],
+      "verification": {
+        "status": "Verified on pull-request head",
+        "details": "The latest quality-gates and CodeQL checks pass on the governance pull-request head. Main remains pending merge."
+      },
+      "closedAt": null
+    }
+  ]
+}
