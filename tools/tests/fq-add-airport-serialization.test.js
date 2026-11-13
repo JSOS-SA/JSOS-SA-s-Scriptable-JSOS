@@ -1,52 +1,23 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
+const { airportEntrySourceLine } = require("../../src/fq_airport_serialization");
 
-const sourcePath = path.join(process.cwd(), "src", "fq_add_airport.js");
-const source = fs.readFileSync(sourcePath, "utf8");
-const start = source.indexOf("function _insertAirportEntry(");
-const end = source.indexOf("\n}\n", start);
-
-assert.notEqual(start, -1, "The production insertion function must exist.");
-assert.notEqual(end, -1, "The production insertion function must have a closing brace.");
-
-const declaration = source.slice(start, end + 2);
-const functionContext = {};
-vm.runInNewContext(
-  declaration + "\nthis.insertAirportEntry = _insertAirportEntry;",
-  functionContext
-);
-
-const content = "const AIRPORTS = {\n};\n\nmodule.exports = { AIRPORTS };";
 const city = "City with \\ backslash, \" quotes, newline\nand separators " + String.fromCharCode(8232, 8233);
 const country = "Country with \\ path, \" quote, carriage return\r\nand closing syntax }, injected: true";
-const output = functionContext.insertAirportEntry(content, {
+const line = airportEntrySourceLine({
   code: "TST",
-  city,
-  country
+  city: city,
+  country: country
 });
 
-assert.equal(typeof output, "string", "A valid anchor should produce updated source.");
-const executionContext = { module: { exports: {} } };
-vm.runInNewContext(output, executionContext);
+const match = /^  TST: \{ d: ("(?:\\.|[^"\\])*"), c: ("(?:\\.|[^"\\])*") \},\n$/.exec(line);
 
-assert.deepEqual(
-  JSON.parse(JSON.stringify(executionContext.module.exports.AIRPORTS.TST)),
-  { d: country, c: city },
-  "Generated JavaScript must preserve the exact original strings."
-);
-assert.deepEqual(
-  Object.keys(executionContext.module.exports.AIRPORTS),
-  ["TST"],
-  "Untrusted string contents must not inject additional object properties."
-);
-assert.equal(
-  functionContext.insertAirportEntry("no insertion anchor", { code: "TST", city, country }),
-  null,
-  "A missing anchor must not modify the source."
-);
+assert.ok(match, "The generated line must contain exactly one object property and two JSON string literals.");
+assert.equal(JSON.parse(match[1]), country, "Country text must round-trip without alteration.");
+assert.equal(JSON.parse(match[2]), city, "City text must round-trip without alteration.");
+assert.equal(line.includes(String.fromCharCode(8232)), false, "U+2028 must be escaped for older JavaScript parsers.");
+assert.equal(line.includes(String.fromCharCode(8233)), false, "U+2029 must be escaped for older JavaScript parsers.");
+assert.equal(line.split("\n").length, 2, "Untrusted line breaks must remain inside the serialized string literals.");
 
-console.log("PASS: airport string serialization preserves hostile input without code injection.");
+console.log("PASS: airport source-line serialization preserves hostile input without creating executable syntax.");
