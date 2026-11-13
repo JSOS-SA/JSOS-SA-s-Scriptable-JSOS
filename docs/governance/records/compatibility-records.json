@@ -1,0 +1,532 @@
+{
+  "schemaVersion": 1,
+  "assessmentDate": "2026-11-13",
+  "targetCount": 4,
+  "recordCount": 16,
+  "targets": [
+    {
+      "id": "DEV-IPHONE-15",
+      "deviceTarget": "iPhone 6s",
+      "osVersionTarget": "iOS 15.8.8",
+      "scriptableVersionTarget": "1.7.19",
+      "contexts": [
+        "in-app",
+        "webview",
+        "widget"
+      ],
+      "evidenceIds": [
+        "E-001",
+        "E-004"
+      ]
+    },
+    {
+      "id": "DEV-IPAD-15",
+      "deviceTarget": "iPad Air 2",
+      "osVersionTarget": "iPadOS 15.8.8",
+      "scriptableVersionTarget": "1.7.19",
+      "contexts": [
+        "in-app",
+        "webview",
+        "widget"
+      ],
+      "evidenceIds": [
+        "E-001",
+        "E-004"
+      ]
+    },
+    {
+      "id": "DEV-IPHONE-27",
+      "deviceTarget": "iPhone 11",
+      "osVersionTarget": "iOS 27.2.1",
+      "scriptableVersionTarget": "1.7.19",
+      "contexts": [
+        "in-app",
+        "webview",
+        "widget"
+      ],
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006"
+      ]
+    },
+    {
+      "id": "DEV-IPAD-27",
+      "deviceTarget": "iPad 9th generation",
+      "osVersionTarget": "iPadOS 27.2.1",
+      "scriptableVersionTarget": "1.7.19",
+      "contexts": [
+        "in-app",
+        "webview",
+        "widget"
+      ],
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "recordId": "COMP-DEV-IPHONE-15-MAIN-RUNTIME",
+      "targetId": "DEV-IPHONE-15",
+      "component": "Scriptable main runtime",
+      "apiOrFeature": "Device API surface and ECMAScript 2015 built-ins",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iOS 15.8.8",
+      "deviceTarget": "iPhone 6s",
+      "executionContext": "in-app",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/compatibility_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-004",
+        "E-002",
+        "E-003",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPHONE-15-ASYNC-AWAIT",
+      "targetId": "DEV-IPHONE-15",
+      "component": "Scriptable main runtime",
+      "apiOrFeature": "async functions, await, Promise.all, and rejection handling",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iOS 15.8.8",
+      "deviceTarget": "iPhone 6s",
+      "executionContext": "in-app",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/async_runtime_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-004",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPHONE-15-WEBVIEW",
+      "targetId": "DEV-IPHONE-15",
+      "component": "Scriptable WebView",
+      "apiOrFeature": "WebView.loadHTML, evaluateJavaScript, and present",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iOS 15.8.8",
+      "deviceTarget": "iPhone 6s",
+      "executionContext": "WebView",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/webview_context_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-004",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPHONE-15-WIDGET",
+      "targetId": "DEV-IPHONE-15",
+      "component": "Scriptable Widget",
+      "apiOrFeature": "ListWidget, config.runsInWidget, and Script.setWidget",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iOS 15.8.8",
+      "deviceTarget": "iPhone 6s",
+      "executionContext": "Widget",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/widget_context_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-004",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPAD-15-MAIN-RUNTIME",
+      "targetId": "DEV-IPAD-15",
+      "component": "Scriptable main runtime",
+      "apiOrFeature": "Device API surface and ECMAScript 2015 built-ins",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iPadOS 15.8.8",
+      "deviceTarget": "iPad Air 2",
+      "executionContext": "in-app",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/compatibility_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-004",
+        "E-002",
+        "E-003",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPAD-15-ASYNC-AWAIT",
+      "targetId": "DEV-IPAD-15",
+      "component": "Scriptable main runtime",
+      "apiOrFeature": "async functions, await, Promise.all, and rejection handling",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iPadOS 15.8.8",
+      "deviceTarget": "iPad Air 2",
+      "executionContext": "in-app",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/async_runtime_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-004",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPAD-15-WEBVIEW",
+      "targetId": "DEV-IPAD-15",
+      "component": "Scriptable WebView",
+      "apiOrFeature": "WebView.loadHTML, evaluateJavaScript, and present",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iPadOS 15.8.8",
+      "deviceTarget": "iPad Air 2",
+      "executionContext": "WebView",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/webview_context_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-004",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPAD-15-WIDGET",
+      "targetId": "DEV-IPAD-15",
+      "component": "Scriptable Widget",
+      "apiOrFeature": "ListWidget, config.runsInWidget, and Script.setWidget",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iPadOS 15.8.8",
+      "deviceTarget": "iPad Air 2",
+      "executionContext": "Widget",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/widget_context_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-004",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPHONE-27-MAIN-RUNTIME",
+      "targetId": "DEV-IPHONE-27",
+      "component": "Scriptable main runtime",
+      "apiOrFeature": "Device API surface and ECMAScript 2015 built-ins",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iOS 27.2.1",
+      "deviceTarget": "iPhone 11",
+      "executionContext": "in-app",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/compatibility_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006",
+        "E-002",
+        "E-003",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPHONE-27-ASYNC-AWAIT",
+      "targetId": "DEV-IPHONE-27",
+      "component": "Scriptable main runtime",
+      "apiOrFeature": "async functions, await, Promise.all, and rejection handling",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iOS 27.2.1",
+      "deviceTarget": "iPhone 11",
+      "executionContext": "in-app",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/async_runtime_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPHONE-27-WEBVIEW",
+      "targetId": "DEV-IPHONE-27",
+      "component": "Scriptable WebView",
+      "apiOrFeature": "WebView.loadHTML, evaluateJavaScript, and present",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iOS 27.2.1",
+      "deviceTarget": "iPhone 11",
+      "executionContext": "WebView",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/webview_context_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPHONE-27-WIDGET",
+      "targetId": "DEV-IPHONE-27",
+      "component": "Scriptable Widget",
+      "apiOrFeature": "ListWidget, config.runsInWidget, and Script.setWidget",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iOS 27.2.1",
+      "deviceTarget": "iPhone 11",
+      "executionContext": "Widget",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/widget_context_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPAD-27-MAIN-RUNTIME",
+      "targetId": "DEV-IPAD-27",
+      "component": "Scriptable main runtime",
+      "apiOrFeature": "Device API surface and ECMAScript 2015 built-ins",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iPadOS 27.2.1",
+      "deviceTarget": "iPad 9th generation",
+      "executionContext": "in-app",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/compatibility_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006",
+        "E-002",
+        "E-003",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPAD-27-ASYNC-AWAIT",
+      "targetId": "DEV-IPAD-27",
+      "component": "Scriptable main runtime",
+      "apiOrFeature": "async functions, await, Promise.all, and rejection handling",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iPadOS 27.2.1",
+      "deviceTarget": "iPad 9th generation",
+      "executionContext": "in-app",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/async_runtime_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPAD-27-WEBVIEW",
+      "targetId": "DEV-IPAD-27",
+      "component": "Scriptable WebView",
+      "apiOrFeature": "WebView.loadHTML, evaluateJavaScript, and present",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iPadOS 27.2.1",
+      "deviceTarget": "iPad 9th generation",
+      "executionContext": "WebView",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/webview_context_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    },
+    {
+      "recordId": "COMP-DEV-IPAD-27-WIDGET",
+      "targetId": "DEV-IPAD-27",
+      "component": "Scriptable Widget",
+      "apiOrFeature": "ListWidget, config.runsInWidget, and Script.setWidget",
+      "scriptableVersionTarget": "1.7.19",
+      "installedScriptableVersion": null,
+      "osVersionTarget": "iPadOS 27.2.1",
+      "deviceTarget": "iPad 9th generation",
+      "executionContext": "Widget",
+      "testStatus": "Not Tested",
+      "compatibilityStatus": "Not Verified",
+      "supportDecision": "Pending",
+      "required": true,
+      "probe": "src/widget_context_probe.js",
+      "evidenceIds": [
+        "E-001",
+        "E-005",
+        "E-006",
+        "E-002",
+        "E-014"
+      ],
+      "testedAt": null,
+      "actualResult": null,
+      "limitations": [
+        "This is a representative target, not a completed device test.",
+        "Do not transfer results from another device or execution context."
+      ]
+    }
+  ]
+}
