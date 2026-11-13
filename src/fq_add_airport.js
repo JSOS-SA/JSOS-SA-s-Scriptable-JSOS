@@ -61,9 +61,13 @@ function _insertAirportEntry(content, entry) {
   const anchor = "};\n\nmodule.exports = { AIRPORTS };";
   const anchorIndex = content.lastIndexOf(anchor);
   if (anchorIndex === -1) return null;
-  const cSafe = String(entry.city).replace(/"/g, '\\"');
-  const dSafe = String(entry.country).replace(/"/g, '\\"');
-  const newLine = `  ${entry.code}: { d: "${dSafe}", c: "${cSafe}" },\n`;
+  const cLiteral = JSON.stringify(String(entry.city))
+    .replace(new RegExp(String.fromCharCode(8232), "g"), "\\u2028")
+    .replace(new RegExp(String.fromCharCode(8233), "g"), "\\u2029");
+  const dLiteral = JSON.stringify(String(entry.country))
+    .replace(new RegExp(String.fromCharCode(8232), "g"), "\\u2028")
+    .replace(new RegExp(String.fromCharCode(8233), "g"), "\\u2029");
+  const newLine = "  " + entry.code + ": { d: " + dLiteral + ", c: " + cLiteral + " },\n";
   return content.slice(0, anchorIndex) + newLine + content.slice(anchorIndex);
 }
 
