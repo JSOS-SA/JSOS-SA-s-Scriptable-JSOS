@@ -96,15 +96,15 @@ All rules are Proposed while this catalogue remains Draft for review. A rule bec
 **Exception:** A stale record may remain historical but MUST NOT support a current compatibility claim.
 **Owner:** Evidence Steward.
 
-### SCR-COMP-005: Device coverage
+### SCR-COMP-005: iPhone compatibility coverage
 
-**Statement:** The project MUST maintain a device matrix that distinguishes target devices, documented OS eligibility, tested devices, and untested devices.
-**Scope:** iPhone and iPad compatibility targets.
+**Statement:** The project MUST maintain an iPhone compatibility matrix that distinguishes target iPhone models, documented iOS eligibility, tested iPhone models, and untested iPhone models.
+**Scope:** iPhone compatibility targets only.
 **Severity / Enforcement:** Medium / WARN.
-**Rationale:** Device-family support does not prove model-specific runtime behavior.
-**Source:** Q17, Q46, Q54.
-**Verification:** Device matrix and on-device evidence.
-**Exception:** An unavailable device may be recorded as Not Verified, never as Tested.
+**Rationale:** Model-specific runtime behavior requires evidence for the exact iPhone target.
+**Source:** Q46, Q54, Q76.
+**Verification:** iPhone compatibility matrix and on-device evidence.
+**Exception:** An unavailable iPhone may be recorded as Not Verified, never as Tested.
 **Owner:** Compatibility Register Steward.
 
 ## Architecture and dependencies

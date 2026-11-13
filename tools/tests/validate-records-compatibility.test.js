@@ -72,6 +72,16 @@ const baselineRoot = createFixture();
 assert.doesNotThrow(() => validateRecords(baselineRoot),
   "The untouched baseline must remain valid.");
 
+const invalidDecisionLifecycleRoot = createFixture();
+const invalidDecisionRegister = readJson(invalidDecisionLifecycleRoot, "decision-register.json");
+const oldScopeDecision = invalidDecisionRegister.decisions.find((decision) => decision.id === "Q17");
+oldScopeDecision.status = "Approved";
+oldScopeDecision.supersededBy = null;
+writeJson(invalidDecisionLifecycleRoot, "decision-register.json", invalidDecisionRegister);
+assert.throws(() => validateRecords(invalidDecisionLifecycleRoot),
+  /Q17 must be marked Superseded by Q76/,
+  "The superseded scope decision must not remain active.");
+
 const compatibleRoot = createFixture();
 updateFirstCompatibilityRecord(compatibleRoot, (record) => {
   addRuntimeEvidence(compatibleRoot, record, "Passed");
