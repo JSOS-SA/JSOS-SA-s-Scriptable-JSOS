@@ -47,6 +47,14 @@ This register records evidence without treating a source's scope as broader than
 | E-037 | CodeQL alert inventory | GitHub Code Scanning API, inspected 2026-11-13 | Two open high-severity js/incomplete-sanitization alerts identify incomplete string escaping in src/fq_add_airport.js at the city and country serialization statements. | Analysis completion is not remediation. A source fix and regression tests remain outstanding. |
 | E-038 | Current PR check rollup | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1 | The latest quality-gates, CodeQL, and Analyze (javascript-typescript) checks all completed successfully on the governance pull request. | These checks do not resolve the open security alerts or prove Scriptable device compatibility. |
 
+## Verified remediation evidence
+
+| ID | Evidence class | Source | Supported assertion | Limitation |
+|---|---|---|---|---|
+| E-039 | Successful quality-gates run with regression test | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43449061757 | The workflow parsed 146 JavaScript source files, ran the airport serialization regression test successfully, verified governance/security artifacts, and passed probe isolation and patch hygiene. | Node.js tooling test only; not Scriptable JavaScriptCore or physical-device evidence. |
+| E-040 | Successful CodeQL pull-request analysis | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43449057010 | The latest CodeQL analysis reports the two incomplete-string-escaping alerts and the temporary dynamic-test alert fixed on refs/pull/1/head. | The two original alerts remain open on main until merge. The three Secret Scanning alerts remain open. |
+| E-041 | Regression-test source review | tools/tests/fq-add-airport-serialization.test.js on the governance pull-request head | The test uses the pure serializer module and JSON.parse assertions, with no dynamic code execution. It covers backslashes, quotes, line breaks, Unicode separators, and injection-shaped text. | This validates source-literal serialization, not the full Scriptable FileManager write lifecycle. |
+
 ## Evidence handling
 
 - Keep the original evidence and its date.
