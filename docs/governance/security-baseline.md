@@ -38,3 +38,7 @@ Private vulnerability reporting is enabled. The root SECURITY.md file directs re
 Treat every detected credential as exposed until its owner confirms otherwise. Revoke or rotate active credentials at the issuing provider. Removing a value from the current source file does not revoke it and does not remove it from Git history.
 
 Never put credential values in repository documentation, issues, pull requests, logs, or test fixtures.
+
+## Latest analysis evidence
+
+The latest CodeQL pull-request analysis completed successfully on run 43446636909. This records analysis completion only. The code-scanning alert inventory must still be reviewed separately.
