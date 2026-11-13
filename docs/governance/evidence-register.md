@@ -5,6 +5,8 @@
 
 This register records evidence without treating a source's scope as broader than the source supports. Conflicting or failed evidence is retained with its resolution.
 
+
+This Markdown table is the human-readable view of the canonical evidence data in records/evidence-records.json. CI validates evidence identifiers and record counts.
 | ID | Evidence class | Source | Supported assertion | Limitation |
 |---|---|---|---|---|
 | E-001 | Official App Store listing | https://apps.apple.com/us/app/scriptable/id1405459188?platform=ipad | Scriptable is listed for iPhone and iPad; latest displayed app version is 1.7.19; minimum OS is iOS/iPadOS 15.5. | Does not establish the installed version on a particular device or prove every API works on every supported OS. |
