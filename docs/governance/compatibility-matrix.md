@@ -28,10 +28,10 @@ For each target, record:
 2. Device.model() result and phone/pad classification.
 3. iOS/iPadOS version.
 4. Installed Scriptable version.
-5. Main-runtime probe result.
-6. async/await probe result.
-7. WebView probe result.
-8. Widget execution result.
+5. Main-runtime result from src/compatibility_probe.js.
+6. async/await result from src/async_runtime_probe.js.
+7. WebView result from src/webview_context_probe.js.
+8. Widget preview and actual widget-context result from src/widget_context_probe.js.
 9. Date, tester role, and reproducible steps.
 
 Never include the device name, serial number, UDID, Apple ID, or unrelated personal information.
