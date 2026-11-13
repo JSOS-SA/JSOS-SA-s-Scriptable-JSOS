@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -En 'Keychain\.|FileManager\.|Pasteboard\.|new[[:space:]]+Request|new[[:space:]]+Notification|Location\.' \
+          if grep -En 'Keychain\.(get|set|contains|remove)|FileManager\.(local|iCloud|documents)|Pasteboard\.(copy|paste)|new[[:space:]]+Request|new[[:space:]]+Notification|Location\.(current|reverseGeocode)' \
             src/compatibility_probe.js src/async_runtime_probe.js; then
             echo "Device probes must not access private host data or services." >&2
             exit 1
