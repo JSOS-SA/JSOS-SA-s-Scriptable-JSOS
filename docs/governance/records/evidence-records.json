@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "assessmentDate": "2026-11-13",
-  "count": 51,
+  "count": 52,
   "records": [
     {
       "id": "E-001",
@@ -409,6 +409,14 @@
       "source": "docs/governance/policy-rules.md and docs/governance/policies/security-and-dependencies.md on the governance pull-request branch",
       "assertion": "Adds proposed SCR-SEC-004 requiring context-appropriate serialization of untrusted input and regression coverage for injection-shaped strings.",
       "limitations": "Proposed rule only; it does not become Active until approved through a constitutional release.",
+      "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-052",
+      "evidenceClass": "Successful CodeQL pull-request analysis",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43451394102",
+      "assertion": "CodeQL analysis completed successfully on pull-request head 63e5528357529610bcc98b3f547b38727872086f.",
+      "limitations": "The two original CodeQL alerts remain open on main until the reviewed change is merged. The three Secret Scanning alerts remain open.",
       "recordedAt": "2026-11-13"
     }
   ]
