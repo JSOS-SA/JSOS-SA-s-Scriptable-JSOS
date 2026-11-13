@@ -78,9 +78,9 @@ The remote development host reported Git 2.52.0, Node.js 24.22.0, and npm 11.19.
 
 The Node.js release schedule identifies Node.js 26.x as Active LTS as of 2026-11-13, while 24.x is in Maintenance LTS. The initial GitHub Actions workflow uses Node.js 26.x.
 
-The quality-gates workflow runs on pull requests to main and pushes to main. It uses a pinned GitHub Actions checkout and setup-node release, and an Ubuntu 24.04 runner. The current gate parses 143 JavaScript source files, verifies the governance artifacts, and checks that the dedicated probes do not call selected private host APIs.
+The quality-gates workflow runs on pull requests to main and pushes to main. It uses pinned GitHub Actions releases and an Ubuntu 24.04 runner. The current gate parses JavaScript sources, verifies governance artifacts and probes, and checks that the dedicated probes do not call selected private host APIs.
 
-The successful CI run proves syntax parsing under Node.js and the limited checks listed above. It does not enforce the ES2015 syntax ceiling, perform type checking or full linting, execute application unit tests, or prove Scriptable JavaScriptCore, WebView, or widget compatibility. Those checks must be added as separate gates when their implementation and evidence are ready.
+The latest successful CI run parsed the JavaScript source set and passed all three workflow steps. This proves syntax parsing under Node.js and the limited checks listed above. It does not enforce the ES2015 syntax ceiling, perform type checking or full linting, execute application unit tests, or prove Scriptable JavaScriptCore, WebView, or widget compatibility.
 
 ## 7. Role mapping
 
@@ -97,12 +97,16 @@ The role names remain distinct in the governance model even where one person per
 
 ## 8. Immediate device verification
 
+Follow docs/governance/device-test-procedure.md:
+
 1. Run src/compatibility_probe.js manually in Scriptable in-app.
 2. Run src/async_runtime_probe.js manually in Scriptable in-app.
-3. Record the exact device model from Settings, the OS version, and the installed Scriptable version.
-4. Preserve the unedited probe output as evidence, excluding personal identifiers.
-5. Create a Compatibility Record for each tested device/context tuple.
-6. Do not mark a tuple Compatible until the required runtime evidence is recorded.
+3. Run src/webview_context_probe.js and confirm the displayed PASS result.
+4. Run src/widget_context_probe.js in-app, then add it as a home-screen widget and confirm the actual widget context.
+5. Record the exact device model from Settings, the OS version, and the installed Scriptable version.
+6. Preserve the unedited probe output as evidence, excluding personal identifiers.
+7. Create a Compatibility Record for each tested device/context tuple.
+8. Do not mark a tuple Compatible until the required runtime evidence is recorded.
 
 ## Sources
 
