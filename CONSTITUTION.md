@@ -1,8 +1,11 @@
 # Scriptable Project Constitution
 
-**Version:** 0.1.0-draft.1  
-**Status:** Draft for review  
-**Authority:** Repository Owner  
+**Version:** 0.1.0-draft.1
+
+**Status:** Draft for review
+
+**Authority:** Repository Owner
+
 **Effective date:** Upon approval and merge to main
 
 ## 1. Purpose
