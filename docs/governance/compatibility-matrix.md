@@ -3,6 +3,8 @@
 **Assessment date:** 2026-11-13
 **Target app release:** Scriptable 1.7.19, latest version displayed by the App Store listing examined.
 
+This Markdown matrix is the human-readable view of the canonical per-component, per-device, per-context records in records/compatibility-records.json. CI validates target and record synchronization.
+
 This matrix defines representative test targets. Every row begins as Not Verified. Platform eligibility is not a runtime test.
 
 | Target ID | Device target | OS target | Scriptable target | Contexts to verify | Status | Evidence basis |
