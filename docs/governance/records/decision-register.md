@@ -1,7 +1,7 @@
 # Approved Decision Register
 
-**Status:** Approved  
-**Total:** 78 decisions, comprising G1-G3 and Q1-Q75.  
+**Status:** Approved
+**Total:** 78 decisions, comprising G1-G3 and Q1-Q75.
 **Source:** User-approved decisions recorded during the governance design process.
 
 | ID | Approved decision | Rule mapping |
