@@ -3,7 +3,7 @@
 **Assessment date:** 2026-11-13
 **Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS
 **Default branch:** main
-**Assessment status:** Initial operational controls are established. Physical-device execution remains unverified.
+**Assessment status:** Initial operational controls are established. User-reported physical-iPhone probe results are recorded; maintainer reproduction and broad compatibility remain unverified.
 
 ## 1. Repository identity and controls
 
@@ -31,14 +31,14 @@ The draft pull request is https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/p
 
 ## 2. Scriptable and operating-system baseline
 
-The App Store listing examined identifies Scriptable as available for iPhone and iPad, lists version 1.7.19 as its latest displayed version, and states a minimum requirement of iOS/iPadOS 15.5.
+The App Store listing examined for iPhone identifies Scriptable version 1.7.19 as its latest displayed version and states a minimum requirement of iOS 15.5.
 
 For this project, use the following conservative target baseline until a device-specific record supersedes it:
 
-- **Scriptable target:** 1.7.19, the latest version displayed by the App Store listing examined. Earlier app versions are not in the supported set unless separately verified.
-- **Minimum OS target:** iOS/iPadOS 15.5, matching the App Store compatibility requirement.
-- **Current OS reference at assessment date:** iOS/iPadOS 27.2.1, released by Apple on 2026-11-09.
-- **Device families:** iPhone and iPad.
+- **Scriptable version reference:** 1.7.19, the latest version displayed by the App Store listing examined. Compatibility for another app version is assessed only for an exact recorded tuple; this baseline does not set a project-wide minimum Scriptable version.
+- **Minimum OS reference:** iOS 15.5, matching the App Store compatibility requirement.
+- **Current OS reference at assessment date:** iOS 27.2.1, released by Apple on 2026-11-09.
+- **Device scope:** iPhone only, as approved by Q76 and SCR-COMP-005.
 
 The OS range is a support target, not a claim that every intermediate OS release, device, API, and context has been tested. Compatibility remains a per-tuple assessment.
 
@@ -53,18 +53,15 @@ The inspected application source establishes these project contexts:
 - **Widget context:** src/fq_widget.js creates ListWidget instances and calls Script.setWidget.
 - **Manual test context:** src/selftest.js checks config.runsInApp.
 
-The production source uses async functions and await. These are newer than the documented ECMAScript 2015 baseline. They remain an explicit compatibility exception until the dedicated on-device probe passes on the selected Scriptable/iOS/device tuples. A passing Node.js check is not proof of JavaScriptCore support.
+The production source uses async functions and await. These are newer than the documented ECMAScript 2015 baseline. User-reported async/await probe evidence passes for iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12, but the result remains Not Verified and does not establish compatibility on other tuples. The feature remains an explicit compatibility exception pending the applicable evidence standard and maintainer review. A passing Node.js check is not proof of JavaScriptCore support.
 
 ## 4. Device test targets
 
-The compatibility matrix defines representative edge targets:
+The compatibility matrix defines representative iPhone targets on the iOS 15.x and iOS 27 lines, plus a separately tested iPhone 15 Pro Max tuple. Each target is scoped to its exact model, iOS version, Scriptable version, and execution contexts.
 
-- An older iPhone and iPad on the iOS/iPadOS 15.x line.
-- A current-minimum iPhone and iPad model supported by iOS/iPadOS 27.
+The exact models and OS versions are listed in compatibility-matrix.md. The iPhone 15 Pro Max probe results are user-reported and remain Not Verified pending the evidence standard and maintainer review.
 
-The exact representative models and OS versions are listed in compatibility-matrix.md. They are test targets, not devices already tested by this assessment.
-
-The Scriptable Device API exposes model class, system version, phone/pad classification, screen resolution, and screen scale. The inspected Device API page does not expose an installed Scriptable app-version getter. Record the installed app version separately.
+The Scriptable Device API exposes model class, system version, iPhone classification, screen resolution, and screen scale. The inspected Device API page does not expose an installed Scriptable app-version getter. Record the installed app version separately.
 
 Do not include device name, serial number, UDID, Apple ID, or other personal identifiers in a compatibility report.
 
@@ -80,7 +77,7 @@ The remote development host reported Git 2.52.0, Node.js 24.22.0, and npm 11.19.
 
 The Node.js release schedule identifies Node.js 26.x as Active LTS as of 2026-11-13, while 24.x is in Maintenance LTS. The initial GitHub Actions workflow uses Node.js 26.x.
 
-The quality-gates workflow runs on pull requests to main and pushes to main. It uses pinned GitHub Actions releases and an Ubuntu 24.04 runner. The current gate checks patch hygiene, parses JavaScript sources, verifies governance/security artifacts and probes, and checks that the dedicated probes do not call selected private host APIs.
+The quality-gates workflow runs on pull requests to main and pushes to main. It uses pinned GitHub Actions releases and an Ubuntu 24.04 runner. The current gate checks patch hygiene, parses JavaScript sources, verifies governance/security artifacts and probes, and checks that the dedicated iPhone probes do not call selected private host APIs.
 
 The latest successful quality-gates run parsed 145 JavaScript source files and passed all workflow steps. CodeQL default setup also completed successfully on the main branch and the governance pull request for JavaScript/TypeScript.
 
@@ -128,7 +125,7 @@ The owner must revoke or rotate the affected credentials with Google. After revo
 
 CodeQL also reports two open high-severity incomplete-string-escaping findings in src/fq_add_airport.js. The implementation does not escape backslash characters before interpolating city and country values into JavaScript string literals. The reviewed source fix and regression test are present on the governance pull-request head and pass CI and CodeQL. The two original alerts remain open on main until merge.
 
-The governance pull request must remain draft and must not merge until credential revocation, source remediation, regression verification, and the physical-device evidence requirements are completed. The successful CI and CodeQL runs recorded above do not close these findings.
+The governance pull request must remain draft and must not merge until credential revocation, source remediation, regression verification, and the physical-iPhone evidence requirements are completed. The successful CI and CodeQL runs recorded above do not close these findings.
 
 ## 10. Governance draft status
 

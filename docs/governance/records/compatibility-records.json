@@ -1,28 +1,13 @@
 {
   "schemaVersion": 1,
   "assessmentDate": "2026-11-13",
-  "targetCount": 4,
-  "recordCount": 16,
+  "targetCount": 3,
+  "recordCount": 12,
   "targets": [
     {
       "id": "DEV-IPHONE-15",
       "deviceTarget": "iPhone 6s",
       "osVersionTarget": "iOS 15.8.8",
-      "scriptableVersionTarget": "1.7.19",
-      "contexts": [
-        "in-app",
-        "webview",
-        "widget"
-      ],
-      "evidenceIds": [
-        "E-001",
-        "E-004"
-      ]
-    },
-    {
-      "id": "DEV-IPAD-15",
-      "deviceTarget": "iPad Air 2",
-      "osVersionTarget": "iPadOS 15.8.8",
       "scriptableVersionTarget": "1.7.19",
       "contexts": [
         "in-app",
@@ -51,10 +36,10 @@
       ]
     },
     {
-      "id": "DEV-IPAD-27",
-      "deviceTarget": "iPad 9th generation",
-      "osVersionTarget": "iPadOS 27.2.1",
-      "scriptableVersionTarget": "1.7.19",
+      "id": "DEV-IPHONE-15-PRO-MAX-27",
+      "deviceTarget": "iPhone 15 Pro Max",
+      "osVersionTarget": "iOS 27.2",
+      "scriptableVersionTarget": "1.7.12",
       "contexts": [
         "in-app",
         "webview",
@@ -62,8 +47,13 @@
       ],
       "evidenceIds": [
         "E-001",
-        "E-005",
-        "E-006"
+        "E-002",
+        "E-003",
+        "E-014",
+        "E-056",
+        "E-057",
+        "E-058",
+        "E-059"
       ]
     }
   ],
@@ -162,119 +152,6 @@
       "installedScriptableVersion": null,
       "osVersionTarget": "iOS 15.8.8",
       "deviceTarget": "iPhone 6s",
-      "executionContext": "Widget",
-      "testStatus": "Not Tested",
-      "compatibilityStatus": "Not Verified",
-      "supportDecision": "Pending",
-      "required": true,
-      "probe": "src/widget_context_probe.js",
-      "evidenceIds": [
-        "E-001",
-        "E-004",
-        "E-002",
-        "E-014"
-      ],
-      "testedAt": null,
-      "actualResult": null,
-      "limitations": [
-        "This is a representative target, not a completed device test.",
-        "Do not transfer results from another device or execution context."
-      ]
-    },
-    {
-      "recordId": "COMP-DEV-IPAD-15-MAIN-RUNTIME",
-      "targetId": "DEV-IPAD-15",
-      "component": "Scriptable main runtime",
-      "apiOrFeature": "Device API surface and ECMAScript 2015 built-ins",
-      "scriptableVersionTarget": "1.7.19",
-      "installedScriptableVersion": null,
-      "osVersionTarget": "iPadOS 15.8.8",
-      "deviceTarget": "iPad Air 2",
-      "executionContext": "in-app",
-      "testStatus": "Not Tested",
-      "compatibilityStatus": "Not Verified",
-      "supportDecision": "Pending",
-      "required": true,
-      "probe": "src/compatibility_probe.js",
-      "evidenceIds": [
-        "E-001",
-        "E-004",
-        "E-002",
-        "E-003",
-        "E-014"
-      ],
-      "testedAt": null,
-      "actualResult": null,
-      "limitations": [
-        "This is a representative target, not a completed device test.",
-        "Do not transfer results from another device or execution context."
-      ]
-    },
-    {
-      "recordId": "COMP-DEV-IPAD-15-ASYNC-AWAIT",
-      "targetId": "DEV-IPAD-15",
-      "component": "Scriptable main runtime",
-      "apiOrFeature": "async functions, await, Promise.all, and rejection handling",
-      "scriptableVersionTarget": "1.7.19",
-      "installedScriptableVersion": null,
-      "osVersionTarget": "iPadOS 15.8.8",
-      "deviceTarget": "iPad Air 2",
-      "executionContext": "in-app",
-      "testStatus": "Not Tested",
-      "compatibilityStatus": "Not Verified",
-      "supportDecision": "Pending",
-      "required": true,
-      "probe": "src/async_runtime_probe.js",
-      "evidenceIds": [
-        "E-001",
-        "E-004",
-        "E-002",
-        "E-014"
-      ],
-      "testedAt": null,
-      "actualResult": null,
-      "limitations": [
-        "This is a representative target, not a completed device test.",
-        "Do not transfer results from another device or execution context."
-      ]
-    },
-    {
-      "recordId": "COMP-DEV-IPAD-15-WEBVIEW",
-      "targetId": "DEV-IPAD-15",
-      "component": "Scriptable WebView",
-      "apiOrFeature": "WebView.loadHTML, evaluateJavaScript, and present",
-      "scriptableVersionTarget": "1.7.19",
-      "installedScriptableVersion": null,
-      "osVersionTarget": "iPadOS 15.8.8",
-      "deviceTarget": "iPad Air 2",
-      "executionContext": "WebView",
-      "testStatus": "Not Tested",
-      "compatibilityStatus": "Not Verified",
-      "supportDecision": "Pending",
-      "required": true,
-      "probe": "src/webview_context_probe.js",
-      "evidenceIds": [
-        "E-001",
-        "E-004",
-        "E-002",
-        "E-014"
-      ],
-      "testedAt": null,
-      "actualResult": null,
-      "limitations": [
-        "This is a representative target, not a completed device test.",
-        "Do not transfer results from another device or execution context."
-      ]
-    },
-    {
-      "recordId": "COMP-DEV-IPAD-15-WIDGET",
-      "targetId": "DEV-IPAD-15",
-      "component": "Scriptable Widget",
-      "apiOrFeature": "ListWidget, config.runsInWidget, and Script.setWidget",
-      "scriptableVersionTarget": "1.7.19",
-      "installedScriptableVersion": null,
-      "osVersionTarget": "iPadOS 15.8.8",
-      "deviceTarget": "iPad Air 2",
       "executionContext": "Widget",
       "testStatus": "Not Tested",
       "compatibilityStatus": "Not Verified",
@@ -412,120 +289,123 @@
       ]
     },
     {
-      "recordId": "COMP-DEV-IPAD-27-MAIN-RUNTIME",
-      "targetId": "DEV-IPAD-27",
+      "recordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-MAIN-RUNTIME",
+      "targetId": "DEV-IPHONE-15-PRO-MAX-27",
       "component": "Scriptable main runtime",
       "apiOrFeature": "Device API surface and ECMAScript 2015 built-ins",
-      "scriptableVersionTarget": "1.7.19",
-      "installedScriptableVersion": null,
-      "osVersionTarget": "iPadOS 27.2.1",
-      "deviceTarget": "iPad 9th generation",
+      "scriptableVersionTarget": "1.7.12",
+      "installedScriptableVersion": "1.7.12",
+      "osVersionTarget": "iOS 27.2",
+      "deviceTarget": "iPhone 15 Pro Max",
       "executionContext": "in-app",
-      "testStatus": "Not Tested",
+      "testStatus": "Tested",
       "compatibilityStatus": "Not Verified",
       "supportDecision": "Pending",
       "required": true,
       "probe": "src/compatibility_probe.js",
       "evidenceIds": [
         "E-001",
-        "E-005",
-        "E-006",
         "E-002",
         "E-003",
-        "E-014"
+        "E-014",
+        "E-056"
       ],
-      "testedAt": null,
-      "actualResult": null,
+      "testedAt": "2026-11-13T20:00:00+03:00",
+      "actualResult": "Passed",
       "limitations": [
-        "This is a representative target, not a completed device test.",
-        "Do not transfer results from another device or execution context."
+        "Result is user-reported evidence from issue #11, not an independently reproduced maintainer test.",
+        "The result applies only to iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12 and this execution context.",
+        "User-reported output, not independently reproduced by maintainers. Installed Scriptable 1.7.12 and test timestamp are user-confirmed in issue #11. The Device API does not expose the installed app version. Preserve the source comment as the evidence artifact."
       ]
     },
     {
-      "recordId": "COMP-DEV-IPAD-27-ASYNC-AWAIT",
-      "targetId": "DEV-IPAD-27",
+      "recordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-ASYNC-AWAIT",
+      "targetId": "DEV-IPHONE-15-PRO-MAX-27",
       "component": "Scriptable main runtime",
       "apiOrFeature": "async functions, await, Promise.all, and rejection handling",
-      "scriptableVersionTarget": "1.7.19",
-      "installedScriptableVersion": null,
-      "osVersionTarget": "iPadOS 27.2.1",
-      "deviceTarget": "iPad 9th generation",
+      "scriptableVersionTarget": "1.7.12",
+      "installedScriptableVersion": "1.7.12",
+      "osVersionTarget": "iOS 27.2",
+      "deviceTarget": "iPhone 15 Pro Max",
       "executionContext": "in-app",
-      "testStatus": "Not Tested",
+      "testStatus": "Tested",
       "compatibilityStatus": "Not Verified",
       "supportDecision": "Pending",
       "required": true,
       "probe": "src/async_runtime_probe.js",
       "evidenceIds": [
         "E-001",
-        "E-005",
-        "E-006",
         "E-002",
-        "E-014"
+        "E-003",
+        "E-014",
+        "E-057"
       ],
-      "testedAt": null,
-      "actualResult": null,
+      "testedAt": "2026-11-13T20:00:00+03:00",
+      "actualResult": "Passed",
       "limitations": [
-        "This is a representative target, not a completed device test.",
-        "Do not transfer results from another device or execution context."
+        "Result is user-reported evidence from issue #11, not an independently reproduced maintainer test.",
+        "The result applies only to iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12 and this execution context.",
+        "User-reported result, not independently reproduced by maintainers. The full raw probe output was not attached to the issue. Installed Scriptable 1.7.12 and test timestamp are user-confirmed in issue #11."
       ]
     },
     {
-      "recordId": "COMP-DEV-IPAD-27-WEBVIEW",
-      "targetId": "DEV-IPAD-27",
+      "recordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-WEBVIEW",
+      "targetId": "DEV-IPHONE-15-PRO-MAX-27",
       "component": "Scriptable WebView",
       "apiOrFeature": "WebView.loadHTML, evaluateJavaScript, and present",
-      "scriptableVersionTarget": "1.7.19",
-      "installedScriptableVersion": null,
-      "osVersionTarget": "iPadOS 27.2.1",
-      "deviceTarget": "iPad 9th generation",
+      "scriptableVersionTarget": "1.7.12",
+      "installedScriptableVersion": "1.7.12",
+      "osVersionTarget": "iOS 27.2",
+      "deviceTarget": "iPhone 15 Pro Max",
       "executionContext": "WebView",
-      "testStatus": "Not Tested",
+      "testStatus": "Tested",
       "compatibilityStatus": "Not Verified",
       "supportDecision": "Pending",
       "required": true,
       "probe": "src/webview_context_probe.js",
       "evidenceIds": [
         "E-001",
-        "E-005",
-        "E-006",
         "E-002",
-        "E-014"
+        "E-003",
+        "E-014",
+        "E-058"
       ],
-      "testedAt": null,
-      "actualResult": null,
+      "testedAt": "2026-11-13T20:00:00+03:00",
+      "actualResult": "Passed",
       "limitations": [
-        "This is a representative target, not a completed device test.",
-        "Do not transfer results from another device or execution context."
+        "Result is user-reported evidence from issue #11, not an independently reproduced maintainer test.",
+        "The result applies only to iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12 and this execution context.",
+        "Only the PASS outcome was supplied; detailed raw WebView output and reproduction trace were not attached. User-reported, not independently reproduced by maintainers. Installed Scriptable 1.7.12 and test timestamp are user-confirmed in issue #11."
       ]
     },
     {
-      "recordId": "COMP-DEV-IPAD-27-WIDGET",
-      "targetId": "DEV-IPAD-27",
+      "recordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-WIDGET",
+      "targetId": "DEV-IPHONE-15-PRO-MAX-27",
       "component": "Scriptable Widget",
       "apiOrFeature": "ListWidget, config.runsInWidget, and Script.setWidget",
-      "scriptableVersionTarget": "1.7.19",
-      "installedScriptableVersion": null,
-      "osVersionTarget": "iPadOS 27.2.1",
-      "deviceTarget": "iPad 9th generation",
+      "scriptableVersionTarget": "1.7.12",
+      "installedScriptableVersion": "1.7.12",
+      "osVersionTarget": "iOS 27.2",
+      "deviceTarget": "iPhone 15 Pro Max",
       "executionContext": "Widget",
-      "testStatus": "Not Tested",
+      "testStatus": "Tested",
       "compatibilityStatus": "Not Verified",
       "supportDecision": "Pending",
       "required": true,
       "probe": "src/widget_context_probe.js",
       "evidenceIds": [
         "E-001",
-        "E-005",
-        "E-006",
         "E-002",
-        "E-014"
+        "E-003",
+        "E-014",
+        "E-059"
       ],
-      "testedAt": null,
-      "actualResult": null,
+      "testedAt": "2026-11-13T20:00:00+03:00",
+      "actualResult": "Passed",
       "limitations": [
-        "This is a representative target, not a completed device test.",
-        "Do not transfer results from another device or execution context."
+        "Result is user-reported evidence from issue #11, not an independently reproduced maintainer test.",
+        "The result applies only to iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12 and this execution context.",
+        "The initial Widget preview success was user-reported without detailed output; the later home-screen Widget context output was supplied. User-reported, not independently reproduced by maintainers. Installed Scriptable 1.7.12 and test timestamp are user-confirmed in issue #11."
       ]
     }
   ]

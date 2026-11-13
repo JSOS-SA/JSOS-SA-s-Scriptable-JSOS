@@ -168,7 +168,7 @@ All rules are Proposed while this catalogue remains Draft for review. A rule bec
 
 ### SCR-TEST-003: Device proof
 
-**Statement:** APIs or language features that are new, changed, uncertain, or risk-sensitive MUST receive Scriptable Runtime evidence on an Apple device for each required context.
+**Statement:** APIs or language features that are new, changed, uncertain, or risk-sensitive MUST receive Scriptable Runtime evidence on a physical iPhone for each required context.
 **Scope:** Scriptable Host APIs, newer language features, WebView, and Widget behavior.
 **Severity / Enforcement:** High / BLOCK.
 **Rationale:** Node.js, static analysis, and documentation cannot replace device execution.

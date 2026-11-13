@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "assessmentDate": "2026-11-13",
-  "count": 55,
+  "count": 59,
   "records": [
     {
       "id": "E-001",
       "evidenceClass": "Official App Store listing",
-      "source": "https://apps.apple.com/us/app/scriptable/id1405459188?platform=ipad",
-      "assertion": "Scriptable is listed for iPhone and iPad; latest displayed app version is 1.7.19; minimum OS is iOS/iPadOS 15.5.",
-      "limitations": "Does not establish the installed version on a particular device or prove every API works on every supported OS.",
+      "source": "https://apps.apple.com/us/app/scriptable/id1405459188?platform=iphone",
+      "assertion": "The official App Store listing for Scriptable on iPhone displays version 1.7.19 and a minimum operating-system requirement of iOS 15.5.",
+      "limitations": "Does not establish the installed version on a particular iPhone or prove every API works on every supported iOS version.",
       "recordedAt": "2026-11-13"
     },
     {
@@ -23,7 +23,7 @@
       "id": "E-003",
       "evidenceClass": "Official Scriptable Device API documentation",
       "source": "https://docs.scriptable.app/device/",
-      "assertion": "Documents Device.model, Device.systemVersion, Device.isPhone, Device.isPad, Device.screenResolution, and Device.screenScale.",
+      "assertion": "The documented Scriptable Device API includes Device.model, Device.systemVersion, Device.isPhone, Device.screenResolution, and Device.screenScale.",
       "limitations": "The documented Device API page does not expose an installed Scriptable app-version getter or a unique hardware model identifier.",
       "recordedAt": "2026-11-13"
     },
@@ -31,24 +31,24 @@
       "id": "E-004",
       "evidenceClass": "Apple security documentation",
       "source": "https://support.apple.com/en-sa/120323",
-      "assertion": "iOS/iPadOS 15.5 compatibility includes iPhone 6s and later, iPad Pro models, iPad Air 2 and later, iPad 5th generation and later, and iPad mini 4 and later.",
-      "limitations": "Establishes OS compatibility, not Scriptable runtime behavior.",
+      "assertion": "Apple documentation identifies iPhone 6s and later as eligible for iOS 15.5.",
+      "limitations": "This record relies only on the iPhone eligibility statement; OS eligibility does not establish Scriptable runtime behavior.",
       "recordedAt": "2026-11-13"
     },
     {
       "id": "E-005",
       "evidenceClass": "Apple Developer release information",
       "source": "https://developer.apple.com/news/releases/",
-      "assertion": "Apple published iOS 27.2.1 and iPadOS 27.2.1 on 2026-11-09.",
-      "limitations": "Establishes release availability, not application compatibility.",
+      "assertion": "Apple published iOS 27.2.1 on 2026-11-09.",
+      "limitations": "Establishes iOS release availability, not application compatibility.",
       "recordedAt": "2026-11-13"
     },
     {
       "id": "E-006",
       "evidenceClass": "Apple security release information",
       "source": "https://support.apple.com/en-sa/100100",
-      "assertion": "Apple's iOS 27 device list includes iPhone 11 and later; its iPadOS 27 list includes iPad 9th generation and later, plus supported Pro, Air, and mini models.",
-      "limitations": "Device support must still be checked against the exact OS release and hardware model.",
+      "assertion": "Apple's iOS 27 device list includes iPhone 11 and later.",
+      "limitations": "This record relies only on the iPhone eligibility statement; device support must still be checked against the exact OS release and hardware model.",
       "recordedAt": "2026-11-13"
     },
     {
@@ -96,7 +96,7 @@
       "evidenceClass": "Remote host observation",
       "source": "Remote Desktop Commander, read-only system metadata",
       "assertion": "The connected Linux ARM64 host reported Git 2.52.0, Node.js 24.22.0, and npm 11.19.1.",
-      "limitations": "This is not the project's CI runner or an Apple device. No local project, Scriptable, Python, document, or memory files were read.",
+      "limitations": "This is not the project's CI runner or a physical iPhone. No local project, Scriptable, Python, document, or memory files were read.",
       "recordedAt": "2026-11-13"
     },
     {
@@ -109,10 +109,10 @@
     },
     {
       "id": "E-014",
-      "evidenceClass": "Dedicated device probes",
+      "evidenceClass": "Dedicated iPhone probes",
       "source": "src/compatibility_probe.js, src/async_runtime_probe.js, src/webview_context_probe.js, and src/widget_context_probe.js",
       "assertion": "Provides separate manual procedures for main runtime, async/await, WebView, and widget contexts without importing application data.",
-      "limitations": "No device result exists until a human runs the probes on the target device and records the output.",
+      "limitations": "The probe definitions describe procedures but do not independently establish runtime behavior. User-reported results for the iPhone 15 Pro Max tuple are recorded separately in E-056 through E-059; every other tuple requires its own result.",
       "recordedAt": "2026-11-13"
     },
     {
@@ -157,10 +157,10 @@
     },
     {
       "id": "E-020",
-      "evidenceClass": "Draft pull request",
+      "evidenceClass": "Governance pull request",
       "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1",
       "assertion": "Holds the operational baseline, glossary, compatibility matrix, evidence register, CI workflow, device probes, and security policy for review.",
-      "limitations": "It has not been merged.",
+      "limitations": "Merged on 2026-11-13. The merge does not establish security-remediation completion or physical-iPhone compatibility.",
       "recordedAt": "2026-11-13"
     },
     {
@@ -415,8 +415,8 @@
       "id": "E-051",
       "evidenceClass": "Successful quality-gates run with canonical record validation",
       "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43451399883",
-      "assertion": "The workflow validated 78 approved decision records, 50 evidence records, four device targets, 16 compatibility records, zero exceptions, and two violation records. It also passed source parsing, airport serialization regression, governance artifact checks, punctuation checks, and device-probe isolation.",
-      "limitations": "CI validation and Node.js tests only. It does not establish Scriptable runtime compatibility on physical devices.",
+      "assertion": "Historical quality-gates snapshot before the approved iPhone-only scope normalization: the workflow validated 78 approved decision records, 50 evidence records, four device targets, 16 compatibility records, zero exceptions, and two violation records. It also passed source parsing, airport serialization regression, governance artifact checks, punctuation checks, and device-probe isolation.",
+      "limitations": "Historical CI snapshot only. Its target and compatibility-record counts predate the current iPhone-only canonical records. CI validation and Node.js tests do not establish runtime compatibility on a physical iPhone.",
       "recordedAt": "2026-11-13"
     },
     {
@@ -442,6 +442,90 @@
       "assertion": "CodeQL completed successfully on pull-request head 55916df4815037796adadb237108fae9ce8e80cf.",
       "limitations": "The two original CodeQL alerts remain open on main until merge. Three Secret Scanning alerts remain open.",
       "recordedAt": "2026-11-13"
+    },
+    {
+      "id": "E-056",
+      "evidenceClass": "Scriptable Runtime test",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6859706210",
+      "assertion": "User-reported Main Runtime probe on iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12: Promise, Object.assign, Map, Set, Array.includes, and String.includes all returned true; device classification reported iPhone; screen resolution was 1290 × 2796 at scale 3. The report stated that no files, Keychain, network, notifications, or Pasteboard were accessed.",
+      "limitations": "User-reported, not independently reproduced by maintainers. Some copied labels and formatting were malformed; no separate raw-output artifact, probe source commit, or step-by-step reproduction details were supplied. The Device API does not expose the installed app version. The tester role was not stated.",
+      "recordedAt": "2026-11-13",
+      "runtimeTest": {
+        "compatibilityRecordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-MAIN-RUNTIME",
+        "component": "Scriptable main runtime",
+        "apiOrFeature": "Device API surface and ECMAScript 2015 built-ins",
+        "scriptableVersion": "1.7.12",
+        "osVersion": "iOS 27.2",
+        "device": "iPhone 15 Pro Max",
+        "executionContext": "in-app",
+        "result": "Passed",
+        "testedAt": "2026-11-13T20:00:00+03:00"
+      },
+      "timestampSource": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6861874218",
+      "versionSource": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6860697188"
+    },
+    {
+      "id": "E-057",
+      "evidenceClass": "Scriptable Runtime test",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6859609425",
+      "assertion": "User-reported async/await probe on iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12: async function parsed successfully; Promise.all returned first and second; rejectionCaught=true.",
+      "limitations": "User-reported, not independently reproduced by maintainers. No separate raw-output artifact, probe source commit, or step-by-step reproduction details were supplied. The tester role was not stated.",
+      "recordedAt": "2026-11-13",
+      "runtimeTest": {
+        "compatibilityRecordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-ASYNC-AWAIT",
+        "component": "Scriptable main runtime",
+        "apiOrFeature": "async functions, await, Promise.all, and rejection handling",
+        "scriptableVersion": "1.7.12",
+        "osVersion": "iOS 27.2",
+        "device": "iPhone 15 Pro Max",
+        "executionContext": "in-app",
+        "result": "Passed",
+        "testedAt": "2026-11-13T20:00:00+03:00"
+      },
+      "timestampSource": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6861874218",
+      "versionSource": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6860697188"
+    },
+    {
+      "id": "E-058",
+      "evidenceClass": "Scriptable Runtime test",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6859609425",
+      "assertion": "User-reported WebView probe result on iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12: PASS.",
+      "limitations": "Only the PASS outcome was supplied. Detailed raw output, probe source commit, and step-by-step reproduction details were not supplied. User-reported, not independently reproduced by maintainers. The tester role was not stated.",
+      "recordedAt": "2026-11-13",
+      "runtimeTest": {
+        "compatibilityRecordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-WEBVIEW",
+        "component": "Scriptable WebView",
+        "apiOrFeature": "WebView.loadHTML, evaluateJavaScript, and present",
+        "scriptableVersion": "1.7.12",
+        "osVersion": "iOS 27.2",
+        "device": "iPhone 15 Pro Max",
+        "executionContext": "WebView",
+        "result": "Passed",
+        "testedAt": "2026-11-13T20:00:00+03:00"
+      },
+      "timestampSource": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6861874218",
+      "versionSource": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6860697188"
+    },
+    {
+      "id": "E-059",
+      "evidenceClass": "Scriptable Runtime test",
+      "source": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6859706210",
+      "assertion": "User-reported actual home-screen Widget context result on iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12: device class iPhone, OS version 27.2, and Widget context=true.",
+      "limitations": "The actual home-screen Widget context result was user-reported, but no separate raw-output artifact, probe source commit, or step-by-step reproduction details were supplied. User-reported, not independently reproduced by maintainers. The tester role was not stated.",
+      "recordedAt": "2026-11-13",
+      "runtimeTest": {
+        "compatibilityRecordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-WIDGET",
+        "component": "Scriptable Widget",
+        "apiOrFeature": "ListWidget, config.runsInWidget, and Script.setWidget",
+        "scriptableVersion": "1.7.12",
+        "osVersion": "iOS 27.2",
+        "device": "iPhone 15 Pro Max",
+        "executionContext": "Widget",
+        "result": "Passed",
+        "testedAt": "2026-11-13T20:00:00+03:00"
+      },
+      "timestampSource": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6861874218",
+      "versionSource": "https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/issues/11#issuecomment-6860697188"
     }
   ]
 }

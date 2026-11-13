@@ -11,7 +11,7 @@ Changes use all applicable layers:
 3. Type checking.
 4. Unit testing.
 5. Integration testing.
-6. Scriptable Runtime testing on an Apple device.
+6. Scriptable Runtime testing on a physical iPhone.
 7. Execution-context testing for WebView, Widget, and other declared contexts.
 8. Security testing.
 
@@ -30,7 +30,7 @@ CodeQL default setup analyzes JavaScript/TypeScript. It is a separate security a
 
 ## Device evidence
 
-A new, changed, uncertain, or risk-sensitive Scriptable API or language feature requires on-device evidence for each required tuple. A Node.js result is not a Scriptable Runtime result. A WebView result is not a main-runtime result. A widget preview is not proof of actual widget-host execution.
+A new, changed, uncertain, or risk-sensitive Scriptable API or language feature requires on-device evidence for each required iPhone tuple. A Node.js result is not a Scriptable Runtime result. A WebView result is not a main-runtime result. A widget preview is not proof of actual widget-host execution.
 
 ## Enforcement levels
 
@@ -42,4 +42,4 @@ Mandatory checks fail closed. A failed, unavailable, or untrustworthy check is r
 
 ## Current gate limitations
 
-The current quality-gates workflow does not enforce the ES2015 syntax ceiling, validate Scriptable Host API signatures, type-check, or run a complete unit/integration harness. It does not execute JavaScriptCore, production WebView, or widget behavior on a physical Apple device. Those capabilities must be added as separate checks with evidence.
+The current quality-gates workflow does not enforce the ES2015 syntax ceiling, validate Scriptable Host API signatures, type-check, or run a complete unit/integration harness. It does not execute JavaScriptCore, production WebView, or widget behavior on a physical iPhone. Those capabilities must be added as separate checks with evidence.

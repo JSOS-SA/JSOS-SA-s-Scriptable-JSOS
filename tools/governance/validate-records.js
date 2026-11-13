@@ -170,6 +170,12 @@ const validateRecords = (root) => {
   }
 
   const targetsById = new Map(compatibility.targets.map((target) => [target.id, target]));
+  for (const target of compatibility.targets) {
+    assert.match(target.deviceTarget, /^iPhone\b/,
+      "Compatibility targets must be iPhone-only: " + target.id);
+    assert.match(target.osVersionTarget, /^iOS\b/,
+      "Compatibility targets must use iOS versions: " + target.id);
+  }
   for (const record of compatibility.records) {
     validateCompatibilityRecord(record, evidence.records, targetsById);
   }
