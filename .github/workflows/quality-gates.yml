@@ -20,6 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Set up Node.js
@@ -27,6 +28,12 @@ jobs:
         with:
           node-version: 26
           package-manager-cache: false
+
+      - name: Check patch hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check "origin/main...HEAD"
 
       - name: Parse Scriptable JavaScript sources
         shell: bash
@@ -40,15 +47,18 @@ jobs:
           test "$count" -gt 0
           echo "Parsed $count JavaScript source files."
 
-      - name: Verify governance artifacts and probes
+      - name: Verify governance and security artifacts
         shell: bash
         run: |
           set -euo pipefail
           test -s GLOSSARY.md
+          test -s SECURITY.md
           test -s docs/governance/operational-baseline.md
           test -s docs/governance/evidence-register.md
           test -s docs/governance/compatibility-matrix.md
           test -s docs/governance/ci-baseline.md
+          test -s docs/governance/device-test-procedure.md
+          test -s .github/dependabot.yml
           test -s src/compatibility_probe.js
           test -s src/async_runtime_probe.js
           test -s src/webview_context_probe.js
