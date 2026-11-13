@@ -1,8 +1,8 @@
 # Operational Baseline
 
-**Assessment date:** 2026-11-13
-**Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS
-**Default branch:** main
+**Assessment date:** 2026-11-13  
+**Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS  
+**Default branch:** main  
 **Assessment status:** Initial operational controls are established. Physical-device execution remains unverified.
 
 ## 1. Repository identity and controls
@@ -13,7 +13,7 @@ Current repository facts:
 
 - The default branch is main.
 - The main branch is protected.
-- The main branch requires a pull request and the quality-gates status check.
+- The main branch requires a pull request and the quality-gates and CodeQL status checks.
 - Required status checks are strict.
 - Admin enforcement is enabled.
 - Force pushes and branch deletion are disabled.
@@ -21,6 +21,8 @@ Current repository facts:
 - Required approving reviews are set to zero because the repository currently has one collaborator. This preserves the pull-request gate without making merging impossible for the sole collaborator.
 - The repository rulesets endpoint is empty. Protection is configured through classic branch protection.
 - The initial quality-gates workflow is present on the governance/operational-baseline pull request branch. It becomes part of main only after that pull request is merged.
+- CodeQL default setup is configured for JavaScript/TypeScript.
+- Secret Scanning, Push Protection, Dependabot Alerts, Dependabot Security Updates, and private vulnerability reporting are enabled.
 - No root package.json is present.
 - tools/test/harness.js, referenced by comments in the self-test source, is not present at the inspected revision.
 - The GitHub connection reports repository-owner permissions including Admin and Push.
@@ -78,9 +80,11 @@ The remote development host reported Git 2.52.0, Node.js 24.22.0, and npm 11.19.
 
 The Node.js release schedule identifies Node.js 26.x as Active LTS as of 2026-11-13, while 24.x is in Maintenance LTS. The initial GitHub Actions workflow uses Node.js 26.x.
 
-The quality-gates workflow runs on pull requests to main and pushes to main. It uses pinned GitHub Actions releases and an Ubuntu 24.04 runner. The current gate parses JavaScript sources, verifies governance artifacts and probes, and checks that the dedicated probes do not call selected private host APIs.
+The quality-gates workflow runs on pull requests to main and pushes to main. It uses pinned GitHub Actions releases and an Ubuntu 24.04 runner. The current gate checks patch hygiene, parses JavaScript sources, verifies governance/security artifacts and probes, and checks that the dedicated probes do not call selected private host APIs.
 
-The latest successful CI run parsed the JavaScript source set and passed all three workflow steps. This proves syntax parsing under Node.js and the limited checks listed above. It does not enforce the ES2015 syntax ceiling, perform type checking or full linting, execute application unit tests, or prove Scriptable JavaScriptCore, WebView, or widget compatibility.
+The latest successful quality-gates run parsed 145 JavaScript source files and passed all workflow steps. CodeQL default setup also completed successfully on the main branch and the governance pull request for JavaScript/TypeScript.
+
+These checks prove syntax parsing under Node.js, CodeQL analysis completion, and the limited repository checks listed above. They do not enforce the ES2015 syntax ceiling, perform type checking or full linting, execute application unit tests, or prove Scriptable JavaScriptCore, WebView, or widget compatibility.
 
 ## 7. Role mapping
 
@@ -93,9 +97,13 @@ The repository currently has one collaborator. The role model is:
 - **Reviewer:** The Repository Owner performs the review checklist when acting as author, because no independent collaborator is currently available.
 - **Compatibility Register Steward:** A role assigned by the Constitution Owner.
 
-The role names remain distinct in the governance model even where one person performs multiple roles. The branch protection configuration requires a pull request and successful CI, but does not require an approval that the sole collaborator cannot provide.
+The role names remain distinct in the governance model even where one person performs multiple roles. The branch protection configuration requires a pull request and successful CI/security checks, but does not require an approval that the sole collaborator cannot provide.
 
-## 8. Immediate device verification
+## 8. Security baseline
+
+See security-baseline.md. Secret-scanning alert details are intentionally not reproduced in this public documentation. Review and remediate them through GitHub Security. Do not merge the governance pull request while any detected live credential remains unrevoked.
+
+## 9. Immediate device verification
 
 Follow docs/governance/device-test-procedure.md:
 
@@ -110,4 +118,4 @@ Follow docs/governance/device-test-procedure.md:
 
 ## Sources
 
-See evidence-register.md and ci-baseline.md for source URLs, evidence identifiers, scope, and limitations.
+See evidence-register.md, ci-baseline.md, and security-baseline.md for source URLs, evidence identifiers, scope, and limitations.
