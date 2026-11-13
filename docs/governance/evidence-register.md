@@ -33,11 +33,19 @@ This register records evidence without treating a source's scope as broader than
 | E-024 | GitHub security settings | GitHub repository security settings, inspected 2026-11-13 | Secret Scanning, Push Protection, Dependabot Alerts, and Dependabot Security Updates are enabled. | Secret values and alert details are intentionally not copied into repository documentation. |
 | E-025 | Private vulnerability reporting | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/security/advisories/new | Private vulnerability reporting is enabled for the repository. | Does not establish that every report has been reviewed. |
 | E-026 | CodeQL default setup | https://api.github.com/repos/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/code-scanning/default-setup | CodeQL default setup is configured for JavaScript/TypeScript, with the default query suite and remote_and_local threat model. Python is not in the configured language set. | Analysis completion does not mean the alert inventory is empty. |
-| E-027 | CodeQL main-branch run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43445460446 | CodeQL JavaScript/TypeScript analysis completed successfully on main. | The alert inventory was not inspected in this assessment. |
-| E-028 | CodeQL pull-request run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446104838 | CodeQL JavaScript/TypeScript analysis completed successfully on the governance pull request. | The alert inventory was not inspected in this assessment. |
+| E-027 | CodeQL main-branch run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43445460446 | CodeQL JavaScript/TypeScript analysis completed successfully on main. | Analysis completion does not imply a clean alert inventory. |
+| E-028 | CodeQL pull-request run | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/actions/runs/43446104838 | CodeQL JavaScript/TypeScript analysis completed successfully on the governance pull request. | Analysis completion does not imply a clean alert inventory. |
 | E-029 | Dependabot status | GitHub Dependabot API, inspected 2026-11-13 | Dependabot Alerts and Security Updates are enabled; the alert count was zero at inspection time. | The repository has no root package.json. The Dependabot configuration in the pull request targets GitHub Actions. |
 | E-030 | Private security policy | SECURITY.md on the governance pull request branch | Defines private reporting and safe secret-handling requirements. | It is not part of main until the pull request is merged. |
 | E-031 | Dependabot configuration | .github/dependabot.yml on the governance pull request branch | Configures monthly updates for GitHub Actions dependencies. | It is not active on main until the pull request is merged. |
+
+## Security findings evidence
+
+| ID | Evidence class | Source | Supported assertion | Limitation |
+|---|---|---|---|---|
+| E-036 | Secret Scanning alert inventory | GitHub Secret Scanning API and alert-location endpoints, inspected 2026-11-13 | Three open alerts exist: two Google API Key alerts and one Google Cloud Service Account Credentials alert. Validity is unknown. All are tied to commits on the public main branch; one location is a service-account JSON file still present on main. | Secret values and credential contents were not retrieved. The credentials must be treated as exposed until revoked or rotated by the issuing provider. |
+| E-037 | CodeQL alert inventory | GitHub Code Scanning API, inspected 2026-11-13 | Two open high-severity js/incomplete-sanitization alerts identify incomplete string escaping in src/fq_add_airport.js at the city and country serialization statements. | Analysis completion is not remediation. A source fix and regression tests remain outstanding. |
+| E-038 | Current PR check rollup | https://github.com/JSOS-SA/JSOS-SA-s-Scriptable-JSOS/pull/1 | The latest quality-gates, CodeQL, and Analyze (javascript-typescript) checks all completed successfully on the governance pull request. | These checks do not resolve the open security alerts or prove Scriptable device compatibility. |
 
 ## Evidence handling
 
