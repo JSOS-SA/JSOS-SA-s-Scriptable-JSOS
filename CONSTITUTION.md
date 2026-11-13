@@ -105,6 +105,8 @@ Network requests MUST use HTTPS and normal certificate validation. Insecure cert
 
 High-risk operations are blocked by default. An exception requires documented approval, scope, risk, compensating controls, and expiry.
 
+Untrusted values MUST be serialized with context-appropriate encoders. Partial manual escaping MUST NOT be used to construct executable source or structured output.
+
 ## 10. Exceptions
 
 An Exception never removes or rewrites the underlying Policy Rule. It grants a limited, time-bounded deviation.
