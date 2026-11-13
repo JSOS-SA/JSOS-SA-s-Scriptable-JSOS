@@ -7,7 +7,7 @@ This register records policy violations and their remediation without duplicatin
 | Violation ID | Policy Rule | Status | Severity | Scope | Evidence |
 |---|---|---|---|---|---|
 | V-2026-001 | SCR-SEC-001 | Assigned | Critical | Exposed Google API and service-account credentials in the public repository history/current tree | E-045 |
-| V-2026-002 | SCR-SEC-004 | Remediated on pull-request branch | High | Incomplete escaping when generating airport JavaScript source | E-046, E-048, E-049, E-050, E-053 |
+| V-2026-002 | SCR-SEC-004 | Remediated on pull-request branch | High | Incomplete escaping when generating airport JavaScript source | E-046, E-048, E-049, E-050, E-051, E-052, E-053, E-054, E-053 |
 
 ## Required workflow
 
