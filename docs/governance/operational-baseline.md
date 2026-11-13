@@ -126,7 +126,7 @@ The security inventory inspected on 2026-11-13 contains three open Secret Scanni
 
 The owner must revoke or rotate the affected credentials with Google. After revocation, remove the exposed credential material from the current tree and coordinate any Git-history rewrite as a separate controlled operation. A history rewrite must not be treated as a substitute for revocation.
 
-CodeQL also reports two open high-severity incomplete-string-escaping findings in src/fq_add_airport.js. The implementation does not escape backslash characters before interpolating city and country values into JavaScript string literals. A reviewed source fix and regression tests are outstanding.
+CodeQL also reports two open high-severity incomplete-string-escaping findings in src/fq_add_airport.js. The implementation does not escape backslash characters before interpolating city and country values into JavaScript string literals. The reviewed source fix and regression test are present on the governance pull-request head and pass CI and CodeQL. The two original alerts remain open on main until merge.
 
 The governance pull request must remain draft and must not merge until credential revocation, source remediation, regression verification, and the physical-device evidence requirements are completed. The successful CI and CodeQL runs recorded above do not close these findings.
 
