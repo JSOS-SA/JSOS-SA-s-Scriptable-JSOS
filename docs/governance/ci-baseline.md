@@ -22,8 +22,8 @@ The initial quality-gates workflow runs on pull requests targeting main and on p
 
 1. Check patch hygiene with git diff --check against origin/main.
 2. Parse every JavaScript file under src/ using Node.js module syntax checking.
-3. Verify the existence of the approved glossary, security policy, operational baseline, evidence register, compatibility matrix, CI baseline, device test procedure, Dependabot configuration, and all four device probes.
-4. Check that the four dedicated device probes do not invoke selected private host APIs such as Keychain, FileManager, Pasteboard, Request, Notification, or Location.
+3. Verify the existence of the approved glossary, security policy, operational baseline, evidence register, compatibility matrix, CI baseline, device test procedure, Dependabot configuration, and all four iPhone probe scripts.
+4. Check that the four dedicated iPhone probes do not invoke selected private host APIs such as Keychain, FileManager, Pasteboard, Request, Notification, or Location.
 
 The latest successful quality-gates run parsed 145 JavaScript source files and passed all workflow steps.
 
@@ -50,12 +50,12 @@ The current workflow is an initial syntax and repository-integrity gate. It does
 - Validate Scriptable Host API names or signatures.
 - Type-check JSDoc or TypeScript definitions.
 - Run a full unit-test harness.
-- Execute JavaScriptCore on an Apple device.
+- Execute JavaScriptCore on a physical iPhone.
 - Execute the production WebView lifecycle.
 - Execute the widget context.
-- Establish compatibility for any physical device tuple.
+- Establish compatibility for any physical iPhone tuple.
 
-These limitations are deliberate. The workflow must not claim evidence it does not produce. The device probes and later context-specific tests remain separate evidence sources.
+These limitations are deliberate. The workflow must not claim evidence it does not produce. The iPhone probes and later context-specific tests remain separate evidence sources.
 
 ## Branch protection
 

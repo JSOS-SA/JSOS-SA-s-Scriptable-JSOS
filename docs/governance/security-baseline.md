@@ -71,6 +71,6 @@ The three Secret Scanning alerts remain open. Credential revocation/rotation and
 
 ## Latest verification, 2026-11-13
 
-The current pull-request head 63e5528357529610bcc98b3f547b38727872086f passes all three checks: quality-gates, CodeQL, and Analyze (javascript-typescript). The canonical-record validator passes with 78 approved decisions, 50 evidence records, four device targets, 16 compatibility records, zero exceptions, and two violations. See E-051 and E-052.
+The current pull-request head 63e5528357529610bcc98b3f547b38727872086f passes all three checks: quality-gates, CodeQL, and Analyze (javascript-typescript). The historical canonical-record snapshot in E-051 predates the approved iPhone-only scope normalization. Its target and compatibility-record counts are not current; use the canonical compatibility matrix and record validator for current counts. See E-051 and E-052.
 
 The two high-severity CodeQL alerts remain open on main until merge. Three Secret Scanning alerts remain open. No credential values were accessed or copied into governance records. Credential revocation/rotation must be confirmed by the issuing provider before the credential exposure violation can be closed.

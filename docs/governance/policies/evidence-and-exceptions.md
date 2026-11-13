@@ -21,7 +21,7 @@ A material test record includes:
 
 - Stable evidence ID.
 - Component and API.
-- Scriptable and iOS/iPadOS versions.
+- Scriptable and iOS versions.
 - Exact device.
 - Execution context.
 - Reproduction steps and inputs.
@@ -31,6 +31,9 @@ A material test record includes:
 - Limitations and risk assessment.
 
 ## Evidence validity
+
+Compatibility evidence is limited to the approved iPhone-only scope. Each compatibility result applies only to its recorded iPhone model, iOS version, Scriptable version, component or API, and execution context.
+
 
 Evidence is valid only for the scope it actually covers. It may require re-verification after platform, version, API, device, context, dependency, or threat changes.
 

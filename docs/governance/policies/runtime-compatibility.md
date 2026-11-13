@@ -2,11 +2,15 @@
 
 **Rules:** SCR-RUN-001 through SCR-RUN-004, SCR-COMP-001 through SCR-COMP-005.
 
+## Approved device scope
+
+The supported device platform is iPhone only under decision Q76 and policy rule SCR-COMP-005. Every compatibility assessment must identify the exact iPhone model, iOS version, Scriptable version, component or API, and execution context.
+
 ## Language baseline
 
 Scriptable documents JavaScriptCore and ECMAScript 6 support. The project baseline is ECMAScript 2015. Features introduced after ES2015 require explicit compatibility evidence before general use.
 
-The production source currently contains async functions and await. These features remain a compatibility exception until the async runtime probe passes on the selected Scriptable/iOS/device tuples. Node.js parsing does not prove JavaScriptCore support.
+The production source currently contains async functions and await. User-reported async/await probe evidence passes for iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12, but the result remains Not Verified and does not establish compatibility on other tuples. The feature remains a compatibility exception pending the applicable evidence standard and maintainer review. Node.js parsing does not prove JavaScriptCore support.
 
 ## Execution contexts
 
@@ -52,7 +56,7 @@ Each record identifies:
 
 - Component and API/feature.
 - Scriptable version.
-- iOS/iPadOS version.
+- iOS version.
 - Exact device.
 - Execution context.
 - Evidence references.
@@ -64,6 +68,6 @@ Each environment tuple receives its own record. Results are not transferred betw
 
 ## Initial version target
 
-The App Store listing examined reports Scriptable 1.7.19 and a minimum iOS/iPadOS requirement of 15.5. The current OS reference used for this baseline is iOS/iPadOS 27.2.1.
+The App Store listing examined for iPhone reports Scriptable 1.7.19 and a minimum iOS requirement of 15.5. The current OS reference used for this baseline is iOS 27.2.1.
 
-These are version targets, not proof that all intermediate releases, devices, APIs, or contexts have passed runtime tests. See the Compatibility Matrix and Evidence Register.
+These are version references, not proof that all intermediate iOS releases, iPhone models, APIs, or contexts have passed runtime tests. See the Compatibility Matrix and Evidence Register.

@@ -19,7 +19,7 @@ Do not publish suspected secrets, exploit details, personal data, or unpatched v
 
 ## Supported project baseline
 
-The current documented target is Scriptable 1.7.19 with iOS/iPadOS 15.5 or later. Device and execution-context compatibility is determined by the compatibility matrix and evidence register, not by the version range alone.
+The current documented iPhone target reference is Scriptable 1.7.19 with iOS 15.5 or later. Device and execution-context compatibility is determined by the compatibility matrix and evidence register, not by the version range alone.
 
 ## Review and response
 

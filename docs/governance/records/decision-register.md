@@ -1,7 +1,7 @@
 # Approved Decision Register
 
 **Status:** Approved
-**Total:** 78 decisions, comprising G1-G3 and Q1-Q75.
+**Total:** 79 decisions, comprising G1-G3 and Q1-Q76.
 **Source:** User-approved decisions recorded during the governance design process.
 
 | ID | Approved decision | Rule mapping |
@@ -25,7 +25,7 @@
 | Q14 | Architecture uses Core, Data, Services, Features, and UI layers with Scriptable Host APIs. | SCR-ARCH-001 |
 | Q15 | A central compatibility register records each API or feature assessment. | SCR-COMP-001, SCR-GOV-003 |
 | Q16 | Minimum Scriptable and iOS versions are evidence-based, not guessed. | SCR-COMP-004, SCR-COMP-005 |
-| Q17 | The device matrix includes iPhone and iPad and records differences. | SCR-COMP-005 |
+| Q17 | Superseded by Q76. | SCR-COMP-005 |
 | Q18 | New, changed, uncertain, or risky APIs require Scriptable Runtime proof. | SCR-TEST-003 |
 | Q19 | Backward compatibility and deprecation require reason, affected users, alternative, transition period, and records. | SCR-CHG-001 |
 | Q20 | Breaking changes include incompatible changes to scripts, API contracts, outputs, side effects, or runtime requirements. | SCR-CHG-001 |
@@ -84,3 +84,4 @@
 | Q73 | A bad release is corrected through a later release with traceable rollback impact, not erased history. | SCR-CHG-002 |
 | Q74 | Drift between documentation, rules, tests, and actual behavior is recorded and remediated. | SCR-CHG-002 |
 | Q75 | The Constitution is reviewed after major platform, architecture, dependency, or threat-model changes. | SCR-GOV-005 |
+| Q76 | The project compatibility scope is iPhone only; every claim is scoped to the exact model, iOS, Scriptable version, component/API, and execution context. | SCR-COMP-005 |

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "status": "Approved",
   "source": "User-approved governance decisions",
-  "count": 78,
+  "count": 79,
   "decisions": [
     {
       "id": "G1",
@@ -166,11 +166,12 @@
     },
     {
       "id": "Q17",
-      "decision": "The device matrix includes iPhone and iPad and records differences.",
+      "decision": "Superseded by Q76.",
       "policyRuleIds": [
         "SCR-COMP-005"
       ],
-      "status": "Approved"
+      "status": "Superseded",
+      "supersededBy": "Q76"
     },
     {
       "id": "Q18",
@@ -639,6 +640,14 @@
       "decision": "The Constitution is reviewed after major platform, architecture, dependency, or threat-model changes.",
       "policyRuleIds": [
         "SCR-GOV-005"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "Q76",
+      "decision": "The project compatibility scope is iPhone only. Every compatibility claim is scoped to the exact iPhone model, iOS version, Scriptable version, component or API, and execution context.",
+      "policyRuleIds": [
+        "SCR-COMP-005"
       ],
       "status": "Approved"
     }

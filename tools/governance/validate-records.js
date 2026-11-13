@@ -124,7 +124,15 @@ const validateRecords = (root) => {
 
   assert.equal(decisions.status, "Approved");
   assert.equal(decisions.count, decisions.decisions.length);
-  assert.equal(decisions.decisions.length, 78);
+  assert.equal(decisions.decisions.length, 79);
+  const supersededScopeDecision = decisions.decisions.find((decision) => decision.id === "Q17");
+  const activeScopeDecision = decisions.decisions.find((decision) => decision.id === "Q76");
+  assert.ok(supersededScopeDecision && supersededScopeDecision.status === "Superseded" &&
+    supersededScopeDecision.supersededBy === "Q76",
+  "Q17 must be marked Superseded by Q76.");
+  assert.ok(activeScopeDecision && activeScopeDecision.status === "Approved" &&
+    activeScopeDecision.policyRuleIds.includes("SCR-COMP-005"),
+  "Q76 must be the approved iPhone-only compatibility scope decision.");
   unique(ids(decisions.decisions, "id"), "Decision IDs");
 
   assert.equal(evidence.count, evidence.records.length);
@@ -162,6 +170,12 @@ const validateRecords = (root) => {
   }
 
   const targetsById = new Map(compatibility.targets.map((target) => [target.id, target]));
+  for (const target of compatibility.targets) {
+    assert.match(target.deviceTarget, /^iPhone\b/,
+      "Compatibility targets must be iPhone-only: " + target.id);
+    assert.match(target.osVersionTarget, /^iOS\b/,
+      "Compatibility targets must use iOS versions: " + target.id);
+  }
   for (const record of compatibility.records) {
     validateCompatibilityRecord(record, evidence.records, targetsById);
   }
