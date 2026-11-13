@@ -1,6 +1,6 @@
 # Evidence Register
 
-**Assessment date:** 2026-11-13  
+**Assessment date:** 2026-11-13
 **Repository:** JSOS-SA/JSOS-SA-s-Scriptable-JSOS
 
 This register records evidence without treating a source's scope as broader than the source supports. Conflicting or failed evidence is retained with its resolution.
