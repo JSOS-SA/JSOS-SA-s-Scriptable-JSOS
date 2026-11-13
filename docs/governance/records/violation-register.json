@@ -19,7 +19,7 @@
       "ownerRole": "Repository Owner",
       "remediation": "Revoke or rotate the affected credentials with Google, remove exposed credential material from the current tree, and coordinate any Git-history cleanup after revocation.",
       "evidenceIds": [
-        "E-036"
+        "E-045"
       ],
       "verification": {
         "status": "Pending",
@@ -44,10 +44,10 @@
       "ownerRole": "Repository Owner",
       "remediation": "Moved source-line generation to a pure serializer module using JSON.stringify with explicit U+2028 and U+2029 escaping. Added regression coverage for hostile strings.",
       "evidenceIds": [
-        "E-037",
-        "E-039",
-        "E-040",
-        "E-041"
+        "E-046",
+        "E-048",
+        "E-049",
+        "E-050"
       ],
       "verification": {
         "status": "Verified on pull-request head",
