@@ -1,8 +1,8 @@
 # CI Baseline
 
-**Assessment date:** 2026-11-13  
-**Workflow:** .github/workflows/quality-gates.yml  
-**Required check:** quality-gates  
+**Assessment date:** 2026-11-13
+**Workflow:** .github/workflows/quality-gates.yml
+**Required check:** quality-gates
 **Protected branch:** main
 
 ## Workflow contract
