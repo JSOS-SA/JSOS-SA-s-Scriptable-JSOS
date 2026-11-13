@@ -1,6 +1,6 @@
 # Compatibility Matrix
 
-**Assessment date:** 2026-11-13  
+**Assessment date:** 2026-11-13
 **Target app release:** Scriptable 1.7.19, latest version displayed by the App Store listing examined.
 
 This matrix defines representative test targets. Every row begins as Not Verified. Platform eligibility is not a runtime test.
