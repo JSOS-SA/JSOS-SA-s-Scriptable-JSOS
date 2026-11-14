@@ -1,9 +1,9 @@
 # Scriptable Engineering Specification
 # Terminology Control Addendum 01
 
-**Document type:** Terminology control addendum  
-**Scope:** English terminology used in the Scriptable engineering specification and its related technical documentation  
-**Status:** Provisionally approved for translation terminology control  
+**Document type:** Terminology control addendum
+**Scope:** English terminology used in the Scriptable engineering specification and its related technical documentation
+**Status:** Provisionally approved for translation terminology control
 **Relationship to the dictionaries:** This addendum controls term selection, distinctions, and usage. It is not a third glossary and does not create duplicate canonical term records. The existing unified and supplementary dictionaries remain the canonical termbase.
 
 ---
