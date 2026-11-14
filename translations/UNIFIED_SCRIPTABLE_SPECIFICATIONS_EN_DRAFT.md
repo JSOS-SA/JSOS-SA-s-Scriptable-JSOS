@@ -1808,101 +1808,288 @@ Normative terms, Rule IDs, and technical field names are maintained in English f
 
 ## 20. Compatibility Review and Governance Continuity
 
-Reverification MUST be performed whenever a material change occurs in any of the following:
+### 20.1 Mandatory Reverification Triggers
 
-- Scriptable version.
-- iOS version.
-- JavaScriptCore.
-- The adopted ECMAScript standard.
-- Scriptable APIs.
-- Execution contexts.
-- Libraries and dependencies.
-- Analysis and build tools.
-- Architecture.
-- Security threat model.
+Compatibility MUST be reassessed whenever a material change affects an assumption, dependency, interface, execution environment, verification method, or risk boundary on which an existing approval relies. Material changes include, but are not limited to:
 
-Any discrepancy between documentation, implementation, and tests MUST be recorded as a matter requiring investigation. It MUST NOT be concealed or assumed to have no impact.
+- Scriptable application version, build, release channel, or documented behavior.
+- iOS version, build, security behavior, permissions, or relevant system framework behavior.
+- JavaScriptCore version, implementation behavior, or engine configuration, where known or reasonably evidenced.
+- The adopted ECMAScript baseline, a newly proposed language feature, or a change in the project's approved language-feature set.
+- Scriptable host APIs, including API availability, signatures, parameter constraints, return values, permissions, or documented limitations.
+- Execution contexts, including Main Runtime, WebView, Widget, Shortcuts, and Share Sheet, where applicable.
+- Module boundaries, module loading, import paths, public interfaces, data contracts, schemas, or serialization formats.
+- Libraries, third-party modules, transitive dependencies, generated declarations, and dependency versions.
+- Analysis, linting, type-checking, test, build, packaging, and deployment tools, including configuration changes that affect their conclusions.
+- Application architecture, dependency direction, state ownership, persistence, networking, or integration boundaries.
+- Device model, device capabilities, storage constraints, network conditions, or permissions when they are relevant to the feature's approved scope.
+- Security and privacy assumptions, threat model, trust boundaries, authentication, authorization, data classification, or secret-handling requirements.
+- Backend services, remote APIs, data providers, and external contracts on which application behavior depends.
+
+A change is material when it can invalidate a previous compatibility conclusion, alter observable behavior, change the scope of a requirement, weaken a verification method, or change the likelihood or impact of a relevant failure. The change reviewer MUST record why a change is or is not material when that decision is not self-evident.
+
+A change to a tool's version or configuration MUST trigger review of the checks that depend on it. A passing result from an earlier tool version MUST NOT be silently reused as evidence for a materially changed toolchain.
+
+### 20.2 Reverification Procedure
+
+When a material change occurs, the responsible reviewer MUST:
+
+1. Identify the affected requirements, Rule IDs, APIs, language features, modules, value categories, execution contexts, dependencies, and risk controls.
+2. Identify the previous compatibility claims and the exact environment and evidence on which each claim depended.
+3. Review the applicable official documentation, specification edition, release notes, source revision, or other authoritative evidence.
+4. Select the approved verification cases affected by the change, including relevant regression, negative, boundary, integration, context, and device cases.
+5. Add or revise test cases when the existing catalogue does not cover the changed behavior. Each new or revised case MUST have a stable Test ID, an explicit scope, expected result, verification method, required environment, and approval record.
+6. Execute the applicable cases in the required environment. Record cases that cannot be executed as Blocked, Indeterminate, or Not Run, as appropriate. A plan or approval record MUST NOT be represented as an execution result.
+7. Update the compatibility matrix, evidence references, discrepancy records, and affected approval statuses.
+8. Reassess downstream requirements, modules, documentation, CI checks, and dependent verification cases before the change is approved.
+
+Only affected cases need to be rerun when a documented impact analysis justifies the selection. The impact analysis MUST identify the cases selected, the cases not selected, and the reason for each exclusion. A broad claim such as "no impact" is insufficient without a traceable rationale.
+
+### 20.3 Minimum Value and Boundary Verification Set
+
+The approved verification catalogue MUST contain distinct test cases for every value category and boundary that an approved interface claims to support. The following baseline cases MUST be considered for each applicable interface. A case may be marked Not Applicable only with a recorded reason.
+
+| Test ID | Test case | Minimum verification scope |
+| --- | --- | --- |
+| SCR-VAL-001 | Primitive Value Handling | Verify each supported primitive category, including undefined, null, Boolean, String, Number, and Symbol where the target runtime and interface support it. Include finite numeric values and relevant edge cases such as NaN, positive and negative infinity, positive zero, and negative zero. Verify that missing properties, explicit undefined, and explicit null are not conflated. Track BigInt separately because it was standardized after the documented ECMAScript 6 baseline. |
+| SCR-VAL-002 | Function Object Behavior | Verify the function forms actually accepted by the interface, such as ordinary functions, arrow functions, closures, and bound functions. Test invocation, arguments, return values, callback behavior, and error propagation. Do not assume that function identity or executable behavior survives serialization or persistence. |
+| SCR-VAL-003 | Ordinary Object and Array Behavior | Verify plain objects, nested objects, arrays, sparse arrays, relevant property shapes, and supported built-in objects. Include empty values, missing properties, invalid property types, repeated references, and circular references where relevant to the contract. |
+| SCR-VAL-004 | Class Constructor and Instance Behavior | Verify class constructors as function objects and class instances as objects. Where relevant, test construction, methods, inheritance, prototype-dependent behavior, and instanceof. Do not define Class as a separate ECMAScript primitive type. |
+| SCR-VAL-005 | Scriptable Host Object Behavior | Verify each Scriptable host object accepted or returned by the interface against the applicable official Scriptable API documentation and the intended execution context. Test the documented methods, parameters, return values, permissions, and failure behavior actually used by the interface. |
+| SCR-VAL-006 | Context-Bound Value Transfer | Verify each explicitly supported transfer between Main Runtime, WebView, Widget, Shortcuts, and Share Sheet. Test the documented or project-defined transfer representation. Do not assume shared globals, shared object identity, or direct transfer of arbitrary host objects. |
+| SCR-VAL-007 | Persistence and Transport Representation | Verify each supported representation, including JSON-compatible data, file content, Keychain strings, and network payloads. Test encoding, decoding, validation, round-trip behavior where applicable, malformed input, and conversion failures. |
+| SCR-VAL-008 | Unsupported and Failure Boundaries | Verify that unsupported categories, invalid inputs, unavailable APIs, rejected permissions, serialization failures, and other declared failure conditions are rejected or handled according to the interface contract. |
+
+The value inventory MUST remain explicit and MUST distinguish:
+
+- **Primitive values:** ECMAScript language values that are not objects.
+- **Function objects:** callable objects, not primitive values.
+- **Ordinary object values:** ordinary objects, arrays, and applicable built-in objects.
+- **Class constructors and instances:** constructors are function objects; instances are objects.
+- **Scriptable host objects:** host-provided values whose availability and behavior depend on Scriptable documentation and context.
+- **Context-bound values:** values whose use or transfer depends on a particular execution context or bridge.
+- **Persistence and transport representations:** encoded forms that may not preserve the identity, prototype, callable behavior, or complete semantics of the original value.
+- **Other interface-specific categories:** any additional value or representation explicitly accepted, returned, transformed, persisted, or transferred by an approved interface.
+
+Symbol is an ECMAScript 2015 primitive type and is within the language-standard scope of the documented ES6 baseline. Its availability at a particular Scriptable host API, persistence, or transport boundary MUST still be verified independently. BigInt was standardized after ES6, in ECMAScript 2020, and is outside Scriptable’s documented ES6 baseline. It MUST remain Not Verified until demonstrated in the target Scriptable runtime. A TypeScript declaration or behavior in another JavaScript engine MUST NOT be treated as runtime evidence for either value category.
+
+These test cases define required catalogue coverage where applicable. Their inclusion in this specification does not assert that test code exists, that a test has been executed, or that a result has passed. Approval status and execution result MUST remain separate fields in accordance with Section 15.7.
+
+### 20.4 Documentation, Implementation, and Test Discrepancies
+
+Any discrepancy between an authoritative reference, this specification, implementation behavior, a type declaration, a test expectation, or an observed test result MUST be recorded for investigation. It MUST NOT be concealed, silently reconciled, or assumed to have no impact.
+
+Each discrepancy record MUST include, where applicable:
+
+- A stable Discrepancy ID.
+- The affected Rule ID, requirement, API, module, interface, or Test ID.
+- The conflicting statements or observations, with exact source locations and revisions.
+- The expected behavior and the observed behavior.
+- Scriptable version/build, iOS version, iPhone model, execution context, and relevant tool versions.
+- Reproduction steps, sanitized input, actual output, and evidence location.
+- Potential impact, affected consumers, security or privacy implications, and uncertainty.
+- An assigned owner, review status, decision, corrective action, and verification evidence.
+- Links to related issues, exceptions, changes, and superseding decisions.
+
+The discrepancy MUST be classified and tracked until it is resolved, explicitly accepted through the approved exception process, or retained as an open limitation. An unresolved discrepancy affecting a required compatibility or security claim MUST prevent that claim from being presented as verified. Where evidence is insufficient, the applicable status MUST remain Not Verified.
 
 ## 21. Approved Reference Sources
 
-### Level One: Official Scriptable Documentation
+### 21.1 Authority Is Determined by Subject Matter
+
+The sources below are grouped by the technical question they govern. Their order is a navigation aid and MUST NOT be interpreted as a universal ranking in which one source overrides another outside its subject matter.
+
+The approved project constitution and specifications govern project policy, architecture, and engineering obligations. They cannot create a platform capability or override an external technical standard. When sources disagree, the conflict MUST be recorded and resolved using the authority appropriate to the question, the exact versions involved, and reproducible evidence.
+
+### 21.2 Level One: Official Scriptable Documentation
+
+Official documentation:
 
 https://docs.scriptable.app/
 
-The primary source for application APIs, their behavior, properties, parameters, and return values.
+This is the primary source for Scriptable host APIs, documented global objects, properties, methods, parameters, return values, invocation behavior, and application-specific constraints.
 
-Important references:
+The JavaScript Environment documentation states that Scriptable uses Apple's JavaScriptCore and supports ECMAScript 6. It also states that Scriptable does not run JavaScript in a browser and that browser-specific objects such as document are not available in the main script environment.
 
-- JavaScript Environment.
-- importModule.
-- WebView.
-- FileManager.
-- Request.
-- Keychain.
-- ListWidget.
-- args.
-- Script.
-- Calendar.
-- Location.
+Important API references include:
 
-### Level Two: Apple JavaScriptCore
+- JavaScript Environment: https://docs.scriptable.app/
+- importModule: https://docs.scriptable.app/importmodule/
+- WebView: https://docs.scriptable.app/webview/
+- FileManager: https://docs.scriptable.app/filemanager/
+- Request: https://docs.scriptable.app/request/
+- Keychain: https://docs.scriptable.app/keychain/
+- ListWidget: https://docs.scriptable.app/listwidget/
+- args: https://docs.scriptable.app/args/
+- Script: https://docs.scriptable.app/script/
+- Calendar: https://docs.scriptable.app/calendar/
+- Location: https://docs.scriptable.app/location/
+
+The documentation page applicable to the API MUST be checked directly. A name appearing in a community declaration, generated type file, example, or search result is not a substitute for reviewing the official API page.
+
+Official documentation establishes what is documented. It does not, by itself, establish successful execution on every Scriptable release, iOS release, device, or execution context.
+
+### 21.3 Level Two: Apple JavaScriptCore Documentation
+
+Official framework reference:
 
 https://developer.apple.com/documentation/javascriptcore
 
-A reference for understanding the JavaScriptCore engine and its components, not evidence that Native iOS APIs are directly available within Scriptable.
+JavaScriptCore documentation is authoritative for Apple's framework APIs and the framework behavior described by Apple. It is used to understand the engine and its native integration model.
 
-### Level Three: ECMAScript
+Important references:
+
+- JSContext: https://developer.apple.com/documentation/javascriptcore/jscontext
+- JSExport: https://developer.apple.com/documentation/javascriptcore/jsexport
+- JSManagedValue: https://developer.apple.com/documentation/javascriptcore/jsmanagedvalue
+- JSValue: https://developer.apple.com/documentation/javascriptcore/jsvalue
+- JSVirtualMachine: https://developer.apple.com/documentation/javascriptcore/jsvirtualmachine
+
+These APIs describe facilities used by native application developers integrating JavaScriptCore with Swift, Objective-C, or C. Their presence in Apple's framework documentation MUST NOT be interpreted as proof that a Scriptable script can instantiate or access the corresponding native classes, methods, or framework symbols.
+
+Scriptable's own documentation determines the documented Scriptable host surface. Runtime testing determines the behavior observed in the target Scriptable environment.
+
+### 21.4 Level Three: ECMAScript Language Specification
+
+Living specification:
 
 https://tc39.es/ecma262/
 
-A reference for language rules and behavior, not a reference for Scriptable APIs.
+Edition snapshots:
 
-### Level Four: TypeScript
+https://tc39.es/ecma262/2026/
+
+https://262.ecma-international.org/6.0/
+
+ECMAScript defines JavaScript language syntax, semantics, language types, standard built-ins, and conformance requirements. It does not define Scriptable-specific host APIs.
+
+Scriptable's documented baseline is ECMAScript 6, corresponding to ECMAScript 2015. The project MUST treat that documented baseline as the starting point unless a later feature is independently verified and explicitly adopted for the relevant target environment.
+
+The root https://tc39.es/ecma262/ URL is a living specification and changes over time. It MUST NOT be treated as a version-pinned reference. A claim about a particular edition MUST cite the corresponding edition snapshot. A claim about a later feature MUST identify the edition or proposal stage relevant to that feature and MUST still undergo Scriptable runtime verification.
+
+### 21.5 Level Four: Official TypeScript Documentation
+
+Official documentation:
 
 https://www.typescriptlang.org/docs/
 
+TSConfig reference:
+
 https://www.typescriptlang.org/tsconfig/
 
-**Community Definitions**
+Relevant compiler options:
+
+https://www.typescriptlang.org/tsconfig/target
+
+https://www.typescriptlang.org/tsconfig/lib
+
+TypeScript documentation governs TypeScript language, declaration, compiler, and configuration behavior. It is a development and static-analysis reference, not a specification of Scriptable's runtime.
+
+The target option controls which JavaScript syntax TypeScript downlevels and which syntax it leaves in the emitted output. It does not upgrade the JavaScript engine or polyfill unsupported runtime features.
+
+The lib option controls which built-in and host-environment declarations are available to the type checker. Including a declaration library such as DOM can make names such as window and document type-check even when those globals are not available in Scriptable Main Runtime. Type declarations do not create runtime objects or APIs.
+
+TypeScript checks MUST therefore be configured for the intended Scriptable environment, and any declarations that describe host APIs MUST be reviewed against official Scriptable documentation. Successful type-checking MUST NOT be reported as runtime compatibility.
+
+### 21.6 Community Type Definitions
+
+DefinitelyTyped Scriptable declarations:
 
 https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/scriptable-ios
 
-Used as a development aid after being reviewed against the official documentation.
+The community package may assist editor completion and static checking. It is not an official Scriptable runtime specification. Its declarations MUST be reviewed against the official Scriptable documentation and the target app version.
 
-**Test262**
+The generated declaration project:
+
+https://github.com/schl3ck/ios-scriptable-types
+
+Its README describes a process that downloads Scriptable's Tern definition file, parses it, and generates TypeScript declarations. The generated repository, the DefinitelyTyped source, and the published npm package are distinct artifacts. Their versions and contents MUST NOT be assumed to be identical.
+
+Community definitions and their own tests verify declaration shape and type-checking behavior. They do not prove that an API exists or works in the installed Scriptable runtime.
+
+### 21.7 Test262: ECMAScript Conformance Test Suite
+
+Official repository:
 
 https://github.com/tc39/test262
 
-ECMAScript conformance tests; they do not replace testing of Scriptable APIs.
+Test interpretation requirements:
+
+https://github.com/tc39/test262/blob/main/INTERPRETING.md
+
+Test262 is a conformance test suite for ECMAScript-related standards. It is useful for selecting language-level test cases and investigating engine conformance. It is not a Scriptable API test suite and does not verify Scriptable host objects, application permissions, WebView bridges, or other Scriptable-specific behavior.
+
+Test262 tests have harness and execution-environment requirements. A test subset MUST be selected and adapted only where its requirements can be satisfied by the target engine and harness. The project MUST NOT claim that the full Test262 suite has passed unless it has actually been run with a compatible harness and its scope, exclusions, and results have been recorded.
+
+Test262 is non-normative test material. Where a test and the applicable ECMAScript specification appear to disagree, the specification governs the language requirement and the discrepancy MUST be investigated.
+
+### 21.8 Additional Platform and Governance References
+
+Apple WebKit documentation may explain web-platform behavior, but it does not prove that Scriptable exposes every underlying WebKit or WKWebView property:
+
+https://developer.apple.com/documentation/webkit/wkwebview
+
+Normative keyword interpretation:
+
+https://www.rfc-editor.org/rfc/rfc2119.html
+
+https://www.rfc-editor.org/rfc/rfc8174.html
+
+Risk and security assessment references:
+
+https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf
+
+https://csrc.nist.gov/pubs/sp/800/30/r1/final
+
+These sources support governance, risk assessment, or platform understanding within their respective scopes. They MUST NOT be used to infer Scriptable-specific runtime behavior.
 
 ## 22. Central Governing Rule
 
-An API, feature, or library MUST NOT be approved solely because it appears in an example or TypeScript definition, or because it works in Node.js or a web browser.
+An API, language feature, value category, module interface, or library MUST NOT be approved solely because it appears in an example, a community TypeScript definition, a generated declaration, or a test suite, or because it works in Node.js, a browser, or another JavaScript engine.
 
-Four independent matters MUST be established:
+Four independent compatibility dimensions MUST be established for the approved target scope:
 
-1. Language Compatibility: Compatibility of JavaScript syntax and standard features with the engine.
-2. Host API Compatibility: The existence of the API in Scriptable documentation and the correctness of its use.
-3. Context Compatibility: Its operation in the intended execution context.
-4. Device Verification: Successful testing on the target iPhone and the targeted Scriptable and iOS versions.
+1. **Language Compatibility:** The JavaScript syntax, language semantics, and standard built-ins used by the implementation are supported by the JavaScript engine and the project's adopted ECMAScript baseline.
+2. **Host API Compatibility:** Each Scriptable API used by the implementation is documented for Scriptable, and its name, signature, parameters, return values, permissions, and documented constraints are used correctly.
+3. **Context Compatibility:** The implementation works in each intended execution context. Main Runtime, WebView, Widget, Shortcuts, and Share Sheet MUST be treated as distinct contexts where applicable. Browser globals MUST NOT be assumed in Main Runtime.
+4. **Device Verification:** The required cases have been executed successfully on the approved target iPhone, with the exact Scriptable app version/build, iOS version, device model, execution context, and evidence recorded.
 
-Any point for which sufficient evidence is unavailable MUST be recorded as Not Verified. It MUST NOT be converted into an approved fact through assumption.
+The value categories and boundary representations in Section 20.3 MUST be included in the applicable interface contracts and test coverage. Passing a primitive-value test does not establish function, object, class-instance, host-object, context-transfer, or persistence compatibility. Each supported category and boundary MUST be verified independently where the interface claims to support it.
+
+An approval decision MUST be based on the applicable approved test cases and their recorded evidence. The following distinctions are mandatory:
+
+- **Documented** means an applicable authoritative source describes the feature or API. It does not mean the feature was executed.
+- **Approved** means the verification case or requirement has passed the project's review and approval process. It does not mean the test was executed.
+- **Tested** means execution occurred and the environment, procedure, and evidence were recorded. It does not mean the test passed.
+- **Passed** means the observed result matched the approved expected result for that execution.
+- **Compatible** means all required verification cases passed within the explicitly stated scope.
+- **Not Verified** means the available evidence is insufficient to establish compatibility.
+- **Blocked**, **Indeterminate**, and **Not Run** MUST remain distinct execution outcomes and MUST NOT be represented as Passed.
+
+Any point for which sufficient evidence is unavailable MUST be recorded as Not Verified. It MUST NOT be converted into an approved compatibility fact through assumption, a type declaration, a successful static check, or a test plan.
+
+A compatibility statement MUST specify its scope. Evidence from one iPhone, Scriptable version, iOS version, API, or execution context MUST NOT be generalized to untested environments. A successful Node.js, browser, TypeScript, ESLint, or Test262 result MUST NOT be presented as proof of Scriptable device compatibility.
 
 ## 23. Conditions for Approving the Specifications
 
-This document does not become the final approved reference until the following conditions have been met:
+This document MUST remain a DRAFT until all of the following conditions have been completed and recorded:
 
-1. Review the completeness of the integration of decisions Q1–Q75.
-2. Review the completeness of the integration of the technical rules and standards.
-3. Verify that no unresolved conflicts remain.
-4. Verify that the device scope remains iPhone only.
-5. Verify that the responsibility model remains one person.
-6. Review the testing, compatibility, and security rules.
-7. Explicitly approve the final version.
+1. Review the completeness and traceability of the integration of decisions Q1–Q75.
+2. Review the completeness of the integration of technical rules, engineering standards, architecture constraints, and security requirements.
+3. Verify that no unresolved normative conflicts, contradictory requirements, or unclassified discrepancies remain.
+4. Verify that the approved device scope remains iPhone only. Testing or claims for iPad, macOS, or other platforms MUST NOT be implied unless the scope is explicitly changed and approved.
+5. Verify that the responsibility model remains one person, with ownership and approval responsibilities clearly identified.
+6. Review the testing, compatibility, value-category, context, persistence, security, and privacy rules.
+7. Review the approved verification catalogue for coverage of all applicable interfaces and value categories, including the baseline cases in Section 20.3.
+8. Verify that approval status, implementation status, execution result, and compatibility status are recorded as separate dimensions.
+9. Verify that reference URLs are complete, visible, applicable, and correctly classified by authority and subject matter.
+10. Verify that unresolved limitations, Not Verified claims, exceptions, and residual risks are explicitly recorded and have accountable owners.
+11. Confirm that the final document is internally consistent and that its requirements have traceable verification methods.
+12. Explicitly approve the final version through the project's designated approval process.
+
+Merging a documentation change, passing CI, or publishing a new revision MUST NOT by itself be interpreted as final approval of this specification. Approval requires the explicit decision described above.
 
 **End of the Unified Specifications.**
-
----
 
 ## 24. Complete Reference List
 
@@ -2205,6 +2392,106 @@ https://docs.scriptable.app/speech/
 https://docs.scriptable.app/mail/
 
 https://docs.scriptable.app/xmlparser/
+
+### 24.12 Additional Scriptable API Entry Point
+
+Module loading:
+
+https://docs.scriptable.app/importmodule/
+
+### 24.13 ECMAScript Edition and Language References
+
+Scriptable JavaScript Environment and documented ECMAScript 6 baseline:
+
+https://docs.scriptable.app/
+
+ECMAScript 2015, Sixth Edition:
+
+https://262.ecma-international.org/6.0/
+
+ECMAScript 2026 edition snapshot:
+
+https://tc39.es/ecma262/2026/
+
+Living ECMAScript specification:
+
+https://tc39.es/ecma262/
+
+ECMAScript data types and values:
+
+https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values
+
+TC39 proposal process:
+
+https://tc39.es/process-document/
+
+The edition snapshot MUST be used when a statement depends on a specific edition. The living specification MUST be treated as mutable and MUST NOT be cited as though it were a fixed historical edition.
+
+### 24.14 Test262 Scope and Execution References
+
+Official Test262 repository:
+
+https://github.com/tc39/test262
+
+Test262 test interpretation and harness requirements:
+
+https://github.com/tc39/test262/blob/main/INTERPRETING.md
+
+Test262 rationale and test organization:
+
+https://github.com/tc39/test262/blob/main/docs/rationale.md
+
+ECMA Technical Report 104:
+
+https://ecma-international.org/wp-content/uploads/ECMA_TR-104_2nd_edition_december_2016.pdf
+
+These references define the scope and execution conventions of the ECMAScript conformance suite. They do not establish Scriptable host API compatibility.
+
+### 24.15 TypeScript Runtime-Targeting and Declaration References
+
+TypeScript documentation:
+
+https://www.typescriptlang.org/docs/
+
+TSConfig reference:
+
+https://www.typescriptlang.org/tsconfig/
+
+Compiler target:
+
+https://www.typescriptlang.org/tsconfig/target
+
+Compiler library declarations:
+
+https://www.typescriptlang.org/tsconfig/lib
+
+Compiler options:
+
+https://www.typescriptlang.org/docs/handbook/compiler-options.html
+
+DefinitelyTyped Scriptable iOS definitions:
+
+https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/scriptable-ios
+
+The TypeScript target and lib references are included to explain compiler output and type-checking scope. They are not runtime compatibility evidence.
+
+### 24.16 Governance and Risk References
+
+IETF RFC 2119:
+
+https://www.rfc-editor.org/rfc/rfc2119.html
+
+IETF RFC 8174:
+
+https://www.rfc-editor.org/rfc/rfc8174.html
+
+NIST Cybersecurity Framework 2.0:
+
+https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf
+
+NIST SP 800-30 Revision 1:
+
+https://csrc.nist.gov/pubs/sp/800/30/r1/final
 
 ## 25. Rules for Using the Reference List
 
