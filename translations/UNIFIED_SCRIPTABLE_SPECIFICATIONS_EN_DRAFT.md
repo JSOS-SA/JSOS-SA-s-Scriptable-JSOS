@@ -419,39 +419,235 @@ A documented API MUST NOT automatically be labelled runtime verified. A runtime 
 
 ## 6. Module and Import System
 
-### 6.1 Scriptable Mechanism
+### 6.1. Scriptable Module Architecture
 
-The module system relies on:
+Scriptable provides a native module mechanism based on the following documented interfaces:
 
-- importModule()
-- module.exports
+- `importModule()`
+- `module`
+- `module.exports`
 
-The documented import behavior MUST be followed, and file paths MUST be specified correctly.
+Scriptable treats each JavaScript file as a separate Module. The `importModule(name)` function loads a module and returns the value assigned to its `module.exports` property.
 
-### 6.2 Node.js Compatibility Boundaries
+The documented module-loading behavior MUST be followed.
 
-The existence of importModule and module.exports does not mean that the complete Node.js environment is available.
+#### 6.1.1. Module Import and Resolution
 
-MUST NOT assume the availability of:
+The `importModule(name)` function accepts a module name or file path.
 
-- require()
-- process
-- node_modules
-- Native Node.js APIs
-- All npm libraries
-- The ES Modules system as implemented in Node.js or the browser.
+The `.js` extension is optional when importing a JavaScript file by name.
 
-### 6.3 Module Responsibility
+Scriptable searches for modules in the following documented order:
 
-Every module MUST have a clear purpose, inputs, outputs, and an understandable contract.
+1. Relative to the file importing the module.
+2. The Scriptable folder in iCloud Drive, when iCloud Drive is enabled.
+3. Scriptable's internal App Group folder.
+4. Scriptable's local folder.
 
-MUST avoid:
+A module may also be imported using a file path. When the specified path points to a directory, Scriptable looks for an `index.js` file inside that directory.
 
-- Duplicated logic.
-- Circular dependencies.
-- Unnecessary coupling.
-- Multiple responsibilities within a module.
-- Direct dependencies on system APIs when business logic can be separated from them.
+Engineering requirements:
+
+- Module paths MUST identify the intended module unambiguously.
+- Relative paths MUST be evaluated according to Scriptable's documented resolution behavior.
+- Module directory structures MUST use a consistent and understandable convention.
+- Directory-based modules MUST provide the expected `index.js` entry point.
+- Modules MUST NOT depend on undocumented path-resolution behavior.
+- Import paths MUST be verified in the actual Scriptable execution environment.
+
+#### 6.1.2. Module Exports
+
+A module exposes its public values through `module.exports`.
+
+The exported value may be:
+
+- A Function.
+- An Object.
+- A Class.
+- A primitive value.
+- Another supported JavaScript value.
+
+A module may expose multiple functions or objects through properties of `module.exports`, or assign a single value directly to `module.exports`.
+
+Example:
+
+```javascript
+function calculateSquare(value) {
+  return value * value;
+}
+
+function calculateCube(value) {
+  return value * value * value;
+}
+
+module.exports = {
+  calculateSquare,
+  calculateCube
+};
+```
+
+Importing the module:
+
+```javascript
+const calculations = importModule("calculations");
+
+const square = calculations.calculateSquare(5);
+const cube = calculations.calculateCube(5);
+```
+
+Engineering requirements:
+
+- Every module MUST expose an intentional public interface.
+- Internal implementation details SHOULD remain private unless consumers require them.
+- Exported names MUST be descriptive and consistent.
+- Exported functions MUST have predictable input and output behavior.
+- Consumers MUST use the exported interface rather than relying on internal implementation details.
+- A module's public interface MUST NOT change incompatibly without updating its dependent modules.
+
+### 6.2. Node.js Compatibility Boundaries
+
+The existence of `importModule()` and `module.exports` does NOT establish compatibility with the complete Node.js runtime or its module-loading architecture.
+
+Scriptable uses Apple's JavaScriptCore and provides its own host environment and documented module mechanism. Its module system MUST be treated as Scriptable-specific rather than assumed to be a complete implementation of Node.js CommonJS or ECMAScript Modules.
+
+The following capabilities MUST NOT be assumed to exist unless independently documented and verified in the target Scriptable environment:
+
+- `require()`
+- `process`
+- Automatic `node_modules` package resolution.
+- Node.js built-in modules and native Node.js APIs.
+- Node.js package-manager behavior.
+- Automatic compatibility with arbitrary npm packages.
+- Node.js CommonJS module-loading semantics beyond the behavior explicitly documented by Scriptable.
+- The complete Node.js or browser ECMAScript Modules loading and resolution systems.
+
+#### 6.2.1. Third-Party JavaScript Libraries
+
+The fact that a JavaScript library is published on npm does NOT establish that it is compatible with Scriptable.
+
+A third-party library MAY be used only after its runtime requirements have been evaluated.
+
+Compatibility verification MUST consider:
+
+- Dependencies on Node.js built-in modules.
+- Dependencies on browser-specific APIs.
+- Dependencies on unsupported JavaScript language features.
+- Dynamic module loading and package-resolution requirements.
+- Native bindings or platform-specific functionality.
+- External runtime assumptions.
+- Compatibility with Scriptable's actual execution context.
+
+Libraries that require unavailable Node.js or browser APIs MUST NOT be used without a verified compatibility layer or an appropriate alternative implementation.
+
+Bundling or transpiling a library does not, by itself, establish runtime compatibility.
+
+### 6.3. Module Responsibility and Cohesion
+
+Every module MUST have a clearly defined purpose and a cohesive set of related responsibilities.
+
+A module SHOULD represent a well-defined functional concern rather than an arbitrary collection of unrelated functions.
+
+Its design MUST make the following aspects understandable:
+
+- Module purpose and responsibility.
+- Public functions, objects, and exported values.
+- Required inputs and expected outputs.
+- Data structures and interface contracts.
+- External dependencies.
+- Side effects and state changes.
+- Error-handling behavior.
+- Execution and asynchronous behavior, where applicable.
+
+A module's responsibilities SHOULD be sufficiently cohesive that its implementation can be understood, tested, and maintained without requiring unnecessary knowledge of unrelated modules.
+
+### 6.4. Dependency Management and Coupling
+
+Module dependencies MUST be explicit, understandable, and limited to what is necessary.
+
+Engineering requirements:
+
+- Circular dependencies MUST be avoided.
+- Unnecessary inter-module coupling MUST be eliminated.
+- Modules SHOULD depend on stable public interfaces rather than internal implementation details.
+- Dependencies MUST follow a clear and understandable direction.
+- A module MUST NOT depend on unrelated modules merely to access incidental functionality.
+- Shared functionality SHOULD be extracted into an appropriately scoped reusable module when doing so reduces genuine duplication.
+- Dependency relationships SHOULD remain traceable through the project's import graph.
+
+A module dependency graph SHOULD be reviewed to identify circular references, excessive dependency chains, unnecessary coupling, and architectural inconsistencies.
+
+### 6.5. Separation of Business Logic and System Integration
+
+Business Logic SHOULD be separated from direct interaction with Scriptable APIs when that separation improves maintainability, testability, or architectural clarity.
+
+System integration includes operations involving Scriptable host APIs, such as:
+
+- `FileManager`
+- `Request`
+- `Keychain`
+- `Location`
+- `Calendar`
+- `Notification`
+- `WebView`
+
+Where appropriate, system-facing operations SHOULD be isolated behind dedicated service modules or adapter functions.
+
+Business Logic SHOULD operate on clearly defined inputs and outputs rather than being unnecessarily coupled to file-system operations, network requests, persistent storage, or user-interface APIs.
+
+This separation MUST NOT introduce unnecessary abstraction layers. Direct use of a Scriptable API is acceptable when the module's primary responsibility is specifically to provide that system integration.
+
+### 6.6. Module Contracts and Interface Stability
+
+Every reusable module MUST maintain a clear and consistent contract with its consumers.
+
+The contract SHOULD document:
+
+- Exported function and object names.
+- Function parameters and accepted data structures.
+- Return values and their expected structure.
+- Synchronous or asynchronous execution behavior.
+- Possible errors and failure conditions.
+- Side effects and external resource interactions.
+- Required dependencies and runtime assumptions.
+
+Changes to a public module contract MUST be reviewed for their impact on dependent modules.
+
+Breaking changes MUST be reflected in all affected consumers and relevant tests.
+
+### 6.7. Module Testing and Verification
+
+Module correctness MUST NOT be established solely by successful importing or the absence of syntax errors.
+
+Verification SHOULD cover:
+
+- Successful module resolution.
+- Correct exported values and interfaces.
+- Valid input and output behavior.
+- Error handling and failure conditions.
+- Dependency availability.
+- Side effects and state changes.
+- Integration with dependent modules.
+- Execution within the actual Scriptable Runtime.
+
+Critical modules SHOULD have isolated tests for their business logic and integration tests for their Scriptable-specific dependencies.
+
+All runtime-dependent behavior MUST be verified in the target Scriptable environment rather than inferred from Node.js execution.
+
+### 6.8. Maintainability and Duplication Control
+
+Module boundaries SHOULD support maintainability, reuse, and controlled change.
+
+Engineering requirements:
+
+- Accidental duplication of business logic SHOULD be eliminated.
+- Shared behavior SHOULD have a clearly defined owner.
+- Modules MUST NOT become general-purpose collections of unrelated utilities.
+- Abstractions SHOULD be introduced when they provide a demonstrable benefit.
+- Premature abstraction and unnecessary indirection SHOULD be avoided.
+- Public interfaces SHOULD remain as small and cohesive as practical.
+- Internal implementation details SHOULD NOT be exposed without a functional requirement.
+
+The objective is high cohesion, controlled coupling, explicit contracts, and predictable module behavior.
 
 ## 7. Separation Between Scriptable Main Runtime and WebView Runtime
 
