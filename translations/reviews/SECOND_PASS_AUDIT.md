@@ -90,8 +90,8 @@ No translation query remains open in this review. This does not constitute appro
 - All 25 top-level English sections are present.
 - Both lifecycle sequences are preserved exactly.
 - The Arabic source file was not modified.
-- `git diff --check` must pass after the final edits.
-- Pull-request checks must be rerun after the final commit.
+- `git diff --check` passed after the final edits on 2026-11-14.
+- Pull-request checks passed for commit `8442e04` after the final translation correction.
 
 ## Approval boundary
 
