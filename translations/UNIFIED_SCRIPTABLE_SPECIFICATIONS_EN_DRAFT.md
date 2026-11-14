@@ -82,29 +82,60 @@ These responsibilities can be separated conceptually in procedures and records, 
 
 Every approval, review, test result, and deployment operation MUST be attributable to the sole responsible owner, with the date, outcome, and appropriate evidence recorded.
 
-## 3. Technical Model and Runtime Layers
+3. Technical Model and Runtime Layers
 
-The following layers MUST be distinguished and MUST NOT be treated as a single environment:
+The following technical layers MUST be distinguished. They MUST NOT be treated as a single, interchangeable execution environment.
 
-| Layer | Responsibility |
-|---|---|
-| JavaScript | Programming language |
-| ECMAScript | The standard that defines the language’s rules and behavior |
-| JavaScriptCore | JavaScript execution engine |
-| Scriptable | Host Application and its Scriptable APIs |
-| Scriptable Main Runtime | Primary script execution context |
-| WebView Runtime | Web page execution context |
-| TypeScript | Type checking and development tools |
-| Native iOS APIs | Apple’s native iOS APIs; their existence does not establish their direct availability within Scriptable |
+Layer	Responsibility
+JavaScript	The programming language used to express program logic and instructions.
+ECMAScript	The standardized language specification defining JavaScript’s core syntax, semantics, built-in objects, and language behavior.
+JavaScriptCore	Apple’s JavaScript execution framework and engine, providing JavaScript execution environments that host applications can configure and expose to embedded scripts.
+Scriptable Host Application	The iOS application that hosts script execution and provides Scriptable-specific APIs and native integrations.
+Scriptable Main Runtime	The primary script execution context provided by Scriptable. This is an architectural designation and MUST NOT be assumed to expose every JavaScriptCore, browser, or native iOS API.
+WebView Runtime	The JavaScript execution context associated with web content loaded inside Scriptable’s WebView. Its browser-related APIs and global objects MUST be evaluated independently from the Main Runtime.
+TypeScript	A development language and toolchain providing static type analysis, declarations, editor support, and JavaScript transformation. Its type declarations do not create runtime implementations or APIs.
+Native iOS APIs	Apple’s native operating system frameworks and interfaces. Their availability in iOS does not establish that Scriptable exposes them directly to scripts.
+Runtime Bridge	Any explicitly provided mechanism through which Scriptable or its WebView enables communication between execution contexts or access to host-provided functionality.
 
-### 3.1 Rule for Separating Layers
+3.1. Rule for Separating Technical Layers
 
-1. The existence of a feature in ECMAScript does not establish its existence in every runtime environment.
-2. The existence of an API in JavaScriptCore does not establish that it is directly available to the script.
-3. The existence of a TypeScript definition does not create a Runtime API.
-4. Successful execution of code in Node.js does not establish its compatibility with Scriptable.
-5. Successful execution of code in WebView does not establish its compatibility with Scriptable Main Runtime.
-6. The layer and context MUST be identified before any API or feature is approved.
+The following rules are mandatory:
+
+1. The existence of a feature in ECMAScript does not establish its availability or support level in every JavaScript runtime.
+2. The existence of an API in JavaScriptCore does not establish that the Scriptable Host Application exposes that API to scripts.
+3. The existence of a TypeScript declaration or type definition does not create a runtime object, function, class, or implementation.
+4. Successful compilation or type checking does not establish runtime compatibility.
+5. Successful execution in Node.js does not establish compatibility with Scriptable Main Runtime.
+6. Successful execution in Scriptable WebView does not establish compatibility with Scriptable Main Runtime.
+7. The existence of a native iOS API does not establish direct accessibility from Scriptable scripts.
+8. Similar API names across different environments do not establish identical signatures, behavior, permissions, or lifecycle constraints.
+9. Global objects and built-in host interfaces MUST be evaluated within their specific execution contexts. The existence of an object in one context MUST NOT be assumed in another.
+10. A documented API MUST NOT be considered runtime-verified solely because it appears in documentation or TypeScript declarations.
+11. The exact execution context, host application, API source, and relevant version MUST be identified before approving an API or language feature.
+12. Any communication between the Main Runtime and WebView Runtime MUST be based on documented or experimentally verified bridge behavior. Shared access to variables, objects, or native capabilities MUST NOT be assumed.
+
+3.2. Runtime API Verification Requirement
+
+Before an API, language feature, or runtime capability is approved for Scriptable development, the following MUST be established:
+
+1. API Origin: Identify whether the feature originates from ECMAScript, JavaScriptCore, Scriptable, WebView, TypeScript tooling, or a native iOS framework.
+2. Execution Context: Identify the exact target context: Scriptable Main Runtime or WebView Runtime.
+3. Documentation Evidence: Retrieve and record the authoritative documentation supporting the feature.
+4. Version Compatibility: Identify the relevant Scriptable version, iOS version, and documented language or framework support.
+5. Runtime Verification: Test the feature in the actual target execution context whenever practical.
+6. Evidence Traceability: Record the source URL, tested context, test conditions, and observed result.
+
+3.3. Verification Status
+
+Every runtime capability MUST be assigned an explicit verification status:
+
+* CONFIRMED: Supported by authoritative documentation and successfully tested in the target runtime.
+* DOCUMENTED: Explicitly documented by an authoritative source but not yet verified through a target-runtime test.
+* INFERRED: Derived from indirect evidence and not explicitly established by the authoritative documentation.
+* UNVERIFIED: Availability or behavior has not been established.
+* UNSUPPORTED: Evidence establishes that the capability is unavailable or unsupported in the specified target context and version.
+
+A verification result MUST NOT be generalized from one execution context to another without independent evidence.
 
 ## 4. JavaScript and ECMAScript Standard
 
