@@ -76,7 +76,7 @@ One person assumes all project responsibilities, including:
 - Deployment and maintenance.
 - Managing evidence, compatibility, and risk registers.
 
-These responsibilities MAY be separated conceptually in procedures and records, but different people MUST NOT be assumed to occupy them.
+These responsibilities can be separated conceptually in procedures and records, but different people MUST NOT be assumed to occupy them.
 
 ### 2.3 Responsibility Principle
 
@@ -118,7 +118,7 @@ The following layers MUST be distinguished and MUST NOT be treated as a single e
 
 ### 4.2 Modern Features
 
-Any feature whose compatibility with the baseline or target device has not been established MUST be treated as unverified until it has been tested.
+Any feature whose compatibility with the baseline or target device has not been established is treated as unverified until it has been tested.
 
 This includes, for example, features introduced after ES2015, such as async/await, BigInt, and modern array features.
 
@@ -264,7 +264,7 @@ The following definition statuses MUST be recorded:
 
 - Correct.
 - Missing.
-- Extra.
+- Excess.
 - Conflicting.
 - Unverified.
 
@@ -359,7 +359,7 @@ Every public module MUST specify:
 
 ### 11.1 Data
 
-All data originating from the network, files, the user, or the execution context MUST be treated as data requiring validation.
+All data originating from the network, files, the user, or the execution context are considered data requiring validation.
 
 MUST:
 
@@ -515,7 +515,7 @@ The following statuses MUST be distinguished:
 - Tested.
 - Compatible.
 - Incompatible.
-- Not Verified.
+- Compatibility Not Established.
 
 The phrase “fully compatible” MUST NOT be used without specifying the scope and providing evidence of the required tests.
 
@@ -639,7 +639,7 @@ The main branch MUST be protected, and Pull Requests and required checks MUST be
 
 Merging MUST NOT be allowed when a mandatory check fails.
 
-A failure of the checking tool does not mean that the check has passed; its status MUST be recorded as BLOCKED or INDETERMINATE, depending on the reason.
+A failure or outage of the checking tool does not mean that the check has passed; its status MUST be recorded as BLOCKED or INDETERMINATE, depending on the reason.
 
 ### 18.3 Normative Change Management
 
@@ -763,7 +763,7 @@ Four independent matters MUST be established:
 3. Context Compatibility: Its operation in the intended execution context.
 4. Device Verification: Successful testing on the target iPhone and the targeted Scriptable and iOS versions.
 
-Any point for which sufficient evidence is unavailable MUST be recorded as Not Verified. It MUST NOT be converted into an approved fact through assumption.
+Any point for which sufficient evidence is unavailable MUST be recorded as Compatibility Not Established. It MUST NOT be converted into an approved fact through assumption.
 
 ## 23. Conditions for Approving the Specifications
 
