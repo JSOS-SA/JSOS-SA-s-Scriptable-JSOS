@@ -1281,74 +1281,152 @@ Acceptance MUST be based on the relevant data contract, validation rules, error 
 
 ## 12. Security, Privacy, and Reliability
 
+Security and privacy requirements apply to data regardless of its JavaScript representation. Relevant values include primitive values (`String`, `Number`, `Boolean`, `BigInt`, `Symbol`, `undefined`, and `null`), `Object` values (including arrays and plain objects), `Function` values, `Class` constructors and instances, and objects exposed by Scriptable or other host APIs. A value's type does not determine whether it is sensitive; its content, origin, purpose, and permitted use do.
+
 ### 12.1 Secrets
 
-MUST store passwords, tokens, and sensitive keys in Keychain when appropriate.
+MUST:
 
-MUST NOT embed secrets in JavaScript files or print them in logs.
+- Store passwords, access tokens, refresh tokens, API keys, private keys, and other credential material in Scriptable `Keychain` when appropriate.
+- Keep secrets out of JavaScript source files, committed configuration, URLs, query parameters, screenshots, diagnostic output, and logs.
+- Limit secret access to the smallest set of modules and execution paths that require it.
+- Remove or rotate credentials when they are no longer required or are suspected to be compromised.
+- Redact credentials and sensitive personal data from errors, telemetry, and support reports.
+
+MUST NOT:
+
+- Embed live secrets in source code, examples, test fixtures, or repository history.
+- Print, serialize for diagnostics, or expose secrets to WebView content or third-party services unless the data flow is explicitly required and authorized.
+
+Scriptable's `Keychain.set(key, value)` accepts a string value. Structured data MUST be converted only when necessary and only from explicitly selected, serializable data fields. JSON serialization does not preserve `Function` behavior, `Class` behavior or prototypes, `Symbol`, `undefined` object properties, or every JavaScript value type. Do not treat `JSON.stringify()` as a general-purpose serializer for arbitrary JavaScript values. Credential values should normally be stored as their original strings.
 
 ### 12.2 Networking
 
 MUST:
 
-- Use HTTPS.
-- Validate responses.
-- Set appropriate timeouts.
-- Handle connection interruptions.
-- Preserve HTTPS certificate validation.
+- Use HTTPS for remote service communication.
+- Validate the final response before consuming it, including the HTTP status code, expected content type where relevant, and the application-level data contract or schema.
+- Set an explicit, context-appropriate `Request.timeoutInterval` rather than relying unintentionally on its documented 60-second default.
+- Handle rejected Promises, transport failures, connection interruptions, malformed payloads, and unexpected status codes.
+- Preserve normal TLS certificate validation.
+- Validate redirect destinations when redirect handling could change the trust boundary, and MUST NOT allow a secure request to be silently downgraded to plain HTTP.
+- Apply bounded retry policies only where retrying is safe. Non-idempotent operations MUST use an idempotency mechanism or another explicit duplicate-prevention strategy before automatic retries are allowed.
 
-MUST NOT disable certificate validation without a specific, documented justification.
+MUST NOT:
+
+- Set `Request.allowInsecureRequest` to `true` for production traffic.
+- Disable or bypass certificate validation without a specific, documented, reviewed, and narrowly scoped exception.
+
+A successful `loadJSON()` call establishes that a response was parsed as JSON; it does not establish that the HTTP status, content type, schema, business meaning, or trustworthiness of the returned data is valid. Scriptable documents `Request.timeoutInterval` as an idle timeout, not a guarantee of a total end-to-end execution deadline. If the application requires a total deadline, it MUST enforce that requirement at the application level where the available runtime APIs permit it.
 
 ### 12.3 Files
 
-MUST validate paths and destinations before sensitive operations.
+MUST:
 
-MUST account for iCloud behavior and the possibility that a file may need to be downloaded before it can be read.
+- Validate and constrain source paths and destination paths before read, write, copy, move, overwrite, or deletion operations.
+- Treat paths derived from user input, URL parameters, network responses, or imported data as untrusted input.
+- Check file existence and expected file type where relevant before sensitive operations.
+- Account for both local and iCloud-backed storage. A file in iCloud may exist without being downloaded to the device.
+- Await `FileManager.downloadFileFromiCloud(filePath)` before reading an iCloud file that may not be available locally.
+- Retain a recoverable backup when the operation's impact or irreversibility warrants one, especially before deletion, replacement, or movement.
+- Verify the resulting file and its contents after sensitive write or replacement operations.
 
-MUST retain backups when needed, particularly before deletion, moving, or replacement operations.
+MUST NOT:
 
-### 12.4 Privacy
+- Assume that an iCloud file is locally available merely because its path exists.
+- Assume that move or deletion operations are reversible. Scriptable documents that `move()` replaces an existing destination file and that `remove()` cannot be undone through the API.
+- Overwrite or delete a destination without first confirming that it is the intended target.
 
-The minimum permissions necessary to access location, photos, contacts, and calendars MUST be requested.
-
-Permission denial MUST be handled explicitly, without assuming that the operation succeeded.
-
-### 12.5 External Code
-
-MUST NOT execute untrusted external code using eval or any unsafe dynamic execution method.
-
-## 13. Performance and Resource Management
+### 12.4 Privacy and Permission Handling
 
 MUST:
 
-- Minimize repeated read and write operations.
-- Avoid loading large files and images unnecessarily.
-- Set network timeouts.
-- Account for memory constraints in Widgets.
-- Avoid heavy operations in short-lived contexts.
-- Use caching when appropriate.
-- MUST NOT assume that a Widget will refresh immediately after a refresh request.
+- Apply data minimization: access and process only the location, photos, contacts, calendar data, or other personal information required for the requested feature.
+- Request access only when the feature needs the data and the user's intent makes the request understandable.
+- Explain the purpose of access in the user-facing flow when the reason is not already clear.
+- Use the narrowest access path exposed by Scriptable and the relevant iOS API for the required operation.
+- Handle denied, restricted, unavailable, or subsequently revoked access explicitly.
+- Provide a safe fallback, cancellation path, or clear explanation when access is unavailable.
+- Avoid repeated attempts that assume the user will grant access after denial.
 
-Performance MUST be evaluated according to the actual context, not solely according to script execution within the application.
+MUST NOT:
+
+- Treat a permission prompt as proof that access was granted.
+- Treat a returned empty collection, missing value, or failed Promise as proof that the user has no data without considering authorization and API failure states.
+- Collect, retain, transmit, or cache personal data merely because an API makes it available.
+
+The Scriptable API surface may abstract native iOS authorization details. Implementations MUST rely only on authorization controls and behavior actually exposed by Scriptable, and MUST NOT assume that native Apple authorization-status APIs are directly callable from Scriptable JavaScript.
+
+### 12.5 External and Dynamically Executed Code
+
+MUST:
+
+- Treat code and data obtained from network responses, files, shared content, URL parameters, and user input as untrusted until validated.
+- Keep executable code separate from data.
+- Use fixed, reviewed code paths and validated data structures instead of generating executable source from untrusted input.
+- Apply origin and navigation restrictions to WebView content when the WebView handles sensitive data or privileged workflows.
+
+MUST NOT:
+
+- Execute untrusted external code through `eval()`, the `Function` constructor, `WebView.evaluateJavaScript()`, or an equivalent dynamic execution mechanism.
+- Concatenate untrusted values into JavaScript source code, HTML, or other executable contexts.
+- Assume that code loaded by a WebView is trusted merely because it is displayed inside Scriptable.
+
+`WebView.evaluateJavaScript()` is a documented Scriptable capability, not a blanket security violation. It MAY be used with trusted, reviewed code. Values crossing into the WebView MUST be passed as data using a safe serialization and validation strategy, not interpolated as executable code. WebView navigation and resource loading MUST be constrained when required by the sensitivity of the content.
+
+## 13. Performance and Resource Management
+
+Performance MUST be evaluated against the actual execution context, workload, device, and user-visible outcome. Successful execution in the Scriptable app does not establish that the same workload is viable in a Widget, Siri/Shortcuts action, Share Sheet extension, or WebView.
+
+MUST:
+
+- Minimize redundant file reads, writes, network requests, image decoding, and repeated computation.
+- Avoid loading or retaining large files, images, and response bodies when a smaller representation or narrower operation is sufficient.
+- Respect memory constraints in Widgets and extension-based execution contexts.
+- Keep work performed in short-lived contexts bounded and relevant to the user's immediate action.
+- Use caching when it reduces repeated work without violating freshness, privacy, or correctness requirements.
+- Define cache lifetime, invalidation behavior, and behavior when cached data is missing, stale, or corrupt.
+- Bound concurrency and resource consumption when processing multiple files, images, or network requests.
+- Measure performance using representative inputs on the intended iPhone and execution context.
+
+MUST NOT:
+
+- Assume that a script has unlimited memory, persistent background execution, or an unrestricted execution duration.
+- Assume that requesting a Widget refresh causes an immediate refresh. `refreshAfterDate` specifies the earliest permitted refresh time; the operating system determines the actual refresh schedule.
+- Cache credentials or sensitive personal data without a documented need, retention policy, and protection appropriate to the data.
+
+Network timeout requirements are defined in Section 12.2 and apply to performance as well as reliability.
 
 ## 14. Target Execution Contexts
 
-Execution constraints vary depending on the context.
+Execution constraints and available inputs, outputs, permissions, memory, and lifecycle behavior vary by context. A project MAY target the following contexts when required:
 
-The contexts that the project MAY include, as needed, are:
+- Direct execution within the Scriptable app.
+- Home Screen or Lock Screen Widget execution.
+- Shortcuts and Siri execution.
+- Share Sheet / Action Extension execution.
+- Scriptable URL Scheme execution.
+- JavaScript execution inside a Scriptable WebView.
 
-- Direct execution within Scriptable.
-- Widget.
-- Shortcuts and Siri.
-- Share Sheet.
-- URL Scheme.
-- WebView.
+These are execution contexts within the project's existing iPhone device scope. They MUST NOT be interpreted as authorization to expand device testing to iPad, macOS, or other platforms.
 
-These contexts do not mean that the device scope is expanded; all target testing remains limited to iPhone.
+MUST:
 
-MUST test each required context independently.
+- Identify the required execution contexts for each script or feature before implementation is considered complete.
+- Test each required context independently on the target iPhone.
+- Verify context-specific inputs and outputs, including `args`, `config`, shortcut parameters, Share Sheet payloads, URL query parameters, and Widget parameters where applicable.
+- Verify context-specific lifecycle behavior, UI presentation, permission availability, memory constraints, and completion behavior.
+- Record the tested iOS version, Scriptable version, execution context, relevant Widget family or extension mode, test conditions, and observed result.
+- Test failure paths as well as successful execution, including denied permissions, unavailable network access, missing or undownloaded iCloud files, malformed external data, and oversized inputs where relevant.
+- Treat WebView page JavaScript as a separate JavaScript execution environment from the Scriptable Main Runtime.
 
-MUST NOT consider successful script execution within the application as evidence of successful execution in Widget, Shortcuts, Share Sheet, or WebView.
+MUST NOT:
+
+- Treat successful execution in the Scriptable app as evidence of successful execution in a Widget, Shortcuts, Siri, Share Sheet, URL Scheme, or WebView context.
+- Assume that an API, permission, input, output, UI capability, or resource budget available in one context is available in another.
+- Mark a context as supported unless it has been tested or its unverified status is explicitly recorded.
+
+The project remains iPhone-only. Context coverage expands the execution modes tested on iPhone, not the supported device platforms.
 
 ## 15. Testing and Compatibility Verification
 
