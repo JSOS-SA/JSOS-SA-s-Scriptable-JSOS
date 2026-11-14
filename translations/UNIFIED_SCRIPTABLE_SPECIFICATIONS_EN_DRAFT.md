@@ -450,8 +450,9 @@ Engineering requirements:
 
 - Module paths MUST identify the intended module unambiguously.
 - Relative paths MUST be evaluated according to Scriptable's documented resolution behavior.
-- Module directory structures MUST use a consistent and understandable convention.
-- Directory-based modules MUST provide the expected `index.js` entry point.
+- Under this project's flat `src/` convention, every Scriptable application module MUST be a JavaScript file located directly inside `src/` and MUST be imported by its file name or file path.
+- Application modules MUST NOT use nested directories or directory-based `index.js` imports within `src/`.
+- Scriptable's documented directory-import behavior is a runtime capability, not a project layout requirement. It MUST NOT be interpreted as a reason to create subdirectories within `src/`.
 - Modules MUST NOT depend on undocumented path-resolution behavior.
 - Import paths MUST be verified in the actual Scriptable execution environment.
 
@@ -699,6 +700,8 @@ The Main Runtime and WebView Runtime MUST NOT be treated as interchangeable:
 Every source file, module, function, and executable code segment MUST have an identifiable execution context.
 
 The project MUST distinguish between Scriptable Main Runtime code, WebView page JavaScript, shared JavaScript code intended to operate in both contexts, and build-time or development-only code that is not executed by Scriptable.
+
+All JavaScript application files that Scriptable executes or imports, including standalone WebView page scripts maintained as JavaScript files, MUST be placed directly inside the flat `src/` directory defined in Section 10.3. Development-only or build-only code that is not executed or imported by Scriptable MUST remain outside `src/`.
 
 Code placement MUST follow the APIs and capabilities available in the intended runtime. Shared code MUST NOT contain implicit dependencies on browser globals or Scriptable-specific host APIs unless those dependencies are explicitly supplied through a documented interface.
 
@@ -1022,42 +1025,43 @@ The following table defines a reference division of responsibilities. It is not 
 | UI | Menus, alerts, tables, lists, widgets, and presentation behavior. |
 | Runtime Adapters | Controlled integration with Scriptable APIs and environment-specific capabilities. |
 | WebView | Page content, browser-side scripts, styles, and explicit communication contracts with Scriptable. |
-| Tests | Unit, contract, integration, runtime, and context-specific verification. |
 
 A small project MAY combine responsibilities when doing so remains clear and maintainable. A larger project SHOULD separate responsibilities when shared ownership, change frequency, testability, or dependency direction makes separation valuable.
 
-The layer names are architectural terms. They do not establish that Scriptable provides a corresponding built-in directory, service container, package system, or runtime abstraction.
+Testing and verification are engineering activities, not Scriptable runtime architecture layers. Test files, fixtures, and test tooling MUST remain outside `src/`, as required by Section 10.3.
 
-### 10.3 Project and Directory Organization
+The layer names are architectural terms. They do not establish that Scriptable provides a corresponding built-in directory, service container, package system, or runtime abstraction, and they MUST NOT be interpreted as a requirement to create matching source directories.
 
-The directory structure MUST make the location and responsibility of important project components predictable.
+### 10.3 Flat Scriptable Source Directory
 
-A project SHOULD group files by cohesive responsibility or feature and SHOULD apply one consistent organization convention. The selected convention MUST be documented when the project has enough complexity that file placement is not self-evident.
+The Scriptable application source MUST use one directory named `src/`. This directory is reserved for JavaScript application files that are actually executed or imported by Scriptable.
 
-A possible structure is:
+The following source-layout rules are mandatory:
+
+- Every JavaScript application file directly executed by Scriptable or imported through `importModule()` MUST be located directly inside `src/`.
+- `src/` MUST remain flat and MUST NOT contain subdirectories.
+- `src/` MUST contain only JavaScript application files used by Scriptable at runtime.
+- Test files, test fixtures, documentation, TypeScript source or declarations, development tools, build tools, package-manager files, and configuration used only for development or build processes MUST NOT be placed inside `src/`.
+- Repository, CI, documentation, testing, and development artifacts that are not executed or imported by Scriptable MUST remain outside `src/`.
+- Module responsibilities MUST be expressed through clear file names, module interfaces, exports, and dependency direction, not through nested folders.
+- Application JavaScript file names MUST be consistent, descriptive, and aligned with the project's naming conventions.
+
+The required Scriptable source layout is:
 
 ```text
 project/
-├── main.js
-├── core/
-├── domain/
-├── data/
-│   ├── schemas/
-│   ├── validators/
-│   └── repositories/
-├── services/
-│   ├── network/
-│   ├── storage/
-│   └── authentication/
-├── features/
-├── ui/
-├── webview/
-└── tests/
+└── src/
+    ├── script-file.js
+    ├── module-a.js
+    ├── module-b.js
+    └── ...
 ```
 
-This is an illustrative organization only. It MUST NOT be interpreted as a required Scriptable folder structure or as a guarantee that every directory is independently importable. Module import and directory resolution MUST follow Section 6 and the official Scriptable documentation.
+The file names in this example are illustrative only and do not impose a fixed entry-point name. The example describes the Scriptable application source directory only; it does not prescribe the location or presence of other repository-level files or directories.
 
-File and directory names MUST be consistent, descriptive, and aligned with the project's established naming conventions. Entry points, generated files, vendored dependencies, tests, and runtime-specific files SHOULD be identifiable without relying on undocumented naming assumptions.
+Logical responsibilities such as Core, Domain, Services, Data, Features, UI, Runtime Adapters, and WebView MAY be represented by separate JavaScript modules, but they MUST NOT be converted into subdirectories under `src/`. Testing remains a separate verification activity, and all test artifacts MUST be kept outside `src/`.
+
+Scriptable's ability to resolve a directory import through an `index.js` file is documented in Section 6.1.1. That runtime capability does not change this project's flat source convention and MUST NOT be used to justify nested directories within `src/`.
 
 ### 10.4 Module Contracts and Responsibilities
 
@@ -1113,7 +1117,7 @@ Persistent data SHOULD have a documented structure and compatibility strategy. W
 
 ### 10.7 Architecture Change and Verification
 
-A change to module boundaries, directory organization, dependency direction, public exports, or state ownership MUST be reviewed for its impact on existing consumers and execution contexts.
+A change to module boundaries, flat `src/` file organization, dependency direction, public exports, or state ownership MUST be reviewed for its impact on existing consumers and execution contexts.
 
 Where practical, automated or repeatable checks SHOULD identify:
 
@@ -1124,6 +1128,7 @@ Where practical, automated or repeatable checks SHOULD identify:
 - Runtime-specific imports used from an incompatible context.
 - Missing or inconsistent module contracts.
 - Unexpected changes to data ownership or initialization order.
+- Scriptable application JavaScript files that are not direct children of `src/`, nested directories inside `src/`, or non-runtime artifacts placed inside `src/`.
 
 Static analysis and dependency-graph tools provide evidence only for the properties they inspect. They MUST NOT replace testing in the intended Scriptable runtime and execution context, as required by Section 15.
 
@@ -1276,74 +1281,152 @@ Acceptance MUST be based on the relevant data contract, validation rules, error 
 
 ## 12. Security, Privacy, and Reliability
 
+Security and privacy requirements apply to data regardless of its JavaScript representation. Relevant values include primitive values (`String`, `Number`, `Boolean`, `Symbol`, `undefined`, and `null`, with `BigInt` included only when verified on the target Scriptable runtime), `Object` values (including arrays and plain objects), `Function` values, `Class` constructors and instances, and objects exposed by Scriptable or other host APIs. A value's type does not determine whether it is sensitive; its content, origin, purpose, and permitted use do.
+
 ### 12.1 Secrets
 
-MUST store passwords, tokens, and sensitive keys in Keychain when appropriate.
+MUST:
 
-MUST NOT embed secrets in JavaScript files or print them in logs.
+- Store passwords, access tokens, refresh tokens, API keys, private keys, and other credential material in Scriptable `Keychain` when appropriate.
+- Keep secrets out of JavaScript source files, committed configuration, URLs, query parameters, screenshots, diagnostic output, and logs.
+- Limit secret access to the smallest set of modules and execution paths that require it.
+- Remove or rotate credentials when they are no longer required or are suspected to be compromised.
+- Redact credentials and sensitive personal data from errors, telemetry, and support reports.
+
+MUST NOT:
+
+- Embed live secrets in source code, examples, test fixtures, or repository history.
+- Print, serialize for diagnostics, or expose secrets to WebView content or third-party services unless the data flow is explicitly required and authorized.
+
+Scriptable's `Keychain.set(key, value)` accepts a string value. Structured data MUST be converted only when necessary and only from explicitly selected, serializable data fields. JSON serialization does not preserve `Function` behavior, `Class` behavior or prototypes, `Symbol`, `undefined` object properties, or every JavaScript value type. Do not treat `JSON.stringify()` as a general-purpose serializer for arbitrary JavaScript values. Credential values should normally be stored as their original strings.
 
 ### 12.2 Networking
 
 MUST:
 
-- Use HTTPS.
-- Validate responses.
-- Set appropriate timeouts.
-- Handle connection interruptions.
-- Preserve HTTPS certificate validation.
+- Use HTTPS for remote service communication.
+- Validate the final response before consuming it, including the HTTP status code, expected content type where relevant, and the application-level data contract or schema.
+- Set an explicit, context-appropriate `Request.timeoutInterval` rather than relying unintentionally on its documented 60-second default.
+- Handle rejected Promises, transport failures, connection interruptions, malformed payloads, and unexpected status codes.
+- Preserve normal TLS certificate validation.
+- Validate redirect destinations when redirect handling could change the trust boundary, and MUST NOT allow a secure request to be silently downgraded to plain HTTP.
+- Apply bounded retry policies only where retrying is safe. Non-idempotent operations MUST use an idempotency mechanism or another explicit duplicate-prevention strategy before automatic retries are allowed.
 
-MUST NOT disable certificate validation without a specific, documented justification.
+MUST NOT:
+
+- Set `Request.allowInsecureRequest` to `true` for production traffic.
+- Disable or bypass certificate validation without a specific, documented, reviewed, and narrowly scoped exception.
+
+A successful `loadJSON()` call establishes that a response was parsed as JSON; it does not establish that the HTTP status, content type, schema, business meaning, or trustworthiness of the returned data is valid. Scriptable documents `Request.timeoutInterval` as an idle timeout, not a guarantee of a total end-to-end execution deadline. If the application requires a total deadline, it MUST enforce that requirement at the application level where the available runtime APIs permit it.
 
 ### 12.3 Files
 
-MUST validate paths and destinations before sensitive operations.
+MUST:
 
-MUST account for iCloud behavior and the possibility that a file may need to be downloaded before it can be read.
+- Validate and constrain source paths and destination paths before read, write, copy, move, overwrite, or deletion operations.
+- Treat paths derived from user input, URL parameters, network responses, or imported data as untrusted input.
+- Check file existence and expected file type where relevant before sensitive operations.
+- Account for both local and iCloud-backed storage. A file in iCloud may exist without being downloaded to the device.
+- Await `FileManager.downloadFileFromiCloud(filePath)` before reading an iCloud file that may not be available locally.
+- Retain a recoverable backup when the operation's impact or irreversibility warrants one, especially before deletion, replacement, or movement.
+- Verify the resulting file and its contents after sensitive write or replacement operations.
 
-MUST retain backups when needed, particularly before deletion, moving, or replacement operations.
+MUST NOT:
 
-### 12.4 Privacy
+- Assume that an iCloud file is locally available merely because its path exists.
+- Assume that move or deletion operations are reversible. Scriptable documents that `move()` replaces an existing destination file and that `remove()` cannot be undone through the API.
+- Overwrite or delete a destination without first confirming that it is the intended target.
 
-The minimum permissions necessary to access location, photos, contacts, and calendars MUST be requested.
-
-Permission denial MUST be handled explicitly, without assuming that the operation succeeded.
-
-### 12.5 External Code
-
-MUST NOT execute untrusted external code using eval or any unsafe dynamic execution method.
-
-## 13. Performance and Resource Management
+### 12.4 Privacy and Permission Handling
 
 MUST:
 
-- Minimize repeated read and write operations.
-- Avoid loading large files and images unnecessarily.
-- Set network timeouts.
-- Account for memory constraints in Widgets.
-- Avoid heavy operations in short-lived contexts.
-- Use caching when appropriate.
-- MUST NOT assume that a Widget will refresh immediately after a refresh request.
+- Apply data minimization: access and process only the location, photos, contacts, calendar data, or other personal information required for the requested feature.
+- Request access only when the feature needs the data and the user's intent makes the request understandable.
+- Explain the purpose of access in the user-facing flow when the reason is not already clear.
+- Use the narrowest access path exposed by Scriptable and the relevant iOS API for the required operation.
+- Handle denied, restricted, unavailable, or subsequently revoked access explicitly.
+- Provide a safe fallback, cancellation path, or clear explanation when access is unavailable.
+- Avoid repeated attempts that assume the user will grant access after denial.
 
-Performance MUST be evaluated according to the actual context, not solely according to script execution within the application.
+MUST NOT:
+
+- Treat a permission prompt as proof that access was granted.
+- Treat a returned empty collection, missing value, or failed Promise as proof that the user has no data without considering authorization and API failure states.
+- Collect, retain, transmit, or cache personal data merely because an API makes it available.
+
+The Scriptable API surface may abstract native iOS authorization details. Implementations MUST rely only on authorization controls and behavior actually exposed by Scriptable, and MUST NOT assume that native Apple authorization-status APIs are directly callable from Scriptable JavaScript.
+
+### 12.5 External and Dynamically Executed Code
+
+MUST:
+
+- Treat code and data obtained from network responses, files, shared content, URL parameters, and user input as untrusted until validated.
+- Keep executable code separate from data.
+- Use fixed, reviewed code paths and validated data structures instead of generating executable source from untrusted input.
+- Apply origin and navigation restrictions to WebView content when the WebView handles sensitive data or privileged workflows.
+
+MUST NOT:
+
+- Execute untrusted external code through `eval()`, the `Function` constructor, `WebView.evaluateJavaScript()`, or an equivalent dynamic execution mechanism.
+- Concatenate untrusted values into JavaScript source code, HTML, or other executable contexts.
+- Assume that code loaded by a WebView is trusted merely because it is displayed inside Scriptable.
+
+`WebView.evaluateJavaScript()` is a documented Scriptable capability, not a blanket security violation. It MAY be used with trusted, reviewed code. Values crossing into the WebView MUST be passed as data using a safe serialization and validation strategy, not interpolated as executable code. WebView navigation and resource loading MUST be constrained when required by the sensitivity of the content.
+
+## 13. Performance and Resource Management
+
+Performance MUST be evaluated against the actual execution context, workload, device, and user-visible outcome. Successful execution in the Scriptable app does not establish that the same workload is viable in a Widget, Siri/Shortcuts action, Share Sheet extension, or WebView.
+
+MUST:
+
+- Minimize redundant file reads, writes, network requests, image decoding, and repeated computation.
+- Avoid loading or retaining large files, images, and response bodies when a smaller representation or narrower operation is sufficient.
+- Respect memory constraints in Widgets and extension-based execution contexts.
+- Keep work performed in short-lived contexts bounded and relevant to the user's immediate action.
+- Use caching when it reduces repeated work without violating freshness, privacy, or correctness requirements.
+- Define cache lifetime, invalidation behavior, and behavior when cached data is missing, stale, or corrupt.
+- Bound concurrency and resource consumption when processing multiple files, images, or network requests.
+- Measure performance using representative inputs on the intended iPhone and execution context.
+
+MUST NOT:
+
+- Assume that a script has unlimited memory, persistent background execution, or an unrestricted execution duration.
+- Assume that requesting a Widget refresh causes an immediate refresh. `refreshAfterDate` specifies the earliest permitted refresh time; the operating system determines the actual refresh schedule.
+- Cache credentials or sensitive personal data without a documented need, retention policy, and protection appropriate to the data.
+
+Network timeout requirements are defined in Section 12.2 and apply to performance as well as reliability.
 
 ## 14. Target Execution Contexts
 
-Execution constraints vary depending on the context.
+Execution constraints and available inputs, outputs, permissions, memory, and lifecycle behavior vary by context. A project MAY target the following contexts when required:
 
-The contexts that the project MAY include, as needed, are:
+- Direct execution within the Scriptable app.
+- Home Screen or Lock Screen Widget execution.
+- Shortcuts and Siri execution.
+- Share Sheet / Action Extension execution.
+- Scriptable URL Scheme execution.
+- JavaScript execution inside a Scriptable WebView.
 
-- Direct execution within Scriptable.
-- Widget.
-- Shortcuts and Siri.
-- Share Sheet.
-- URL Scheme.
-- WebView.
+These are execution contexts within the project's existing iPhone device scope. They MUST NOT be interpreted as authorization to expand device testing to iPad, macOS, or other platforms.
 
-These contexts do not mean that the device scope is expanded; all target testing remains limited to iPhone.
+MUST:
 
-MUST test each required context independently.
+- Identify the required execution contexts for each script or feature before implementation is considered complete.
+- Test each required context independently on the target iPhone.
+- Verify context-specific inputs and outputs, including `args`, `config`, shortcut parameters, Share Sheet payloads, URL query parameters, and Widget parameters where applicable.
+- Verify context-specific lifecycle behavior, UI presentation, permission availability, memory constraints, and completion behavior.
+- Record the tested iOS version, Scriptable version, execution context, relevant Widget family or extension mode, test conditions, and observed result.
+- Test failure paths as well as successful execution, including denied permissions, unavailable network access, missing or undownloaded iCloud files, malformed external data, and oversized inputs where relevant.
+- Treat WebView page JavaScript as a separate JavaScript execution environment from the Scriptable Main Runtime.
 
-MUST NOT consider successful script execution within the application as evidence of successful execution in Widget, Shortcuts, Share Sheet, or WebView.
+MUST NOT:
+
+- Treat successful execution in the Scriptable app as evidence of successful execution in a Widget, Shortcuts, Siri, Share Sheet, URL Scheme, or WebView context.
+- Assume that an API, permission, input, output, UI capability, or resource budget available in one context is available in another.
+- Mark a context as supported unless it has been tested or its unverified status is explicitly recorded.
+
+The project remains iPhone-only. Context coverage expands the execution modes tested on iPhone, not the supported device platforms.
 
 ## 15. Testing and Compatibility Verification
 
