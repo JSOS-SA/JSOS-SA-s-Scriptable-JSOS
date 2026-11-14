@@ -43,6 +43,7 @@ These sources verify terminology and technical distinctions. They do not prove r
 6. Rephrased the descriptive data-validation sentence in section 11.1 as `are treated as requiring validation`. No `MUST` was added because the Arabic source uses a descriptive construction rather than an explicit obligation.
 7. Retained `GitHub Actions are used to run checks appropriate to the project` in section 18.1. The Arabic source says `تستخدم` and does not explicitly say `يجب` or `MUST`; the following sentence separately contains the explicit requirement that checks include the listed categories.
 8. Reconciled `Apple Native APIs` and `Native iOS APIs`: the addendum's canonical term `Native iOS APIs` remains in the translation. The supplementary glossary's duplicate concept entry was removed, and `Apple Native APIs` is retained as a source wording alias under the canonical `Native iOS APIs` entry.
+9. Kept the descriptive adjective in section 4.2 as lowercase `unverified`, reserving the controlled status label `Not Verified` for status entries and findings.
 
 ## Terminology decisions
 

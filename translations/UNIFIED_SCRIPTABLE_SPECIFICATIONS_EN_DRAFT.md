@@ -118,7 +118,7 @@ The following layers MUST be distinguished and MUST NOT be treated as a single e
 
 ### 4.2 Modern Features
 
-Any feature whose compatibility with the baseline or target device has not been established is treated as Not Verified until it has been tested.
+Any feature whose compatibility with the baseline or target device has not been established is treated as unverified until it has been tested.
 
 This includes, for example, features introduced after ES2015, such as async/await, BigInt, and modern array features.
 
