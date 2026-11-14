@@ -1446,9 +1446,9 @@ Separate verification layers MUST be adopted:
 
 ### 15.2 Tool Limitations
 
-- ESLint does not establish the existence of a Scriptable API.
+- Standard ESLint linting does not prove that a Scriptable host API exists or behaves correctly. A custom rule or verified API allowlist MAY detect selected unsupported names, but remains a static check.
 - TypeScript does not create Runtime APIs.
-- Test262 does not test Scriptable APIs.
+- Test262 tests observable behavior defined by ECMAScript-related standards, including ECMA-262, ECMA-402, and ECMA-404. It does not verify Scriptable-specific host APIs, iOS permissions, or Scriptable execution contexts. Selected tests MAY be used for language-feature investigation only when their required harness and runtime semantics are supported or faithfully adapted. A partial or adapted run MUST NOT be reported as full Test262 conformance.
 - Successful execution in Node.js does not establish Scriptable compatibility.
 - A successful build does not establish successful execution on iPhone.
 - Successful static analysis does not replace actual application testing.
@@ -1459,37 +1459,53 @@ The following tools MAY be used:
 
 - TypeScript Compiler.
 - ESLint.
-- Prettier.
+- Prettier, for formatting only. Formatting success is not evidence of semantic correctness, API availability, runtime compatibility, or test success.
 - Test262.
-- Fallow.
+- Fallow, for static project-level analysis such as module-graph, unused-code, dependency, duplication, complexity, and architecture findings according to enabled features. Its default analysis does not execute Scriptable code or establish host API behavior.
 - Actual Scriptable tests on the device.
 
-The tool MUST be selected according to the type of verification required, and it MUST NOT be given authority to establish anything it does not test.
+The tool MUST be selected according to the verification claim and MUST NOT be given authority to establish anything it does not test. These are verification dimensions, not a mandatory linear sequence. The test plan MUST identify applicable layers and justify any layer marked not applicable.
+
+#### 15.3.1 JavaScript Value and Object Coverage
+
+Where a module accepts, returns, transforms, stores, serializes, or transfers JavaScript values, its test plan MUST cover the value categories the interface claims to support. Consider and mark each category supported, unsupported, or not applicable:
+
+- Primitive values: string, number, boolean, undefined, null, bigint, and symbol. BigInt MUST remain unverified until demonstrated in the target Scriptable runtime; the documented ECMAScript 6 baseline does not establish support for later language features.
+- Function values: named, anonymous, and arrow functions where relevant. Distinguish callable behavior from attempts to serialize or persist a function as data.
+- Objects: plain objects, arrays, nested objects, and relevant built-ins such as Date, Map, Set, Error, and Promise, only where the interface claims support.
+- Class declarations and instances: a class declaration defines a constructor function and an instance is an object. Class MUST NOT be described as a separate ECMAScript primitive type.
+- Scriptable host objects and explicit persistence/transport representations, including JSON-compatible values, Keychain strings, and Data, where relevant.
+
+Tests MUST NOT assume JSON serialization preserves functions, Symbols, undefined object properties, class prototypes, or host-object behavior. Keychain stores strings; any encoding scheme MUST define and test its supported value domain and failure behavior. A passing test for one value category MUST NOT be generalized to untested categories.
 
 ### 15.4 Compatibility Matrix
 
 Every test MUST record:
 
-- API or feature name.
-- Scriptable version.
-- iOS version.
-- iPhone model.
-- Execution context.
-- Test result.
-- Test date.
-- Documentation URL.
-- Actual evidence.
-- Notes and restrictions.
+- Stable Test ID and related requirement or rule ID.
+- API, language feature, module interface, value category, and test layer.
+- Scriptable app version/build, iOS version, and iPhone model.
+- Execution context, explicitly distinguishing Main Runtime from WebView.
+- Preconditions, relevant permissions, and material environment conditions.
+- Test input or sanitized test-data reference.
+- Expected result, actual observed result, and result status.
+- Execution date/time, procedure, harness revision, and source revision or commit.
+- Official documentation URL, specification reference, and evidence location.
+- Notes, limitations, deviations, and restrictions.
+
+Fields that do not apply MUST be marked N/A with a reason. Unknown details MUST be marked Unknown, not inferred. Evidence MUST NOT contain credentials, access tokens, private user data, or other secrets. Compatibility claims MUST state their exact tested scope; results from one device, version, or context MUST NOT be generalized to others.
 
 ### 15.5 Compatibility Statuses
 
 The following statuses MUST be distinguished:
 
-- Documented.
-- Tested.
-- Compatible.
-- Incompatible.
-- Not Verified.
+- Documented: Described by an applicable official source; this does not mean executed.
+- Tested: Executed with environment and evidence recorded; this does not by itself mean passed.
+- Compatible: Passed the required tests within the explicitly stated version, device, and context scope.
+- Incompatible: Failed a reproducible required test, or an applicable authoritative source rules out the claimed support. Scope and evidence MUST be stated.
+- Not Verified: Evidence is insufficient to establish compatibility or incompatibility.
+
+These statuses describe different evidence dimensions, not one interchangeable ranking. A feature can be Documented but Not Verified at runtime, or Tested but Incompatible. Partial support MUST be stated by scope.
 
 The phrase “fully compatible” MUST NOT be used without specifying the scope and providing evidence of the required tests.
 
@@ -1508,30 +1524,32 @@ A test result establishes behavior only in the environment in which the test was
 
 ## 16. Governance and Normative Rules
 
-### 16.1 Order of Authorities
+### 16.1 Authority by Question and Evidence Type
 
-The following hierarchy MUST be adopted:
+The project MUST use an authority model based on the question being answered. A single linear ranking MUST NOT make one source authoritative outside its subject area.
 
-1. The project’s approved constitution and specifications.
-2. The policies, procedures, and standards subordinate to them.
-3. Official Scriptable documentation when determining application APIs.
-4. Apple JavaScriptCore documentation when determining engine behavior.
-5. ECMAScript when determining language rules.
-6. TypeScript documentation when determining development-tool behavior.
-7. Community definitions, repositories, and examples as supporting references.
-8. Actual testing to establish behavior in the target runtime environment.
+1. The approved project constitution and specifications govern project policy, architecture, and engineering obligations. They cannot make an unavailable runtime capability exist or change an external technical specification.
+2. Approved subordinate policies and procedures govern project processes and MUST remain consistent with the constitution.
+3. Official Scriptable documentation is the primary authority for documented Scriptable host APIs, parameters, return behavior, and application constraints.
+4. Apple JavaScriptCore documentation governs Apple's framework behavior. It does not prove Scriptable exposes every framework class or method to scripts.
+5. ECMAScript governs language semantics and standard built-ins, not Scriptable-specific host APIs.
+6. Official TypeScript documentation governs compiler and declaration behavior, not Scriptable runtime implementation.
+7. Community declarations, tools, repositories, and examples are supporting evidence only and MUST be checked against applicable primary sources and the target runtime.
+8. Reproducible tests on a target iPhone provide empirical evidence only for the recorded app version, iOS version, device, and execution context. They do not replace normative specifications or official API documentation.
 
-A source of lower authority MUST NOT override a higher-level rule.
+If a project requirement conflicts with a documented platform limitation or observed runtime constraint, the conflict MUST be recorded and resolved through an approved specification change, a supported alternative, or an explicit exception. The project MUST NOT claim a capability exists merely because a project rule requires it. If official documentation and reproducible runtime evidence disagree, record exact versions and evidence, investigate, and escalate for clarification or specification update. A test result MUST NOT silently rewrite a specification. A community source MUST NOT override the applicable primary source, but MAY identify an omission requiring verification.
 
 ### 16.2 Normative Language
 
-The following terms are used:
+This constitution adopts IETF BCP 14, RFC 2119 and RFC 8174. The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, NOT RECOMMENDED, MAY, and OPTIONAL have the meanings defined by those RFCs when, and only when, they appear in all capitals.
 
-- MUST: Mandatory.
-- MUST NOT: Prohibited.
-- SHOULD: Recommended.
-- SHOULD NOT: Not recommended.
-- MAY: Optional or permitted.
+- MUST / REQUIRED / SHALL: Absolute requirement within the stated scope.
+- MUST NOT / SHALL NOT: Absolute prohibition within the stated scope.
+- SHOULD / RECOMMENDED: Recommendation that may be departed from only for valid reasons, with implications understood and documented.
+- SHOULD NOT / NOT RECOMMENDED: Normally discouraged behavior that may be justified by documented circumstances and risk assessment.
+- MAY / OPTIONAL: A genuinely optional choice within the stated scope.
+
+Normative keywords MUST be used carefully and only when a conformance obligation is intended. Each requirement SHOULD be atomic and testable. Lowercase “must” and “should” retain ordinary English meanings.
 
 ### 16.3 Enforcement Levels
 
@@ -1554,6 +1572,26 @@ Every normative rule MUST include:
 - Exception conditions.
 
 MUST NOT reuse identifiers of retired rules.
+
+Each rule MUST also identify its owner, lifecycle state (active, superseded, or retired), effective date, change history, verification criteria, and related rules. Verification cases MUST identify the Rule ID they cover. A rule without a verification mapping MUST be marked unverified or guidance-only, not silently treated as enforced. A replacement rule MUST receive a new ID and identify the rule it supersedes.
+
+### 16.5 Traceability and Change Control
+
+The project MUST maintain traceability between normative rules, implementation scope, verification cases, test results, and exceptions. A rule change MUST trigger impact analysis for dependent documentation, code, tests, CI checks, and downstream rules. Missing trace links MUST be reported as governance gaps.
+
+### 16.6 Primary References
+
+- Scriptable: https://docs.scriptable.app/
+- Apple JavaScriptCore: https://developer.apple.com/documentation/javascriptcore
+- ECMAScript: https://tc39.es/ecma262/
+- Test262 scope and execution: https://github.com/tc39/test262/ and https://github.com/tc39/test262/blob/main/INTERPRETING.md
+- ESLint: https://eslint.org/docs/latest/use/core-concepts/
+- TypeScript: https://www.typescriptlang.org/docs/handbook/2/basic-types.html
+- Fallow: https://fallow.tools/docs/analysis/dead-code/
+- RFC 2119: https://www.rfc-editor.org/rfc/rfc2119.html
+- RFC 8174: https://www.rfc-editor.org/rfc/rfc8174.html
+- NIST, Principles for Writing Conformance Requirements: https://www.nist.gov/system/files/principles_for_writing_conformance_criteria_0.pdf
+- ETSI, A Guide to Writing World Class Standards: https://www.etsi.org/images/files/Brochures/AGuideToWritingWorldClassStandards.pdf
 
 ## 17. Exceptions, Risks, and Violations
 
