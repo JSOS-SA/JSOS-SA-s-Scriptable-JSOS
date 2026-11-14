@@ -450,8 +450,9 @@ Engineering requirements:
 
 - Module paths MUST identify the intended module unambiguously.
 - Relative paths MUST be evaluated according to Scriptable's documented resolution behavior.
-- Module directory structures MUST use a consistent and understandable convention.
-- Directory-based modules MUST provide the expected `index.js` entry point.
+- Under this project's flat `src/` convention, every Scriptable application module MUST be a JavaScript file located directly inside `src/` and MUST be imported by its file name or file path.
+- Application modules MUST NOT use nested directories or directory-based `index.js` imports within `src/`.
+- Scriptable's documented directory-import behavior is a runtime capability, not a project layout requirement. It MUST NOT be interpreted as a reason to create subdirectories within `src/`.
 - Modules MUST NOT depend on undocumented path-resolution behavior.
 - Import paths MUST be verified in the actual Scriptable execution environment.
 
@@ -699,6 +700,8 @@ The Main Runtime and WebView Runtime MUST NOT be treated as interchangeable:
 Every source file, module, function, and executable code segment MUST have an identifiable execution context.
 
 The project MUST distinguish between Scriptable Main Runtime code, WebView page JavaScript, shared JavaScript code intended to operate in both contexts, and build-time or development-only code that is not executed by Scriptable.
+
+All JavaScript application files that Scriptable executes or imports, including standalone WebView page scripts maintained as JavaScript files, MUST be placed directly inside the flat `src/` directory defined in Section 10.3. Development-only or build-only code that is not executed or imported by Scriptable MUST remain outside `src/`.
 
 Code placement MUST follow the APIs and capabilities available in the intended runtime. Shared code MUST NOT contain implicit dependencies on browser globals or Scriptable-specific host APIs unless those dependencies are explicitly supplied through a documented interface.
 
@@ -1022,42 +1025,43 @@ The following table defines a reference division of responsibilities. It is not 
 | UI | Menus, alerts, tables, lists, widgets, and presentation behavior. |
 | Runtime Adapters | Controlled integration with Scriptable APIs and environment-specific capabilities. |
 | WebView | Page content, browser-side scripts, styles, and explicit communication contracts with Scriptable. |
-| Tests | Unit, contract, integration, runtime, and context-specific verification. |
 
 A small project MAY combine responsibilities when doing so remains clear and maintainable. A larger project SHOULD separate responsibilities when shared ownership, change frequency, testability, or dependency direction makes separation valuable.
 
-The layer names are architectural terms. They do not establish that Scriptable provides a corresponding built-in directory, service container, package system, or runtime abstraction.
+Testing and verification are engineering activities, not Scriptable runtime architecture layers. Test files, fixtures, and test tooling MUST remain outside `src/`, as required by Section 10.3.
 
-### 10.3 Project and Directory Organization
+The layer names are architectural terms. They do not establish that Scriptable provides a corresponding built-in directory, service container, package system, or runtime abstraction, and they MUST NOT be interpreted as a requirement to create matching source directories.
 
-The directory structure MUST make the location and responsibility of important project components predictable.
+### 10.3 Flat Scriptable Source Directory
 
-A project SHOULD group files by cohesive responsibility or feature and SHOULD apply one consistent organization convention. The selected convention MUST be documented when the project has enough complexity that file placement is not self-evident.
+The Scriptable application source MUST use one directory named `src/`. This directory is reserved for JavaScript application files that are actually executed or imported by Scriptable.
 
-A possible structure is:
+The following source-layout rules are mandatory:
+
+- Every JavaScript application file directly executed by Scriptable or imported through `importModule()` MUST be located directly inside `src/`.
+- `src/` MUST remain flat and MUST NOT contain subdirectories.
+- `src/` MUST contain only JavaScript application files used by Scriptable at runtime.
+- Test files, test fixtures, documentation, TypeScript source or declarations, development tools, build tools, package-manager files, and configuration used only for development or build processes MUST NOT be placed inside `src/`.
+- Repository, CI, documentation, testing, and development artifacts that are not executed or imported by Scriptable MUST remain outside `src/`.
+- Module responsibilities MUST be expressed through clear file names, module interfaces, exports, and dependency direction, not through nested folders.
+- Application JavaScript file names MUST be consistent, descriptive, and aligned with the project's naming conventions.
+
+The required Scriptable source layout is:
 
 ```text
 project/
-├── main.js
-├── core/
-├── domain/
-├── data/
-│   ├── schemas/
-│   ├── validators/
-│   └── repositories/
-├── services/
-│   ├── network/
-│   ├── storage/
-│   └── authentication/
-├── features/
-├── ui/
-├── webview/
-└── tests/
+└── src/
+    ├── script-file.js
+    ├── module-a.js
+    ├── module-b.js
+    └── ...
 ```
 
-This is an illustrative organization only. It MUST NOT be interpreted as a required Scriptable folder structure or as a guarantee that every directory is independently importable. Module import and directory resolution MUST follow Section 6 and the official Scriptable documentation.
+The file names in this example are illustrative only and do not impose a fixed entry-point name. The example describes the Scriptable application source directory only; it does not prescribe the location or presence of other repository-level files or directories.
 
-File and directory names MUST be consistent, descriptive, and aligned with the project's established naming conventions. Entry points, generated files, vendored dependencies, tests, and runtime-specific files SHOULD be identifiable without relying on undocumented naming assumptions.
+Logical responsibilities such as Core, Domain, Services, Data, Features, UI, Runtime Adapters, and WebView MAY be represented by separate JavaScript modules, but they MUST NOT be converted into subdirectories under `src/`. Testing remains a separate verification activity, and all test artifacts MUST be kept outside `src/`.
+
+Scriptable's ability to resolve a directory import through an `index.js` file is documented in Section 6.1.1. That runtime capability does not change this project's flat source convention and MUST NOT be used to justify nested directories within `src/`.
 
 ### 10.4 Module Contracts and Responsibilities
 
@@ -1113,7 +1117,7 @@ Persistent data SHOULD have a documented structure and compatibility strategy. W
 
 ### 10.7 Architecture Change and Verification
 
-A change to module boundaries, directory organization, dependency direction, public exports, or state ownership MUST be reviewed for its impact on existing consumers and execution contexts.
+A change to module boundaries, flat `src/` file organization, dependency direction, public exports, or state ownership MUST be reviewed for its impact on existing consumers and execution contexts.
 
 Where practical, automated or repeatable checks SHOULD identify:
 
@@ -1124,6 +1128,7 @@ Where practical, automated or repeatable checks SHOULD identify:
 - Runtime-specific imports used from an incompatible context.
 - Missing or inconsistent module contracts.
 - Unexpected changes to data ownership or initialization order.
+- Scriptable application JavaScript files that are not direct children of `src/`, nested directories inside `src/`, or non-runtime artifacts placed inside `src/`.
 
 Static analysis and dependency-graph tools provide evidence only for the properties they inspect. They MUST NOT replace testing in the intended Scriptable runtime and execution context, as required by Section 15.
 
