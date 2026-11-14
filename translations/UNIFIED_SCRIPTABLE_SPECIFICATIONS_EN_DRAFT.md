@@ -1718,7 +1718,7 @@ The protection configuration MUST define, as applicable:
 
 A required check MUST report success for the latest commit SHA that GitHub evaluates for the merge. Required check names SHOULD be unique across workflows, and the expected check source SHOULD be restricted to the approved GitHub App or integration where supported. The repository MUST account for GitHub's documented check semantics: `success`, `neutral`, and `skipped` may be treated as successful conclusions for merge requirements. A required workflow or job MUST therefore be designed so that path filters, conditional jobs, or skipped dependencies cannot silently satisfy a control that was expected to run.
 
-A failed, timed-out, action-required, or otherwise unsuccessful required check MUST block merge. Queued, requested, expected, pending, waiting, or in-progress checks are not completed success. If a tool outage or execution failure prevents a required check from producing valid evidence, the project record MUST classify it as `BLOCKED` or `INDETERMINATE` with the reason. These are project evidence labels, not GitHub-native check conclusions. The change MUST remain unmergeable until the required evidence is obtained or a separately authorized and documented exception applies. A tool outage MUST NOT be converted into a successful result.
+A failed, timed-out, action-required, or otherwise unsuccessful required check MUST block merge. Queued, requested, expected, pending, waiting, or in-progress checks are not completed success. If a tool outage or execution failure prevents a required check from producing valid evidence, the project record MUST classify it as `BLOCKED` or `INDETERMINATE` with the reason. These are project evidence labels, not GitHub-native check conclusions. The change MUST remain unmergeable until the required evidence is obtained and the required status check reports an accepted successful conclusion. A project exception MUST NOT mark a failed or missing GitHub check as successful or bypass protected-branch enforcement. A tool outage MUST NOT be converted into a successful result.
 
 Administrator bypass MUST be disabled or tightly controlled and audited. Any emergency bypass MUST identify the actor, reason, affected checks, risk acceptance, compensating controls, and follow-up verification. A bypass MUST NOT silently rewrite a failed check as passed.
 
@@ -1739,7 +1739,7 @@ A proposed or reviewed change MUST NOT be represented as approved or effective. 
 
 ### 18.4 Versions
 
-The project adopts Semantic Versioning (`MAJOR.MINOR.PATCH`) as its versioning convention for the published Constitution and normative specification. The project MUST define and maintain the public normative contract to which the version applies.
+The project adopts Semantic Versioning (`MAJOR.MINOR.PATCH`) as a project versioning convention for the published Constitution and normative specification. This is an explicit project adaptation of SemVer for normative documents; it MUST NOT be presented as a document-versioning rule defined by the SemVer specification itself. The project MUST define and maintain the public normative contract to which the version applies.
 
 - **MAJOR:** an incompatible change to the existing normative contract, including a rule change that invalidates prior conformance assumptions or makes previously conforming implementations non-conforming.
 - **MINOR:** a backward-compatible addition of rules, requirements, clarifications, or capabilities that does not invalidate existing conformance.
