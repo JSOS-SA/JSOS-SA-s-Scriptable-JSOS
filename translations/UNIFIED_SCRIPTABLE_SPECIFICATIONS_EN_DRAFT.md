@@ -888,91 +888,391 @@ Type definitions MUST NOT silently override verified project-specific compatibil
 
 ### 9.1 Default Policy
 
-External libraries MUST be prohibited by default.
+External libraries MUST be prohibited by default. The project SHOULD prefer JavaScript language features and documented Scriptable APIs already available in the target environment when they provide an adequate solution.
 
-Any new library requires review before approval.
+Any proposed external library MUST be reviewed before approval. A library MUST NOT be introduced solely because it is popular, available through npm, used by another JavaScript runtime, or present in an example or tutorial.
 
-### 9.2 Review Criteria
+The default prohibition is a project governance rule. It does not mean that every external library is technically incompatible with Scriptable. An exception MAY be approved only when the dependency has a documented purpose, its risks have been evaluated, and its compatibility has been established for the intended execution context.
 
-The following MUST be examined:
+### 9.2 Dependency Classification
 
-- Source and trustworthiness.
-- License.
-- Version.
-- Direct and indirect dependencies.
-- Compatibility with Scriptable.
-- Dependencies on Node.js, the DOM, or Browser APIs.
-- Module system used.
-- Performance and memory consumption.
-- Security risks.
-- Maintainability and updateability.
+Every proposed dependency MUST be classified according to where and when it is used:
 
-### 9.3 Acceptance Requirement
+- **Scriptable runtime dependency:** JavaScript code imported or executed by Scriptable.
+- **WebView dependency:** Code that executes within a WebView page and relies on web-platform facilities.
+- **Development dependency:** A tool used to inspect, lint, type-check, test, or maintain source code.
+- **Build dependency:** A tool used to transform, bundle, generate, or package deliverables.
+- **External service dependency:** A remote API, hosted service, or other externally operated capability required by the project.
 
-Successful installation, compilation, or static analysis does not establish library compatibility with the Runtime.
+A dependency's classification MUST identify its execution environment. A development-time or build-time dependency MUST NOT be represented as a Scriptable runtime dependency unless its generated or distributed output is actually required at runtime.
 
-A library MUST NOT be approved until its compatibility has been established in the target context, or it has been documented as Not Verified and operational reliance on it is prohibited.
+### 9.3 Review Criteria
+
+Before approval, the following MUST be examined and recorded where applicable:
+
+1. **Purpose and necessity:** the specific requirement addressed and why existing language features or documented Scriptable APIs are insufficient or unsuitable.
+2. **Source and provenance:** the official project or distribution source, repository identity, package identity, and whether the obtained artifact can be traced to that source.
+3. **License:** the applicable license, redistribution conditions, attribution requirements, and restrictions relevant to the project.
+4. **Version and maintenance:** the exact version or immutable revision, release history, maintenance status, known deprecations, and update policy.
+5. **Dependency graph:** direct and indirect dependencies, transitive packages, optional dependencies, and packages that introduce additional runtime requirements.
+6. **Runtime compatibility:** compatibility with Scriptable, the JavaScript behavior relied upon, the intended Main Runtime or WebView context, and the actual module-loading mechanism.
+7. **Platform assumptions:** dependencies on Node.js, browser globals, DOM APIs, native bindings, operating-system services, or APIs unavailable in the intended context.
+8. **Module format:** CommonJS, ECMAScript modules, UMD, standalone browser scripts, or another format, and whether the format can be consumed through the project's approved Scriptable loading or build process.
+9. **Security and integrity:** known vulnerabilities, source integrity, dynamic code loading, network behavior, permissions, and risks introduced by executing third-party code.
+10. **Performance and resources:** package size, initialization work, memory use, execution time, network use, and impact on widgets or other constrained contexts.
+11. **Maintainability:** documentation quality, issue history, replacement options, removal cost, and the ability to maintain the dependency if upstream development stops.
+12. **Scope of use:** the modules, features, and runtime contexts that will depend on it.
+
+A review MUST distinguish verified facts from assumptions and unresolved compatibility questions. Missing evidence MUST NOT be converted into a positive compatibility claim.
+
+### 9.4 Scriptable Compatibility Requirements
+
+The availability of a package in the npm registry, its successful installation, or its successful execution in Node.js or a browser MUST NOT be treated as proof of Scriptable compatibility.
+
+Compatibility review MUST consider:
+
+- JavaScript syntax and built-ins required by the dependency.
+- Scriptable host APIs required by the dependency, if any.
+- Browser globals and DOM APIs required by the dependency.
+- Node.js globals, built-in modules, and native bindings required by the dependency.
+- Module format, import behavior, and dependency resolution.
+- File-system, network, storage, cryptographic, and permission assumptions.
+- Initialization behavior and side effects.
+- The actual execution context in which the dependency will run.
+
+Scriptable's documented `importModule()` and `module.exports` mechanism MUST NOT be assumed to implement the complete Node.js module system, automatic `node_modules` resolution, or arbitrary npm package loading. The project's module requirements are governed by Section 6.
+
+A library that requires browser facilities MUST be confined to a suitable WebView implementation. A library that requires Node.js-specific facilities MUST NOT be used in Scriptable Main Runtime unless the required functionality is independently established through a documented and tested implementation. Bundling or transpilation MAY transform source code, but MUST NOT be treated as proof that unavailable runtime APIs have been supplied.
+
+### 9.5 Versioning, Reproducibility, and Distribution
+
+Every approved dependency MUST have an identifiable version or immutable source revision. Floating references that can silently change dependency content SHOULD NOT be used for maintained deliverables.
+
+For npm-managed development or build dependencies, the project SHOULD retain and review the relevant package manifest and lockfile. A lockfile records the resolved package tree for the package manager; it does not define Scriptable's `importModule()` behavior and does not establish runtime compatibility.
+
+When third-party source is copied, vendored, bundled, or otherwise included in a Scriptable deliverable, the project SHOULD retain its source identity, version or revision, license, integrity information where available, and any required attribution. Generated output MUST be traceable to its source and build process when that traceability is necessary to maintain or audit it.
+
+The delivered Scriptable code MUST NOT rely on development-only packages, build tools, or package-manager behavior being present on the user's device unless that runtime dependency is explicitly supported and documented.
+
+### 9.6 Dependency Isolation and Public Interfaces
+
+An approved dependency SHOULD be accessed through a narrow, explicit interface that limits how much of the project relies on its implementation details.
+
+Where practical:
+
+- Keep third-party-specific calls within the module or adapter responsible for that integration.
+- Expose only the operations required by consuming project modules.
+- Avoid spreading dependency-specific types, names, and assumptions throughout unrelated business logic.
+- Avoid undocumented global state and unexpected import-time side effects.
+- Document initialization order when a dependency requires initialization.
+- Avoid circular dependencies between project modules and dependency adapters.
+- Keep replacement or removal feasible without rewriting unrelated features.
+
+These requirements MUST remain proportionate to the dependency's scope. The project MUST NOT add abstraction layers that provide no meaningful isolation, testability, or maintenance benefit.
+
+### 9.7 Security, Updates, and Removal
+
+Approved dependencies MUST be reconsidered when a relevant security advisory, incompatible release, license change, upstream archival, or significant change in maintenance status is identified.
+
+Dependency updates MUST be reviewed for changes to the dependency graph, runtime requirements, module format, public interfaces, and behavior relied upon by the project. An update MUST NOT be accepted solely because it is the latest available version.
+
+A dependency MUST be removed when it is no longer required, cannot satisfy the project's compatibility requirements, introduces unacceptable risk, or can no longer be maintained under the project's governance rules.
+
+The project SHOULD maintain a dependency record containing, at minimum, the dependency name, purpose, source, version or revision, license, classification, intended runtime, compatibility evidence, known direct or transitive dependencies, review date, and approval status.
+
+### 9.8 Acceptance Requirement
+
+A dependency MUST NOT be approved for operational use until its source, license, version, dependency graph, relevant risks, and intended execution context have been reviewed.
+
+Runtime dependencies MUST have compatibility evidence for the intended Scriptable context. A dependency whose compatibility remains `Not Verified` MUST NOT be relied upon by operational functionality. It MAY be retained for isolated investigation or testing only when that status and restriction are explicit.
+
+Successful installation, compilation, bundling, type checking, linting, or static analysis does not establish library compatibility with the Scriptable Runtime. Required verification layers are governed by Sections 5, 6, 14, and 15.
 
 ## 10. Project Architecture and Organization
 
-### 10.1 Principles
+### 10.1 Architectural Principles
 
-MUST adopt a clear structure that is maintainable and testable.
+The project MUST adopt a clear structure that is maintainable, testable, and proportionate to its size and complexity.
 
-MUST separate responsibilities, prevent duplication, and minimize coupling and circular dependencies.
+The architecture MUST:
+
+- Separate responsibilities according to cohesive areas of behavior.
+- Define explicit module boundaries and public interfaces.
+- Minimize unnecessary coupling and circular dependencies.
+- Make dependency direction and initialization requirements understandable.
+- Keep data ownership and state changes identifiable.
+- Separate business rules from presentation and system access where that separation provides a meaningful benefit.
+- Preserve the distinctions between Scriptable Main Runtime, WebView Runtime, and external development or build environments defined in Sections 3 and 7.
+- Support verification and maintenance without requiring knowledge of undocumented implementation details.
+
+The architecture MUST NOT introduce complexity, layers, classes, directories, or abstractions solely to satisfy a preferred pattern. Structure MUST be justified by actual responsibilities, risks, and maintenance needs.
 
 ### 10.2 Architectural Layers
 
+The following table defines a reference division of responsibilities. It is not a fixed directory layout and does not require every project to create a separate module for every layer.
+
 | Layer | Responsibility |
 |---|---|
-| Core | Configuration, constants, errors, and logging |
-| Services | Networking, storage, authentication, and external services |
-| Data | Validation, transformation, contracts, and schemas |
-| Features | Business logic and user-facing functions |
-| UI | Lists, tables, interfaces, and widgets |
-| Scriptable APIs | Integration with Scriptable APIs |
-| Tests | Logic, contract, and Runtime tests |
+| Entry Point | Starts the script, validates invocation requirements, and coordinates the application lifecycle. |
+| Core | Shared configuration, constants, common errors, logging interfaces, and foundational utilities. |
+| Domain | Application-specific concepts, business rules, and decisions that should not depend on presentation. |
+| Services | Networking, storage, authentication, and communication with external services. |
+| Data | Data contracts, schemas, validation, transformation, mapping, and repositories. |
+| Features | Cohesive user-facing capabilities and their orchestration. |
+| UI | Menus, alerts, tables, lists, widgets, and presentation behavior. |
+| Runtime Adapters | Controlled integration with Scriptable APIs and environment-specific capabilities. |
+| WebView | Page content, browser-side scripts, styles, and explicit communication contracts with Scriptable. |
+| Tests | Unit, contract, integration, runtime, and context-specific verification. |
 
-This is a reference architectural division, not a fixed structure that is mandatory for every small project.
+A small project MAY combine responsibilities when doing so remains clear and maintainable. A larger project SHOULD separate responsibilities when shared ownership, change frequency, testability, or dependency direction makes separation valuable.
 
-### 10.3 Module Contracts
+The layer names are architectural terms. They do not establish that Scriptable provides a corresponding built-in directory, service container, package system, or runtime abstraction.
+
+### 10.3 Project and Directory Organization
+
+The directory structure MUST make the location and responsibility of important project components predictable.
+
+A project SHOULD group files by cohesive responsibility or feature and SHOULD apply one consistent organization convention. The selected convention MUST be documented when the project has enough complexity that file placement is not self-evident.
+
+A possible structure is:
+
+```text
+project/
+├── main.js
+├── core/
+├── domain/
+├── data/
+│   ├── schemas/
+│   ├── validators/
+│   └── repositories/
+├── services/
+│   ├── network/
+│   ├── storage/
+│   └── authentication/
+├── features/
+├── ui/
+├── webview/
+└── tests/
+```
+
+This is an illustrative organization only. It MUST NOT be interpreted as a required Scriptable folder structure or as a guarantee that every directory is independently importable. Module import and directory resolution MUST follow Section 6 and the official Scriptable documentation.
+
+File and directory names MUST be consistent, descriptive, and aligned with the project's established naming conventions. Entry points, generated files, vendored dependencies, tests, and runtime-specific files SHOULD be identifiable without relying on undocumented naming assumptions.
+
+### 10.4 Module Contracts and Responsibilities
 
 Every public module MUST specify:
 
-- Its responsibility.
-- Its inputs.
-- Its outputs.
-- Potential errors.
-- Its dependencies.
+- Its responsibility and intended runtime context.
+- Its public exports and their value categories.
+- Its expected inputs and output values.
+- Whether its operations are synchronous or asynchronous.
+- Potential errors and failure behavior.
+- Required dependencies and initialization requirements.
+- Side effects, including file, network, storage, or state changes.
 - The interfaces it exposes to other modules.
+
+Functions SHOULD have focused responsibilities and predictable contracts. Objects SHOULD represent cohesive data or behavior with clear ownership. Classes SHOULD be used when instance state, encapsulation, or lifecycle behavior justifies them. Primitive values and other supported JavaScript values MAY be exported where they form an intentional and documented module contract. The supported export mechanism is defined in Section 6.1.2.
+
+A module MUST NOT expose internal implementation details as an accidental public interface. Consumers MUST depend on documented exports rather than private variables, initialization side effects, or undocumented file layout.
+
+### 10.5 Dependency Direction and Coupling
+
+Dependencies between project modules MUST be explicit and SHOULD follow stable interfaces.
+
+The architecture SHOULD ensure that:
+
+- Domain rules do not depend directly on UI implementation.
+- Shared core utilities do not depend on feature-specific behavior.
+- Presentation modules consume defined data or service interfaces.
+- Data access and external integrations are isolated from pure transformations where practical.
+- Runtime-specific code is not imported into an incompatible execution context.
+- A module does not require another module's undocumented initialization side effects.
+
+Circular dependencies SHOULD be eliminated. When two modules depend on each other, the design SHOULD be reconsidered by clarifying ownership, extracting a shared contract, or introducing a coordinator with a clear responsibility.
+
+High coupling MUST be assessed by its actual maintenance and failure impact. The project SHOULD NOT treat every dependency as harmful or introduce interfaces for dependencies that are stable, local, and simple without a demonstrated benefit.
+
+### 10.6 Data Flow and State Ownership
+
+The architecture MUST make the origin, transformation, ownership, and persistence of significant application data understandable.
+
+For each important data flow, the project SHOULD identify:
+
+1. The originating source.
+2. The module responsible for acquisition.
+3. The validation and transformation boundary.
+4. The module or component that owns the resulting state.
+5. The consumers of the data.
+6. The persistence mechanism, when applicable.
+7. The failure and recovery behavior.
+
+State SHOULD have a clear owner and an explicit update path. Uncontrolled copies of mutable state SHOULD be avoided because they can diverge and produce inconsistent application behavior.
+
+Persistent data SHOULD have a documented structure and compatibility strategy. When a schema changes, the project MUST determine whether existing stored data remains readable and whether migration, defaulting, rejection, or recovery is required.
+
+### 10.7 Architecture Change and Verification
+
+A change to module boundaries, directory organization, dependency direction, public exports, or state ownership MUST be reviewed for its impact on existing consumers and execution contexts.
+
+Where practical, automated or repeatable checks SHOULD identify:
+
+- Unresolved or incorrect imports.
+- Circular module dependencies.
+- Unused modules or public exports.
+- Duplicate implementations of the same business rule.
+- Runtime-specific imports used from an incompatible context.
+- Missing or inconsistent module contracts.
+- Unexpected changes to data ownership or initialization order.
+
+Static analysis and dependency-graph tools provide evidence only for the properties they inspect. They MUST NOT replace testing in the intended Scriptable runtime and execution context, as required by Section 15.
 
 ## 11. Data Quality and Error Handling
 
-### 11.1 Data
+### 11.1 Data Validation Principle
 
-All data originating from the network, files, the user, or the execution context are treated as requiring validation.
+All data originating from the network, files, the user, imported modules, external services, or another execution context MUST be treated as requiring validation at the appropriate trust boundary.
 
-MUST:
+A successful read, request, import, parse, or deserialization operation MUST NOT be considered evidence that the resulting data is valid, complete, current, authorized, or suitable for the intended business operation.
 
-- Validate the expected structure.
-- Validate required values.
-- Handle missing values explicitly.
-- Distinguish between null and undefined.
-- Validate types and ranges.
-- MUST NOT consider successful loading as evidence that the data is valid.
+Validation MUST be proportionate to the source, the consequences of incorrect data, and the contract expected by the consuming component. Validated internal data MAY rely on an established contract, but data crossing a trust boundary MUST be checked before it is used for consequential operations.
 
-### 11.2 Errors
+### 11.2 Data Contracts and Expected Structure
 
-MUST:
+Important data exchanged between modules or received from external sources SHOULD have a documented contract. The contract SHOULD define:
 
-- Handle expected errors using try/catch.
-- Handle Promise rejections.
-- Record useful diagnostic information.
-- MUST NOT silently suppress errors.
-- Establish a retry policy.
-- Prevent the repetition of operations that may produce duplicate data or transactions without appropriate protection.
+- Required and optional properties.
+- Expected JavaScript value types.
+- Nullability and missing-value behavior.
+- Permitted values and enumerations.
+- Numeric ranges and units.
+- String format and length constraints.
+- Date and time representation, including timezone assumptions where relevant.
+- Identifier format and uniqueness requirements.
+- Relationships and dependencies between fields.
+- Defaults, when explicitly permitted.
+- Schema or contract version, where compatibility requires it.
 
-The system state MUST remain clear when a failure occurs, and a failure MUST NOT be converted into a false success result.
+Validation MUST check the expected structure and required values before the data is passed into business logic. Unknown or additional properties MUST be handled according to the relevant contract rather than being accepted or rejected indiscriminately.
+
+TypeScript interfaces and declarations MAY describe expected shapes during development, but they do not validate data at runtime. JSON parsing confirms that text can be interpreted as JSON; it does not establish that the resulting value satisfies the application's schema or business rules.
+
+### 11.3 Type, Range, and Semantic Validation
+
+Validation MUST distinguish structural or type correctness from semantic correctness.
+
+Structural validation SHOULD establish that required fields exist and that values have the expected types and formats. Semantic validation MUST establish that the values are meaningful and permitted for the intended operation.
+
+Where applicable, validation SHOULD check:
+
+- Required properties and expected value types.
+- Numeric ranges, precision, and units.
+- String formats, length, and permitted character sets.
+- Allowed status values and enumerations.
+- Date validity, ordering, and applicable timezone assumptions.
+- Identifier validity and referenced-record existence.
+- Relationships between fields and business invariants.
+- Whether the requested operation is permitted for the current state.
+
+Validation SHOULD use explicit permitted-value sets where practical. Invalid values MUST NOT silently enter application state or be converted into plausible-looking defaults unless the contract explicitly defines that behavior.
+
+### 11.4 Missing Values, Nullability, and Normalization
+
+JavaScript distinguishes between an absent property, `undefined`, `null`, an empty string, an empty array, an empty object, zero, and `false`. These values MUST NOT be treated as interchangeable when the distinction affects application behavior.
+
+The project MUST define how missing and nullable values are interpreted at relevant data boundaries. Defaults MUST be applied deliberately and only when the data contract or business rule defines an appropriate default.
+
+Normalization MAY be used to produce a consistent internal representation. Examples include trimming text, standardizing date representations, converting approved numeric formats, mapping external enumerations to internal values, and mapping external response objects into project data models.
+
+Normalization MUST NOT conceal malformed, contradictory, out-of-range, or unauthorized data. The original source value SHOULD remain available in controlled diagnostic context when needed to investigate a transformation failure, subject to the privacy and logging requirements in Section 12.
+
+### 11.5 Data Integrity and Consistency
+
+The project MUST consider data integrity when values are combined, updated, persisted, or shared across modules and external services.
+
+Relevant conditions include duplicate records, missing relationships, stale data, conflicting values, out-of-order updates, partial writes, repeated requests, unexpected schema changes, and corrupted persisted data.
+
+The project SHOULD identify the authoritative source for important values and define how conflicting or stale values are handled. Updates involving related values SHOULD have an explicit consistency strategy. A partially completed operation MUST NOT be represented as a fully successful update.
+
+Operations that may be repeated after a timeout, interrupted request, or uncertain response MUST be evaluated for idempotency. Where repetition can create duplicate records or transactions, the implementation MUST use appropriate safeguards or require confirmation before retrying.
+
+### 11.6 Error Classification and Context
+
+Errors MUST be handled according to their cause and operational impact. The project SHOULD distinguish at least the following categories where relevant:
+
+| Category | Description | Example |
+|---|---|---|
+| Validation Error | Data violates an expected contract or rule. | Missing required property or invalid range. |
+| Parsing Error | Input cannot be interpreted in the required format. | Malformed JSON or invalid date representation. |
+| Runtime Error | JavaScript execution fails. | `TypeError` or `ReferenceError`. |
+| Module Error | A required module cannot be resolved or initialized. | Incorrect import path or unavailable export. |
+| Network Error | A request cannot be completed at the transport layer. | Connection interruption or timeout. |
+| HTTP Error | An HTTP response indicates an unsuccessful request. | Client or server error status. |
+| Storage Error | A file or persistence operation fails. | Read, write, or migration failure. |
+| Authentication Error | Authentication cannot be completed or maintained. | Invalid or expired credentials. |
+| Authorization Error | The requested operation is not permitted. | Insufficient access. |
+| Integration Error | An external component does not satisfy its expected contract. | Unexpected response or incompatible service behavior. |
+| Configuration Error | Required configuration is missing or invalid. | Missing endpoint or invalid setting. |
+
+An error report SHOULD preserve the original error where available and provide useful context such as the operation, module, relevant non-sensitive identifier, and failure stage. Error messages MUST NOT falsely imply that an operation succeeded.
+
+### 11.7 Exception and Promise-Rejection Handling
+
+Expected failures at operational boundaries MUST be handled deliberately. This includes file access, network operations, parsing, permissions, storage, and asynchronous operations.
+
+Synchronous operations that may throw SHOULD be handled at a layer that can recover, translate the failure, add useful context, or propagate it to a responsible caller. `try...catch` MUST NOT be added indiscriminately where it cannot provide meaningful handling.
+
+Asynchronous operations MUST have an explicit Promise-rejection strategy. When using `async` and `await`, rejected Promises MUST be handled by an appropriate `try...catch` boundary or propagated to a caller that is responsible for handling them. Promise chains MUST include a deliberate rejection-handling or propagation path.
+
+A catch handler MUST recover, translate the error, add useful context, perform required cleanup, or deliberately report and terminate the operation. It MUST NOT silently swallow an error or return a success-shaped value that conceals failure.
+
+Errors that cannot be handled meaningfully at the current layer SHOULD propagate to a layer that can apply the correct failure policy. Cleanup that must occur regardless of success or failure SHOULD be performed through an appropriate `finally` path or equivalent controlled cleanup mechanism.
+
+### 11.8 Network, Storage, and External-Service Failures
+
+Network and external-service operations MUST distinguish transport completion from application-level success. Receiving an HTTP response does not by itself establish that the requested operation succeeded. Implementations MUST inspect the response information required by the service contract and validate the returned data before using it.
+
+Network handling SHOULD account for connection interruptions, timeouts, unsuccessful HTTP status codes, malformed responses, missing fields, authentication failures, authorization failures, rate limits, and temporary service unavailability.
+
+Storage handling SHOULD account for missing or unavailable files, iCloud download behavior, read and write failures, invalid serialized content, incomplete updates, and migration failures.
+
+Recovery behavior MUST reflect the actual failure and possible side effects. A transport retry MUST NOT be used as a substitute for checking whether the original operation may already have succeeded.
+
+### 11.9 Retry and Recovery Policy
+
+The project MUST establish a retry policy for operations where retry is relevant. The policy SHOULD define:
+
+- Which failure categories are eligible for retry.
+- Which failures are permanent and MUST NOT be retried automatically.
+- The maximum number of attempts and applicable delay or backoff behavior.
+- Whether the operation is idempotent or protected against duplicate effects.
+- Whether the service provides retry or rate-limit guidance.
+- What state is retained between attempts.
+- When the user must be notified or asked to intervene.
+- What happens when all permitted attempts fail.
+
+Retries MUST be bounded. Non-idempotent operations MUST NOT be retried automatically without safeguards that prevent duplicate or unintended effects.
+
+When recovery uses cached or previously persisted data, the application SHOULD identify that data as stale or fallback data where that distinction affects the user's decision. Recovery MUST NOT conceal data corruption, invalid authorization, or an unresolved integrity failure.
+
+### 11.10 Diagnostics and Failure Visibility
+
+The project SHOULD record enough diagnostic information to identify the failing operation, its component, the failure category, and the recovery outcome.
+
+Diagnostic records SHOULD include a timestamp, severity, component or module, operation, error identifier where available, relevant non-sensitive context, and retry or recovery status.
+
+Sensitive-data handling, credential protection, redaction, and logging restrictions are governed by Section 12. Diagnostic output MUST NOT expose secrets or private information. Logs MUST NOT be treated as a substitute for a clear application state or a user-facing failure result where the user needs to know that an operation did not complete.
+
+### 11.11 Testing and Acceptance
+
+Data validation and error handling MUST be included in the relevant verification plan under Section 15.
+
+Tests SHOULD cover valid input, missing properties, null and undefined values, incorrect types, invalid formats, values outside permitted ranges, unexpected enumerations, malformed serialized data, incomplete external responses, unsuccessful HTTP statuses, rejected Promises, synchronous exceptions, missing files, storage failures, authentication and authorization failures, duplicate operations, retry limits, partial updates, and outdated persisted data.
+
+Tests MUST verify both successful behavior and the expected response to invalid data or failed operations. A data-processing operation MUST NOT be considered reliable solely because it works with one valid example.
+
+Acceptance MUST be based on the relevant data contract, validation rules, error propagation, recovery behavior, and tests in the intended Scriptable execution context. Test records and compatibility evidence MUST follow the project requirements in Section 15.
+
 
 ## 12. Security, Privacy, and Reliability
 
