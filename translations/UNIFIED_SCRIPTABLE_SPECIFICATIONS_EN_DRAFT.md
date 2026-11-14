@@ -340,7 +340,7 @@ This section defines the project's verification policy for Scriptable host APIs.
 
 The official Scriptable documentation is the primary product-specific source for determining which host APIs Scriptable documents and exposes. The documentation describes Scriptable's JavaScript environment and individual API types, properties, constructors, methods, parameters, return values, behavior, and limitations.
 
-The official documentation MUST be consulted before an API is introduced, recommended, or used in project code. However, documentation presence alone MUST NOT be treated as proof that the API works in every installed Scriptable version or execution context. The documentation can be incomplete, ambiguous, or out of sync with implementation, as empirical API-documentation research has demonstrated [24.12.1] [24.12.2] [24.12.3]. Where the documentation does not state a version or context constraint, record that fact as unspecified and verify the target runtime instead of inferring support.
+The official documentation MUST be consulted before an API is introduced, recommended, or used in project code. However, documentation presence alone MUST NOT be treated as proof that the API works in every installed Scriptable version or execution context. Where the documentation does not state a version or context constraint, record that fact as unspecified and verify the target runtime instead of inferring support.
 
 For each API used or proposed, the reviewer MUST verify and record, where applicable:
 
@@ -394,15 +394,13 @@ The index MUST be expanded only when the relevant type is present in the officia
 The following practices are prohibited:
 
 - **Undocumented API invention:** MUST NOT invent, infer, or fabricate Scriptable globals, classes, constructors, properties, methods, parameter names, return values, or callback behavior.
-- **Unverified examples:** MUST NOT treat an internet example, code snippet, forum post, generated answer, or tutorial as authoritative evidence. Examples may be outdated, incomplete, context-specific, or incorrect. They may guide discovery only; verify every API claim against the official documentation and the target runtime where required [24.12.6].
+- **Unverified examples:** MUST NOT treat an internet example, code snippet, forum post, generated answer, or tutorial as authoritative evidence. Examples may be outdated, incomplete, context-specific, or incorrect. They may guide discovery only; verify every API claim against the official documentation and the target runtime where required.
 - **Apple framework exposure:** MUST NOT assume that an Apple framework API is directly accessible from Scriptable merely because Apple documents it. Scriptable exposes a product-specific host surface; Apple framework documentation describes the underlying platform, not necessarily Scriptable's JavaScript bridge.
-- **npm and third-party package compatibility:** MUST NOT assume that a package works in Scriptable because it is published on npm or works in Node.js, a browser, or another JavaScript runtime. Review its module format, dependency graph, native bindings, runtime globals, platform assumptions, network and filesystem requirements, and build or bundling requirements. Verify the resulting code in the target Scriptable runtime. Runtime-environment compatibility is a separate engineering problem from package availability [24.12.9].
+- **npm and third-party package compatibility:** MUST NOT assume that a package works in Scriptable because it is published on npm or works in Node.js, a browser, or another JavaScript runtime. Review its module format, dependency graph, native bindings, runtime globals, platform assumptions, network and filesystem requirements, and build or bundling requirements. Verify the resulting code in the target Scriptable runtime. Runtime-environment compatibility is a separate engineering problem from package availability.
 - **Type declarations as runtime proof:** MUST NOT use TypeScript declarations, DefinitelyTyped packages, generated declarations, editor autocomplete, or successful type checking as sole evidence that an API exists or is implemented at runtime. Type declarations describe a static type surface; they do not install or implement the corresponding runtime object.
 - **Compilation as runtime proof:** MUST NOT treat successful compilation, transpilation, linting, or static analysis as proof that a Scriptable API is available, that permissions are granted, or that an operation behaves correctly in a particular execution context.
 - **Cross-context assumptions:** MUST NOT transfer browser DOM, Node.js, native iOS, or Scriptable Main Runtime behavior to another context without explicit documentation or a target-specific test.
 - **Version assumptions:** MUST NOT infer support or deprecation solely from a sample's publication date, package version, or the fact that an API is still callable. Check the current official documentation and the relevant version history.
-
-API misuse can cause functional and security defects, and empirical studies show that API usage constraints and examples can be incorrect or misunderstood [24.12.3] [24.12.5] [24.12.6]. These findings support the prohibitions as engineering policy; they are not Scriptable-specific measurements.
 
 ### 5.4 API Verification Record
 
@@ -418,8 +416,6 @@ Every non-trivial API dependency introduced into a maintained project component 
 - Verification date and a clear status separating **documented**, **runtime verified for the stated target**, **not verified**, and **deprecated**.
 
 A documented API MUST NOT automatically be labelled runtime verified. A runtime test on one target MUST NOT automatically establish support on another target. Where evidence is missing, retain the unresolved status and state what remains to be verified.
-
-Research cited in Section 24.12 supports maintaining explicit interface descriptions, checking API constraints, and guarding against documentation drift. The studies concern other APIs and software ecosystems; they provide rationale for the process, not proof of Scriptable-specific behavior.
 
 ## 6. Module and Import System
 
@@ -1318,46 +1314,6 @@ https://docs.scriptable.app/speech/
 https://docs.scriptable.app/mail/
 
 https://docs.scriptable.app/xmlparser/
-
-### 24.12 Empirical Research on API Documentation, API Misuse, and Compatibility
-
-The following studies provide engineering rationale for documentation verification, explicit API constraints, and compatibility checks. They do not study Scriptable itself and MUST NOT be cited as evidence that a particular Scriptable API exists or behaves in a particular way.
-
-24.12.1 Uddin and Robillard (2015), "How API Documentation Fails", *IEEE Software* 32, 68-75. The study reports recurring API-documentation problems including ambiguity, incompleteness, and incorrectness.
-
-https://doi.org/10.1109/MS.2014.80
-
-24.12.2 Zhou et al. (2020), "Automatic Detection and Repair Recommendation of Directive Defects in Java API Documentation", *IEEE Transactions on Software Engineering* 46, 1004-1023. The study evaluates automated detection of defective API-documentation directives, including parameter constraints and exception-handling declarations.
-
-https://doi.org/10.1109/TSE.2018.2872971
-
-24.12.3 Zhou et al. (2017), "Analyzing APIs Documentation and Code to Detect Directive Defects", *ICSE Companion*. The study compares API documentation constraints with code to detect defective directives.
-
-https://doi.org/10.1109/ICSE.2017.11
-
-24.12.4 Theunissen, Hoppenbrouwers, and Overbeek (2022), "Approaches for Documentation in Continuous Software Development", *Complex Systems Informatics and Modeling Quarterly* 32, 1-27. This work examines documentation approaches and the risk of documentation becoming out of sync with implementation.
-
-https://doi.org/10.7250/csimq.2022-32.01
-
-24.12.5 Wang and Zhao (2023), "APICAD: Augmenting API Misuse Detection through Specifications from Code and Documents", *ICSE Companion*. This work uses API specifications from code and documentation to support API-misuse detection.
-
-https://doi.org/10.1109/ICSE48619.2023.00032
-
-24.12.6 Ren et al. (2020), "Demystify Official API Usage Directives with Crowdsourced API Misuse Scenarios, Erroneous Code Examples and Patches", *ICSE Companion*. This work examines erroneous examples and API-misuse scenarios as a means of clarifying official API directives.
-
-https://doi.org/10.1145/3377811.3380430
-
-24.12.7 Dietrich, Ježek, and Brada (2015), "What Java Developers Know about Compatibility, and Why This Matters", *Empirical Software Engineering* 21, 1371-1396. The study distinguishes source, binary, and behavioral compatibility and reports gaps in developers' knowledge of compatibility rules.
-
-https://doi.org/10.1007/s10664-015-9389-1
-
-24.12.8 Xavier et al. (2017), "Historical and Impact Analysis of API Breaking Changes: A Large-Scale Study", *SANER*. This study analyzes the frequency and impact of API-breaking changes in software ecosystems.
-
-https://doi.org/10.1109/SANER.2017.7884616
-
-24.12.9 Cheng, Zhu, and Hu (2022), "Conflict-Aware Inference of Python Compatible Runtime Environments with Domain Knowledge Graph", *ICSE Companion*. This work concerns the difficulty of reconstructing compatible runtime environments and dependency sets. Its Python-specific results are contextual evidence only, not direct evidence about Scriptable or JavaScript packages.
-
-https://doi.org/10.1145/3510003.3510078
 
 ## 25. Rules for Using the Reference List
 
