@@ -648,6 +648,7 @@ Engineering requirements:
 - Internal implementation details SHOULD NOT be exposed without a functional requirement.
 
 The objective is high cohesion, controlled coupling, explicit contracts, and predictable module behavior.
+
 ## 7. Separation Between Scriptable Main Runtime and WebView Runtime
 
 ### 7.1 Scriptable Main Runtime
