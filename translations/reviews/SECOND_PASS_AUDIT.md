@@ -1,63 +1,101 @@
 # Second-Pass Translation Audit
 
-**Status:** In progress. The English specification remains an unapproved draft.
+**Status:** Second linguistic and semantic review completed. The English specification remains an unapproved draft.
 **Source:** `SCRIPTABLE_GOVERNANCE_DECISIONS_Q1-Q75.txt`
 **Target:** `translations/UNIFIED_SCRIPTABLE_SPECIFICATIONS_EN_DRAFT.md`
+**Termbase:** `dictionaries/SCRIPTABLE_ENGINEERING_TERMINOLOGY_GLOSSARY.md`, `dictionaries/SCRIPTABLE_INITIAL_TERMINOLOGY_GLOSSARY.md`, `GLOSSARY.md`, and `docs/governance/terminology-control-addendum-01.md`.
 
 ## Scope and method
 
-This audit checks source fidelity, normative force, technical meaning, and terminology against the translation methodology in `dictionaries/README.md`, the unified and supplementary glossaries, `GLOSSARY.md`, and `docs/governance/terminology-control-addendum-01.md`. The Arabic source remains authoritative. The audit does not approve the English specification or authorize silent changes to the source.
+The review compares the Arabic source with the English target at paragraph, list-item, table, terminology, and normative-force levels. The Arabic source remains authoritative. The review does not approve the English specification and does not authorize silent changes to the Arabic source.
 
-## Confirmed corrections applied
+Local structural and URL checks were run on `oracle-lab-vm` using DuckDB CLI 2.0.0. Git, GitHub CLI, and the GitHub integration were used for repository operations and pull-request checks. Python was not used.
 
-1. Restored the source status metadata to `Unified draft for review and approval`; the separate translation-status note continues to state that the English translation is unapproved.
-2. Standardized normative wording to the controlled terms `MUST`, `MUST NOT`, `SHOULD`, and `MAY`, including obligations and prohibitions that were previously expressed as ordinary imperatives. Possibility statements such as operations that may produce duplicate data remain ordinary descriptive wording.
-3. Changed the responsibility metadata from `One Developer and One Responsible Owner` to `Single Developer and Sole Responsible Owner`, making the single-person model explicit and consistent with section 2.2.
-4. Removed an unsupported `MUST` from the opening statements in sections 4.2 and 11.1. The Arabic source uses descriptive constructions (`تعامل باعتبارها` and `تعتبر`) rather than an explicit `يجب`; the English now preserves those constructions without strengthening their normative force.
-5. Corrected section 9.3 from `operational reliance prohibited` to `operational use prohibited`, matching the source prohibition on operational use.
-6. Aligned the compatibility status in section 15.5 and the governing rule in section 22 with the glossary term `Compatibility Not Established`. The adjective `unverified` remains where it describes a feature or definition rather than naming the compatibility status.
-7. Corrected prohibitions in sections 11.1, 11.2, and 19 to `MUST NOT`, and preserved the corresponding `MUST` obligation to retain old and conflicting evidence.
+## Technical source verification
 
-## Open terminology and interpretation queries
+The following primary sources were inspected to validate the technical boundaries and terminology used by the translation:
 
-| ID | Location | Source term | Existing English terminology | Issue | Status |
-|---|---|---|---|---|---|
-| TQ-001 | Section 3 layer table | `Apple Native APIs` | `Native iOS APIs` | Terminology Control Addendum 01 explicitly maps the source concept to `Native iOS APIs` and reserves it for interfaces provided by iOS or Apple native frameworks. The draft follows that controlling addendum. The older glossary wording `Apple Native APIs` is a dictionary-maintenance discrepancy, not an unresolved translation choice. | Resolved for translation; dictionary cleanup remains separate |
-| TQ-002 | Section 18.1 | `تستخدم GitHub Actions لتشغيل الفحوص المناسبة للمشروع` | `GitHub Actions are used to run checks appropriate to the project.` | The Arabic wording is an indicative construction in a normative section, but it does not explicitly contain `MUST` or `يجب`. Do not strengthen it to `MUST be used` without a recorded interpretation decision. | Open |
+1. Scriptable official documentation: https://docs.scriptable.app/
+   - States that Scriptable uses Apple's JavaScriptCore and supports ECMAScript 6.
+   - States that Scriptable does not run JavaScript in a browser and that browser-specific objects such as `document` do not exist in the primary Scriptable script environment.
+2. Scriptable WebView documentation: https://docs.scriptable.app/webview/
+   - Documents WebView as a facility for presenting websites and evaluating JavaScript on websites.
+   - Documents `evaluateJavaScript()`, `getHTML()`, `waitForLoad()`, and the loading and presentation methods used in the translation.
+3. Apple JavaScriptCore documentation: https://developer.apple.com/documentation/javascriptcore
+   - Describes JavaScriptCore as a framework for evaluating JavaScript from Swift, Objective-C, and C-based apps, and for inserting custom objects into JavaScript environments.
+   - Its `JSContext`, `JSValue`, `JSVirtualMachine`, `JSManagedValue`, and `JSExport` types do not establish that those types are directly exposed as Scriptable script globals.
+4. ECMAScript 2015 specification: https://262.ecma-international.org/6.0/
+   - Identifies the June 2015 document as the sixth edition of ECMA-262 and the ECMAScript 2015 Language Specification.
+5. DuckDB CLI documentation: https://duckdb.org/docs/current/clients/cli/overview
+   - Documents the DuckDB command-line client, SQL execution, and CSV/JSON output modes.
+6. GitHub CLI pull-request documentation: https://cli.github.com/manual/gh_pr
+   - Documents the pull-request command family used to inspect PR metadata, diffs, and checks.
+
+These sources verify terminology and technical distinctions. They do not prove runtime compatibility for every Scriptable version, iOS version, device, or execution context.
+
+## Confirmed corrections applied in this review
+
+1. Replaced `Compatibility Not Established` with `Not Verified` where the Arabic source says `غير متحقق`. The project decision register's Q53 uses `Not Verified` for unverified versions. The canonical glossary maps the different Arabic phrase `غير مثبت التوافق` to `Compatibility Not Established`; that term is now reserved for that distinct phrase.
+2. Added the explicit `غير متحقق` to `Not Verified` mapping to the canonical glossary, while retaining `غير مثبت التوافق` to `Compatibility Not Established` as a separate mapping.
+3. Standardized the relevant status labels in sections 8.2, 15.5, and 22 to `Not Verified`. The descriptive adjective in section 4.2 is no longer used as a substitute status label.
+4. Replaced `definition statuses` with `definition categories` in section 8.2. The Arabic source says `MUST تسجيل التعريفات` and then lists categories of definition findings.
+5. Replaced `operational use prohibited` with `operational reliance on it is prohibited` in section 9.3. This more closely preserves `منع الاعتماد عليها تشغيلياً` without broadening the prohibition from reliance to every possible use.
+6. Rephrased the descriptive data-validation sentence in section 11.1 as `are treated as requiring validation`. No `MUST` was added because the Arabic source uses a descriptive construction rather than an explicit obligation.
+7. Retained `GitHub Actions are used to run checks appropriate to the project` in section 18.1. The Arabic source says `تستخدم` and does not explicitly say `يجب` or `MUST`; the following sentence separately contains the explicit requirement that checks include the listed categories.
+8. Reconciled `Apple Native APIs` and `Native iOS APIs`: the addendum's canonical term `Native iOS APIs` remains in the translation. The supplementary glossary's duplicate concept entry was removed, and `Apple Native APIs` is retained as a source wording alias under the canonical `Native iOS APIs` entry.
+
+## Terminology decisions
+
+| Concept / source wording | Canonical English | Usage decision |
+|---|---|---|
+| واجهات Scriptable البرمجية | Scriptable APIs | Use for interfaces exposed by the Scriptable app. |
+| واجهات Apple الأصلية / source label `Apple Native APIs` | Native iOS APIs | Use `Native iOS APIs` in translated prose; retain `Apple Native APIs` only as a source wording alias. |
+| بيئة تشغيل Scriptable الرئيسية | Scriptable Main Runtime | Project-defined term. |
+| بيئة تشغيل WebView | WebView Runtime | Project-defined term. |
+| غير متحقق | Not Verified | Controlled status label, supported by decision Q53 and the root project glossary. |
+| غير مثبت التوافق | Compatibility Not Established | Separate term; do not substitute it for `غير متحقق`. |
+| الزائدة | Excess | Definition-category label. |
+| الاعتماد عليها تشغيلياً | operational reliance on it | Do not broaden this to a prohibition on every form of use. |
+
+## Query and discrepancy register
+
+| ID | Location | Question | Resolution | Status |
+|---|---|---|---|---|
+| TQ-001 | Section 3 layer table | Source label `Apple Native APIs` versus addendum term `Native iOS APIs` | Use the addendum's canonical `Native iOS APIs`; retain `Apple Native APIs` as a source wording alias in the canonical glossary. | Resolved |
+| TQ-002 | Section 18.1 | Does the sentence about GitHub Actions carry an explicit mandatory force? | No explicit `يجب` or `MUST` appears in the source sentence. Preserve the descriptive construction and do not strengthen it to `MUST`. | Resolved |
+| TQ-003 | Sections 8.2, 15.5, and 22 | `غير متحقق` had been rendered as both `Unverified` and `Compatibility Not Established`. | Use `Not Verified`, supported by decision Q53 and the root project glossary. Reserve `Compatibility Not Established` for `غير مثبت التوافق`. The canonical dictionary now records the distinction. | Resolved |
+| TQ-004 | Section 9.3 | `الاعتماد عليها تشغيلياً` had been rendered as `operational use`. | Use `operational reliance on it`, which preserves the source's reliance concept without broadening the prohibition. | Resolved |
+
+No translation query remains open in this review. This does not constitute approval of the English specification.
 
 ## Unit tracking
 
 | Unit | Source range | Second-pass status |
 |---|---|---|
-| T-001 | Metadata, sections 1–3 | Second-pass comparison completed. `Native iOS APIs` follows Terminology Control Addendum 01; no translation query remains open for this unit. |
-| T-002 | Sections 4–6 | Second-pass comparison completed. The definition-status label `Excess` now mirrors the source category; no unresolved source-fidelity query identified in this unit. |
-| T-003 | Sections 7–9 | Second-pass comparison completed. Runtime separation, TypeScript lifecycle, and the restriction on operational use of unverified libraries were checked against the source. |
-| T-004 | Sections 10–12 | Second-pass comparison completed. The descriptive data-validation statement is no longer strengthened to `MUST`; error, security, privacy, and file requirements retain their source force. |
-| T-005 | Sections 13–15.2 | Second-pass comparison completed. Context coverage, independent testing requirements, and tool limitations were checked against the source. |
-| T-006 | Sections 15.3–16.4 | Second-pass comparison completed. Compatibility matrix fields, status distinctions, authority order, normative vocabulary, enforcement levels, and rule-definition fields were checked. |
-| T-007 | Sections 17–19 | Translation Query. Lifecycle sequences and change-management stages were checked; TQ-002 remains open for the normative interpretation of the GitHub Actions sentence in section 18.1. |
-| T-008 | Sections 20–23 | Second-pass comparison completed. Reverification triggers, authority references, four compatibility dimensions, and all seven approval conditions were checked. |
-| T-009 | Sections 24–25 | Second-pass comparison completed. All reference entries and usage rules were checked; all 49 URLs match the source exactly. |
+| T-001 | Metadata, sections 1–3 | Reviewed. Runtime-layer terminology and the Native iOS APIs alias were reconciled. |
+| T-002 | Sections 4–6 | Reviewed. ECMAScript baseline, normative force, and definition categories were checked. |
+| T-003 | Sections 7–9 | Reviewed. Main Runtime/WebView separation, TypeScript terminology, and operational reliance wording were checked. |
+| T-004 | Sections 10–12 | Reviewed. Architecture, data-validation wording, error handling, security, and privacy requirements were checked. |
+| T-005 | Sections 13–15.2 | Reviewed. Performance, target contexts, testing layers, and tool limitations were checked. |
+| T-006 | Sections 15.3–16.4 | Reviewed. Tool authority, compatibility matrix, `Not Verified` status, authority order, and normative vocabulary were checked. |
+| T-007 | Sections 17–19 | Reviewed. Exception and violation lifecycles, GitHub checks, branch protection, and change-management wording were checked. TQ-002 was resolved without adding a new obligation. |
+| T-008 | Sections 20–23 | Reviewed. Reverification triggers, reference hierarchy, four compatibility dimensions, and seven approval conditions were checked. |
+| T-009 | Sections 24–25 | Reviewed. Reference entries and URL usage rules were checked against the source. |
 
-## Required before approval
+## Mechanical verification results
 
-- Resolve TQ-002 through an explicit source-interpretation decision.
-- TQ-001 is resolved for translation by Terminology Control Addendum 01; the older glossary label remains a separate dictionary-maintenance discrepancy.
-- Verify every list item, table cell, qualifier, exception, example, identifier, number, version, and URL. A URL multiset comparison has confirmed that all 49 source URLs appear in the target exactly once, with no additional URLs.
-- Check each normative statement against its source wording and preserve the distinction among `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`.
-- Reconcile recurring terms with the canonical dictionaries and record unresolved conflicts.
-- Record source or terminology questions without silently amending the Arabic source.
-- Mark a unit `Approved` only after all acceptance criteria in `dictionaries/README.md` are met.
-- Keep the complete English document unapproved until the owner explicitly approves it.
+- The source and target each contain 49 URL occurrences.
+- DuckDB multiset comparison found no missing, additional, or differently repeated URL.
+- All 25 top-level English sections are present.
+- Both lifecycle sequences are preserved exactly.
+- The Arabic source file was not modified.
+- `git diff --check` must pass after the final edits.
+- Pull-request checks must be rerun after the final commit.
 
-**No unit is marked Approved by this audit.**
+## Approval boundary
 
-
-## Second-pass checks completed in this continuation
-
-- All nine units were reviewed against their Arabic source sections. TQ-002 remains the only open source-interpretation query.
-- `Scriptable Main Runtime`, `WebView Runtime`, `Scriptable APIs`, and `Native iOS APIs` follow the terminology control addendum.
-- The compatibility status is `Compatibility Not Established`, matching the canonical glossary entry. `Unverified` remains an adjective or definition status where appropriate. `Excess` is used for the excess-definition category.
-- The source and target contain the same 49 URLs, with no missing or extra URL occurrences.
-- Sections 1 through 25 are present in the target. Both lifecycle sequences are preserved exactly.
-- No unit is marked `Approved`; the English document remains a draft.
+- All nine units have completed this second linguistic and semantic review.
+- No unit is marked `Approved` by this audit.
+- The English specification remains a draft.
+- PR #28 must remain a Draft until the owner explicitly approves the final translation.
+- No merge into `main` is authorized by this audit.

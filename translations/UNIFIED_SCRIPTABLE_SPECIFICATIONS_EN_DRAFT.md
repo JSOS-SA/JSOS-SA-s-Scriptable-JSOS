@@ -118,7 +118,7 @@ The following layers MUST be distinguished and MUST NOT be treated as a single e
 
 ### 4.2 Modern Features
 
-Any feature whose compatibility with the baseline or target device has not been established is treated as unverified until it has been tested.
+Any feature whose compatibility with the baseline or target device has not been established is treated as Not Verified until it has been tested.
 
 This includes, for example, features introduced after ES2015, such as async/await, BigInt, and modern array features.
 
@@ -260,13 +260,13 @@ The project MAY use @types/scriptable-ios, DefinitelyTyped, and type-definition 
 
 The definitions MUST be compared against the official Scriptable documentation.
 
-The following definition statuses MUST be recorded:
+The following definition categories MUST be recorded:
 
 - Correct.
 - Missing.
 - Excess.
 - Conflicting.
-- Unverified.
+- Not Verified.
 
 ### 8.3 Type-Checking Configuration
 
@@ -320,7 +320,7 @@ The following MUST be examined:
 
 Successful installation, compilation, or static analysis does not establish library compatibility with the Runtime.
 
-A library MUST NOT be approved until its compatibility has been established in the target context, or it has been documented as unverified with operational use prohibited.
+A library MUST NOT be approved until its compatibility has been established in the target context, or it has been documented as Not Verified and operational reliance on it is prohibited.
 
 ## 10. Project Architecture and Organization
 
@@ -359,7 +359,7 @@ Every public module MUST specify:
 
 ### 11.1 Data
 
-All data originating from the network, files, the user, or the execution context are considered data requiring validation.
+All data originating from the network, files, the user, or the execution context are treated as requiring validation.
 
 MUST:
 
@@ -515,7 +515,7 @@ The following statuses MUST be distinguished:
 - Tested.
 - Compatible.
 - Incompatible.
-- Compatibility Not Established.
+- Not Verified.
 
 The phrase “fully compatible” MUST NOT be used without specifying the scope and providing evidence of the required tests.
 
@@ -763,7 +763,7 @@ Four independent matters MUST be established:
 3. Context Compatibility: Its operation in the intended execution context.
 4. Device Verification: Successful testing on the target iPhone and the targeted Scriptable and iOS versions.
 
-Any point for which sufficient evidence is unavailable MUST be recorded as Compatibility Not Established. It MUST NOT be converted into an approved fact through assumption.
+Any point for which sufficient evidence is unavailable MUST be recorded as Not Verified. It MUST NOT be converted into an approved fact through assumption.
 
 ## 23. Conditions for Approving the Specifications
 
