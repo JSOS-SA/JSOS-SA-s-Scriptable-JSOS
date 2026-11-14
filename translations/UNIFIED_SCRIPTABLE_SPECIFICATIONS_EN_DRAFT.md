@@ -651,75 +651,238 @@ The objective is high cohesion, controlled coupling, explicit contracts, and pre
 
 ## 7. Separation Between Scriptable Main Runtime and WebView Runtime
 
-### 7.1 Scriptable Main Runtime
+### 7.1. Scriptable Main Runtime
 
-This is the primary script execution context in Scriptable.
+The Scriptable Main Runtime is the primary JavaScript execution context provided by the Scriptable application.
 
-Documented Scriptable APIs, such as FileManager, Request, Keychain, Script, and args, can be used in this context.
+Scriptable uses Apple's JavaScriptCore engine and documents support for ECMAScript 6. Scriptable exposes product-specific host APIs to scripts. Examples include `FileManager`, `Request`, `Keychain`, `Script`, `args`, `WebView`, `Calendar`, `Location`, `Notification`, and `Pasteboard`.
 
-MUST NOT assume that document, window, or the DOM exists in this context.
+The availability of an API MUST be established through the official Scriptable documentation and verified against the intended execution context and target application version where runtime behavior matters.
 
-### 7.2 WebView Runtime
+The Main Runtime MUST NOT be treated as a browser environment. Developers MUST NOT assume that browser-specific globals or interfaces such as `window`, `document`, `navigator`, `localStorage`, the DOM, or browser rendering and event APIs are available in this context.
 
-This is an independent web-page context within WebView.
+JavaScript language features, Scriptable host APIs, and browser APIs MUST be evaluated as separate compatibility categories. The presence of a JavaScript language feature does not establish the availability of a browser API or a Scriptable host API.
 
-It can contain HTML, CSS, JavaScript, the DOM, and document, according to the web-page environment.
+### 7.2. WebView Runtime
 
-The documented WebView APIs MUST be used to control the page, such as evaluateJavaScript(), getHTML(), waitForLoad(), and the loading and presentation operations.
+The WebView Runtime is the JavaScript execution context associated with the web page loaded inside a Scriptable `WebView` instance.
 
-### 7.3 Separation Rules
+It provides a web-page environment capable of rendering HTML, applying CSS, and executing JavaScript against the page's DOM. Depending on the loaded page and underlying web environment, it may expose browser interfaces such as `window`, `document`, DOM elements and nodes, browser event interfaces, HTML and CSS rendering capabilities, and supported Web platform APIs.
 
-1. MUST identify where each piece of code executes: Scriptable Main Runtime or WebView Runtime.
-2. MUST NOT transfer DOM assumptions into Scriptable Main Runtime.
-3. MUST NOT consider WebView a replacement for FileManager.
-4. MUST test JavaScript within WebView independently from the primary script.
-5. MUST handle communication between the two contexts explicitly and validate the transferred data.
-6. MUST account for the behavior of asynchronous operations and loading errors.
+The availability of individual web APIs MUST NOT be assumed solely because code executes inside WebView. Their availability and behavior MUST be verified against the actual web environment and target iOS version when relevant.
+
+Scriptable exposes a native `WebView` API that allows the Main Runtime to control the web-page context. Its documented interface includes:
+
+| API | Purpose |
+|---|---|
+| `new WebView()` | Creates a WebView instance. |
+| `loadHTML()` | Loads HTML content. |
+| `loadFile()` | Loads a local file into WebView. |
+| `loadURL()` | Loads a URL. |
+| `loadRequest()` | Loads a request using its documented request configuration. |
+| `evaluateJavaScript()` | Evaluates JavaScript in the current WebView page context. |
+| `getHTML()` | Retrieves HTML from the loaded page. |
+| `waitForLoad()` | Waits for an active page-loading operation. |
+| `present()` | Presents the WebView interface. |
+
+The WebView API MUST be used according to its documented parameters, return values, lifecycle, and asynchronous behavior.
+
+The Main Runtime and WebView Runtime MUST NOT be treated as interchangeable:
+
+- Scriptable host APIs MUST NOT be assumed to exist inside the WebView page context.
+- Browser DOM APIs MUST NOT be assumed to exist in the Main Runtime.
+- WebView MUST NOT be treated as a replacement for Scriptable APIs such as `FileManager`.
+- The availability of a JavaScript feature in one context MUST NOT establish its availability in the other context.
+
+### 7.3. Runtime Identification and Code Placement
+
+Every source file, module, function, and executable code segment MUST have an identifiable execution context.
+
+The project MUST distinguish between Scriptable Main Runtime code, WebView page JavaScript, shared JavaScript code intended to operate in both contexts, and build-time or development-only code that is not executed by Scriptable.
+
+Code placement MUST follow the APIs and capabilities available in the intended runtime. Shared code MUST NOT contain implicit dependencies on browser globals or Scriptable-specific host APIs unless those dependencies are explicitly supplied through a documented interface.
+
+Where shared code requires environment-specific functionality, the environment-dependent operations SHOULD be isolated behind explicit adapters or injected dependencies when that separation improves testability or change isolation.
+
+### 7.4. Runtime Separation and Compatibility
+
+- Developers MUST identify the intended execution context of each runtime-dependent component.
+- Main Runtime code MUST NOT depend on browser DOM objects.
+- WebView code MUST NOT assume direct access to Scriptable host APIs.
+- Runtime-specific APIs MUST be used only in their supported execution context.
+- Shared modules MUST define their environmental requirements explicitly.
+- Runtime-specific dependencies SHOULD be isolated from reusable business logic.
+- Code MUST NOT be considered compatible with both environments merely because it uses JavaScript syntax supported by both.
+- Runtime compatibility MUST be verified independently for each intended execution context.
+
+### 7.5. Communication Between Main Runtime and WebView Runtime
+
+Communication between Scriptable Main Runtime and WebView Runtime MUST be explicit.
+
+The `evaluateJavaScript()` interface provides a documented mechanism for evaluating JavaScript in the WebView context and returning its evaluation result through a Promise. When its `useCallback` parameter is enabled, evaluation can wait for the page's `completion` function to be called, and the value supplied to that function is carried by the returned Promise.
+
+- Every cross-context communication operation MUST have a defined direction.
+- The sender and receiver MUST have a documented data contract.
+- Transferred data MUST be validated before it is consumed.
+- Data structures MUST use an explicitly supported transfer representation.
+- Data MUST NOT be assumed to preserve unsupported object behavior, methods, or runtime-specific references.
+- Cross-context communication MUST handle missing, malformed, unexpected, and incomplete data.
+- Error responses MUST be distinguishable from successful results.
+- Communication operations SHOULD use a predictable response structure.
+- Untrusted values MUST NOT be inserted into executable JavaScript source without appropriate encoding and validation.
+
+A communication contract SHOULD identify the message purpose, sender and receiver, required and optional fields, data types, validation rules, success and error response structures, and timeout or failure-handling behavior where applicable.
+
+### 7.6. Asynchronous Execution and Loading Lifecycle
+
+WebView operations MUST be designed around their documented asynchronous behavior. Developers MUST account for page-loading completion, JavaScript evaluation completion, Promise resolution and rejection, WebView presentation and dismissal, navigation and page replacement, resource-loading failures, invalid or unavailable page content, and operations that depend on a particular loading state.
+
+The documented behavior of individual methods MUST be respected. For example:
+
+- `loadURL()` returns a Promise associated with completion of the page load.
+- `evaluateJavaScript()` returns a Promise carrying the evaluation result.
+- `present()` returns a Promise associated with dismissal of the presented WebView.
+- `waitForLoad()` waits for an active loading operation and may remain pending if the WebView is not loading or about to load another page.
+- The documented `waitForLoad()` failure result MUST be handled according to its API contract. Implementations MUST NOT assume that every WebView operation reports errors through identical Promise semantics.
+
+Loading, evaluation, and presentation errors MUST be handled according to the specific API contract.
+
+### 7.7. Runtime Testing and Verification
+
+The Main Runtime and WebView Runtime MUST be tested independently. Testing SHOULD cover Scriptable host API availability, browser API availability within WebView, runtime-specific JavaScript behavior, WebView loading and navigation, JavaScript evaluation results, cross-context data transfer, data validation, asynchronous completion, error handling, and integration between both contexts.
+
+A successful test in a browser MUST NOT establish compatibility with Scriptable Main Runtime. Likewise, a successful Main Runtime test MUST NOT establish compatibility with the WebView page environment.
+
+Critical runtime-dependent functionality MUST be verified within the actual Scriptable application and the intended execution context.
 
 ## 8. TypeScript and Scriptable Definitions
 
-### 8.1 Role
+### 8.1. Role of TypeScript
 
-TypeScript is a development and static type-checking tool, not a native runtime environment within Scriptable.
+TypeScript is a development-time programming language and static type-checking tool built on JavaScript. It provides static type checking, type declarations, interface definitions, editor assistance, refactoring support, compiler diagnostics, and JavaScript code generation.
 
-### 8.2 Type Definitions
+TypeScript is NOT a native Scriptable runtime environment. Scriptable executes JavaScript. TypeScript source files MUST be checked and, when necessary, transformed into JavaScript before execution.
 
-The project MAY use @types/scriptable-ios, DefinitelyTyped, and type-definition generation projects, but these MUST be treated as unofficial supporting references.
+TypeScript declarations and compiler diagnostics MUST NOT be interpreted as proof that an API exists or is supported at runtime.
 
-The definitions MUST be compared against the official Scriptable documentation.
+### 8.2. Scriptable Type Definitions and Supporting References
 
-The following definition categories MUST be recorded:
+A project MAY use community-maintained Scriptable TypeScript definitions and generation projects, including `@types/scriptable-ios`, DefinitelyTyped, `schl3ck/ios-scriptable-types`, and other relevant type-definition or documentation-generation projects.
 
-- Correct.
-- Missing.
-- Excess.
-- Conflicting.
-- Not Verified.
+These resources MUST be treated as unofficial supporting references unless Scriptable explicitly establishes an official distribution or maintenance status. The official Scriptable documentation MUST remain the primary reference for Scriptable API behavior and availability.
 
-### 8.3 Type-Checking Configuration
+The existence of a declaration in a third-party definition package MUST NOT establish that the corresponding API is currently available, correctly described, or supported by the installed Scriptable version.
 
-The target, lib, and types settings MUST be configured to suit the target runtime environment.
+### 8.3. Type Definition Verification and Classification
 
-DOM definitions MUST NOT be loaded automatically into Scriptable Main Runtime type checking if doing so would permit the use of APIs that do not exist in that environment.
+Scriptable-related type definitions MUST be compared against the official documentation and, where necessary, verified through runtime testing.
 
-The following MUST be distinguished:
+| Classification | Meaning |
+|---|---|
+| Correct | The definition agrees with the verified API behavior and documented contract. |
+| Missing | A documented or verified API member is absent from the definition. |
+| Excess | A declared member has no sufficient evidence of availability in the target Scriptable environment. |
+| Conflicting | The declaration contradicts the official documentation or verified runtime behavior. |
+| Not Verified | Available evidence is insufficient to establish correctness. |
 
-- TypeScript Declaration.
-- JavaScript Output.
-- Runtime API.
+The review MUST consider relevant declaration elements, including global variables, functions, objects, classes, constructors, properties, methods, function parameters, return types, optional parameters, nullable values, callback signatures, Promise behavior, enumerations, literal values, and other supported JavaScript values.
 
-Successful type checking does not establish that an API exists at runtime.
+Definitions MUST preserve the distinction between a Function, an Object, a Class, a primitive value, and another supported JavaScript value.
 
-### 8.4 TypeScript Lifecycle
+A declaration MUST NOT be accepted merely because it passes the TypeScript compiler. When a discrepancy is identified, the project MUST record the affected symbol, conflicting declaration, authoritative documentation, verification result, and required corrective action.
 
-When using TypeScript:
+### 8.4. TypeScript Compiler Configuration
 
-1. Write the source files.
-2. Perform type checking.
-3. Transpile or build JavaScript when needed.
-4. Verify that the output is compatible with Scriptable.
-5. Execute the output within the application.
-6. Record the result and evidence.
+TypeScript compiler configuration MUST reflect the actual target execution environment. The project MUST distinguish the responsibilities of the following options:
+
+| Option | Responsibility |
+|---|---|
+| `target` | Controls the JavaScript language syntax level emitted by the compiler and influences the default library declarations. |
+| `lib` | Selects built-in library declaration files used by the type checker. |
+| `types` | Controls which visible `@types` packages are included in the global scope. |
+| `typeRoots` | Specifies the directories in which TypeScript searches for type packages. |
+| `module` | Controls the module code-generation format. |
+| `moduleResolution` | Controls how TypeScript resolves module references during development and type checking. |
+
+The configuration MUST be designed for the intended Scriptable execution context.
+
+#### 8.4.1. Target Compatibility
+
+The `target` option MUST be selected according to the JavaScript syntax supported by the intended Scriptable runtime. Scriptable's official documentation identifies ECMAScript 6 as its documented JavaScript baseline.
+
+A compiler target such as `ES2015` MAY be used as a conservative starting point, but it MUST NOT be treated as proof that every JavaScript API introduced in that specification or later specifications is available in the installed runtime.
+
+Transpilation changes syntax where required. It does not automatically provide missing runtime APIs or polyfills.
+
+#### 8.4.2. Library Definitions
+
+The `lib` option MUST represent the built-in language and environment declarations appropriate to the target runtime.
+
+DOM declarations MUST NOT be included in Main Runtime type checking unless the code is explicitly intended to execute in a browser-like environment. A separate TypeScript configuration SHOULD be used for WebView code when its browser API requirements differ from those of Scriptable Main Runtime.
+
+This separation prevents browser-specific declarations from incorrectly permitting Main Runtime code to reference unavailable globals such as `document` and `window`.
+
+#### 8.4.3. Type Package Inclusion
+
+The `types` and `typeRoots` options MUST be configured deliberately. The project MUST avoid unintentionally importing unrelated global declarations that could distort the apparent capabilities of the target runtime.
+
+Scriptable declarations SHOULD be included explicitly in the relevant TypeScript project configuration. The configuration MUST NOT allow definitions intended for Node.js or browser environments to silently expand the apparent Scriptable Main Runtime API surface.
+
+#### 8.4.4. Module Output Compatibility
+
+TypeScript module settings MUST be selected according to the actual module-loading mechanism used by Scriptable.
+
+A successful TypeScript module resolution or compilation does NOT establish that the resulting module format can be loaded by Scriptable. The generated JavaScript MUST NOT depend on undocumented runtime module loaders or automatically assume support for Node.js `require()`, Node.js module resolution, automatic `node_modules` loading, browser-native ECMAScript module loading, or runtime module formats that Scriptable does not document.
+
+Where Scriptable's `importModule()` and `module.exports` mechanism is used, the generated output MUST be compatible with that mechanism or be transformed into a verified compatible form. Bundled output MUST also be checked for runtime dependencies introduced by the bundler or compiler.
+
+### 8.5. TypeScript Declaration, JavaScript Output, and Runtime API
+
+The project MUST distinguish between three separate technical layers.
+
+**TypeScript Declaration**
+
+A declaration describes the expected structure, properties, methods, parameters, and return types of a value for static analysis and editor tooling. It does not create the declared runtime functionality.
+
+**JavaScript Output**
+
+JavaScript output is the code generated from TypeScript source files through compilation or a build process. The generated code is the executable artifact intended for the target JavaScript environment.
+
+**Runtime API**
+
+A Runtime API is an actual function, object, class, property, or capability exposed by the execution environment. Its availability and behavior depend on the actual runtime and its host APIs.
+
+The following principles MUST be enforced:
+
+- A TypeScript declaration MUST NOT be treated as a runtime implementation.
+- A successful type check MUST NOT establish runtime API availability.
+- Generated JavaScript MUST NOT be assumed compatible solely because compilation succeeded.
+- Runtime API compatibility MUST be verified independently.
+- Missing runtime functionality MUST NOT be hidden by adding declarations.
+- Unsupported runtime APIs MUST NOT be treated as supported merely because a type package declares them.
+
+### 8.6. TypeScript Development and Build Lifecycle
+
+When TypeScript is used, the project MUST follow a defined development and build lifecycle:
+
+1. **Source Authoring:** Write and maintain the TypeScript source files, type declarations, interfaces, and relevant project configuration.
+2. **Static Type Checking:** Run the TypeScript compiler or an appropriate type-checking process and review relevant diagnostics.
+3. **Compilation and Build:** Transpile or build TypeScript source into JavaScript when required.
+4. **Output Inspection:** Inspect the generated JavaScript for unsupported syntax, unexpected runtime dependencies, incompatible module output, and incorrect build transformations.
+5. **Scriptable Compatibility Verification:** Verify that the generated output is compatible with the actual Scriptable execution environment, including its module-loading mechanism and documented APIs.
+6. **Application Execution:** Execute the generated JavaScript within the Scriptable application and the intended runtime context.
+7. **Runtime Testing:** Test relevant functionality, including API availability, data handling, asynchronous behavior, error handling, and integration with other modules.
+8. **Evidence Recording:** Record the compiler configuration, relevant build results, test outcomes, detected discrepancies, and runtime verification evidence.
+
+A successful compilation MUST NOT be considered a substitute for executing and testing the generated JavaScript in Scriptable.
+
+### 8.7. Type Definition Maintenance and Traceability
+
+Type definitions MUST be traceable to their source and verification evidence. For each important declaration, the project SHOULD record the declared symbol, definition package and version, source repository, relevant official Scriptable documentation, verification classification, known discrepancies, last verification date, and runtime verification status.
+
+When Scriptable documentation or the application changes, affected declarations SHOULD be reviewed. Third-party definition updates MUST be assessed before adoption, especially when they introduce APIs, alter function signatures, change optional parameters, or modify return types.
+
+Type definitions MUST NOT silently override verified project-specific compatibility findings.
 
 ## 9. Libraries and Dependencies
 
