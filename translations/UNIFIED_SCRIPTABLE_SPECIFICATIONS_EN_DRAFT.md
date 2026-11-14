@@ -2495,15 +2495,65 @@ https://csrc.nist.gov/pubs/sp/800/30/r1/final
 
 ## 25. Rules for Using the Reference List
 
-1. MUST display the complete URL in project documentation, beginning with https:// when the link is securely available over HTTPS.
-2. MUST NOT replace a URL with an abbreviated name or a hidden link.
-3. MUST consult the Scriptable Official Documentation first when examining application APIs.
-4. MUST consult Apple JavaScriptCore to understand the engine, without confusing its APIs with Scriptable APIs.
-5. MUST consult ECMAScript to determine language rules.
-6. MUST consult TypeScript Official Documentation to determine the behavior of type-checking and transpilation tools.
-7. MUST treat DefinitelyTyped definitions and generation projects as supporting references, not as official sources for Runtime APIs.
-8. MUST record the specific source on which each rule or compatibility result is based.
-9. MUST NOT consider the presence of a URL in this list as evidence that its content establishes a particular form of support.
-10. MUST reverify URLs and their content when updating the specifications or conducting a compatibility review.
+### 25.1 URL Visibility, Integrity, and Preservation
+
+1. Source URLs MUST be displayed in full in project documentation. A URL MUST begin with `https://` when the source provides an HTTPS endpoint. If the authoritative source is available only through another protocol, the documented URL MUST reflect the actual source endpoint and the limitation MUST be recorded. HTTPS MUST NOT be fabricated by changing the scheme of a URL without verifying that the endpoint exists and serves the intended resource.
+2. A source URL MUST NOT be replaced by an abbreviated name, URL shortener, redirector, or hidden hyperlink. Descriptive source titles MAY accompany a URL, but MUST NOT replace it.
+3. URLs MUST be preserved accurately, including the hostname, path, relevant query parameters, and fragment identifier. A trailing slash, path, or fragment MUST NOT be removed or altered when doing so changes the resource being referenced.
+4. When a source moves, redirects, changes its canonical URL, or becomes unavailable, the change MUST be checked against the source owner's official location. The old URL and its disposition MUST remain traceable in the change record where it was previously used as evidence.
+5. A link being reachable, returning a successful HTTP response, or appearing in this list MUST NOT by itself be treated as evidence that the linked content supports a particular technical claim.
+
+### 25.2 Source Selection by Technical Authority
+
+1. The official Scriptable Documentation MUST be consulted first when examining Scriptable application APIs, including API availability, signatures, parameters, return values, permissions, execution contexts, and documented limitations.
+2. Apple JavaScriptCore documentation MUST be consulted for claims about Apple's JavaScriptCore framework and its documented engine integration facilities. JavaScriptCore framework APIs MUST NOT be represented as Scriptable APIs unless Scriptable independently documents or exposes them.
+3. The applicable ECMAScript specification edition MUST be consulted for JavaScript language syntax, semantics, language types, standard built-ins, and conformance requirements. The cited edition MUST match the language feature or behavior under examination. A living specification MUST NOT be presented as a version-pinned historical source.
+4. Official TypeScript documentation MUST be consulted for claims about TypeScript type checking, declaration files, compiler options, JavaScript emission, and compiler transformations. Type declarations or compiler output MUST NOT be treated as proof that a runtime API or language feature exists in Scriptable.
+5. DefinitelyTyped declarations, generated Scriptable type definitions, community repositories, and community examples MUST be treated as supporting development references. They MUST NOT be treated as official authorities for Scriptable Runtime API availability or behavior.
+6. Test262 MUST be treated as ECMAScript conformance test material. Its presence or a result from another engine MUST NOT be treated as evidence that Scriptable host APIs, Scriptable execution contexts, or the target iPhone environment are compatible.
+7. Sources MUST be selected according to the subject matter of the claim. The order of entries in the reference list MUST NOT be interpreted as a universal authority ranking across unrelated technical domains.
+8. Where multiple sources are relevant, the reviewer MUST consult each source within its defined scope. No source may be used to establish a fact outside the subject matter it governs.
+
+### 25.3 Source Provenance and Claim Traceability
+
+1. Every normative rule, technical claim, and compatibility conclusion that depends on external material MUST identify the specific source supporting it.
+2. The source record MUST include, where applicable:
+   - Source ID or stable reference identifier.
+   - Exact source title and issuing organization or maintainer.
+   - Complete URL as displayed in the documentation.
+   - Source type, such as official product documentation, platform framework documentation, language specification, compiler documentation, community declaration, or conformance test suite.
+   - Applicable version, edition, release, tag, commit, or document revision.
+   - Access or verification date.
+   - Exact section, API entry, clause, declaration, or repository path supporting the claim.
+   - The claim or Rule ID supported by the source.
+   - Relevant scope limits, assumptions, and known gaps.
+3. When a source is a living document or a mutable repository branch, the record SHOULD include a version-pinned snapshot, release, tag, commit permalink, or other immutable revision when available. If no immutable revision is available, the access date and mutable nature of the source MUST be recorded.
+4. A source citation MUST distinguish what the source explicitly states from what the project infers from it. Inferences MUST be labelled and MUST NOT be presented as direct quotations or explicit source requirements.
+5. A source URL alone is not sufficient traceability. The record MUST identify the specific content that supports the associated claim.
+
+### 25.4 Verification of URLs and Source Content
+
+1. URLs MUST be reverified when the specifications are updated and whenever a compatibility review relies on the referenced material.
+2. Reverification MUST check both resource availability and content relevance. A successful response or redirect MUST NOT be treated as proof that the destination is the same authoritative resource.
+3. The reviewer MUST confirm that the source is controlled by the stated issuing organization or maintainer, that the content is applicable to the claim, and that the cited version or revision is appropriate.
+4. For mutable documentation, the reviewer MUST check whether the relevant statement, API entry, or specification clause has changed since the previous review.
+5. If a URL is unavailable, redirects to an unrelated resource, or no longer contains the cited material, the reference MUST be marked for correction or replacement. The prior claim MUST be reassessed rather than silently retaining unsupported wording.
+6. Reverification records MUST identify the reviewer, date, checked URL, source revision where available, outcome, and any resulting documentation or compatibility changes.
+
+### 25.5 Conflicting, Incomplete, or Inapplicable Sources
+
+1. Conflicts between sources MUST be recorded and investigated. A reviewer MUST NOT resolve a conflict solely by selecting the newest publication or the source with the most convenient wording.
+2. The reviewer MUST determine which source governs the subject matter, compare the applicable versions and scopes, and record the resolution and its rationale.
+3. A conflict between documentation, declarations, implementation behavior, and observed test results MUST be handled under the discrepancy process in Section 20.4.
+4. If the available sources do not establish a claim, the claim MUST remain Not Verified. The absence of contrary documentation MUST NOT be treated as proof of support.
+5. A reference that is relevant only to a different version, platform, engine, host environment, or execution context MUST be identified as such and MUST NOT be generalized to the approved Scriptable target scope.
+
+### 25.6 Separation of Documentary and Runtime Evidence
+
+1. Documentary evidence establishes what a source documents or specifies. It does not, by itself, establish that the target Scriptable application implements the behavior or that the behavior succeeds on the target iPhone.
+2. Runtime compatibility conclusions MUST identify the applicable Scriptable version/build, iOS version, iPhone model, execution context, verification procedure, result, and evidence location.
+3. Static analysis, TypeScript checking, generated declarations, community tests, Node.js execution, browser execution, and Test262 results MUST NOT be represented as successful Scriptable device verification.
+4. A reference-list update, source review, or citation correction MUST NOT be described as a test execution or a Passed test result.
+5. The terms Documented, Approved, Tested, Passed, Compatible, and Not Verified MUST retain the distinct meanings established in Section 22.
 
 **End of the additional reference list.**
