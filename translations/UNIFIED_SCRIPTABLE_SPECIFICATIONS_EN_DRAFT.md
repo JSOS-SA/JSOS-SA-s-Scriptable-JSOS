@@ -3,13 +3,13 @@
 | Metadata | Value |
 |---|---|
 | Document title | Unified Scriptable Engineering Constitution & Technical Standards |
-| Status | Unified draft for review and approval |
+| Status | Revised draft under review; not approved |
 | Proposed version | 1.0.0 |
 | Device scope | iPhone only |
-| Responsibility model | One developer and sole responsible owner |
+| Responsibility model | One Developer and One Responsible Owner |
 | Basis | Decisions Q1–Q75 and the document *Scriptable Application, JavaScript Language, and Runtime Environment Rules and Standards* |
 
-> **Translation status:** Initial English translation draft. Not approved. The Arabic source remains authoritative until the English text is reviewed and explicitly approved.
+> **Translation status:** Revised English translation draft under review. Not approved. The Arabic source remains authoritative until the English text is fully reviewed and explicitly approved.
 
 ### Translation unit map
 
@@ -35,10 +35,10 @@ The specifications cover:
 
 - The JavaScript language and the ECMAScript standard.
 - The Apple JavaScriptCore engine.
-- Native Scriptable APIs.
+- Scriptable APIs.
 - The module and import system.
-- Scriptable Main Runtime.
-- WebView Runtime.
+- Scriptable Main Runtime (Project-defined).
+- WebView Runtime (Project-defined).
 - TypeScript and its definitions.
 - Project structure and architecture.
 - Libraries and dependencies.
@@ -84,18 +84,18 @@ Every approval, review, test result, and deployment operation MUST be attributab
 
 ## 3. Technical Model and Runtime Layers
 
-The following layers MUST be distinguished and MUST NOT be treated as a single environment:
+The following layers must be distinguished and must not be treated as a single environment:
 
 | Layer | Responsibility |
 |---|---|
 | JavaScript | Programming language |
 | ECMAScript | The standard that defines the language’s rules and behavior |
 | JavaScriptCore | JavaScript execution engine |
-| Scriptable | Host application and its native interfaces |
-| Main Runtime | Primary script execution context |
+| Scriptable | Host Application and its Scriptable APIs |
+| Scriptable Main Runtime | Primary script execution context |
 | WebView Runtime | Web page execution context |
 | TypeScript | Type checking and development tools |
-| Apple Native APIs | Apple’s native APIs; their existence does not establish their direct availability within Scriptable |
+| Native iOS APIs | Apple’s native iOS APIs; their existence does not establish their direct availability within Scriptable |
 
 ### 3.1 Rule for Separating Layers
 
@@ -103,7 +103,7 @@ The following layers MUST be distinguished and MUST NOT be treated as a single e
 2. The existence of an API in JavaScriptCore does not establish that it is directly available to the script.
 3. The existence of a TypeScript definition does not create a Runtime API.
 4. Successful execution of code in Node.js does not establish its compatibility with Scriptable.
-5. Successful execution of code in WebView does not establish its compatibility with Main Runtime.
+5. Successful execution of code in WebView does not establish its compatibility with Scriptable Main Runtime.
 6. The layer and context MUST be identified before any API or feature is approved.
 
 ## 4. JavaScript and ECMAScript Standard
@@ -118,11 +118,11 @@ The following layers MUST be distinguished and MUST NOT be treated as a single e
 
 ### 4.2 Modern Features
 
-Any feature whose compatibility with the baseline or target device has not been established MUST be treated as unverified until it has been tested.
+Any feature whose compatibility with the baseline or target device has not been established must be treated as unverified until it has been tested.
 
 This includes, for example, features introduced after ES2015, such as async/await, BigInt, and modern array features.
 
-Support for these features MUST NOT be assumed merely because they exist in a recent version of JavaScriptCore or in TypeScript.
+Support for these features must not be assumed merely because they exist in a recent version of JavaScriptCore or in TypeScript.
 
 ### 4.3 Code Quality
 
@@ -140,7 +140,7 @@ MUST:
 - Document complex logic and the reason for its existence.
 - Separate business logic from system access as far as practicable.
 
-## 5. Native Scriptable APIs
+## 5. Scriptable APIs
 
 ### 5.1 Source of Truth
 
@@ -194,7 +194,7 @@ The module system relies on:
 - importModule()
 - module.exports
 
-The documented import behavior MUST be followed, and file paths MUST be specified correctly.
+The documented import behavior must be followed, and file paths must be specified correctly.
 
 ### 6.2 Node.js Compatibility Boundaries
 
@@ -221,13 +221,13 @@ MUST avoid:
 - Multiple responsibilities within a module.
 - Direct dependencies on system APIs when business logic can be separated from them.
 
-## 7. Separation Between Main Runtime and WebView
+## 7. Separation Between Scriptable Main Runtime and WebView Runtime
 
-### 7.1 Main Runtime
+### 7.1 Scriptable Main Runtime
 
 This is the primary script execution context in Scriptable.
 
-Documented application APIs, such as FileManager, Request, Keychain, Script, and args, can be used in this context.
+Documented Scriptable APIs, such as FileManager, Request, Keychain, Script, and args, can be used in this context.
 
 MUST NOT assume that document, window, or the DOM exists in this context.
 
@@ -237,12 +237,12 @@ This is an independent web-page context within WebView.
 
 It can contain HTML, CSS, JavaScript, the DOM, and document, according to the web-page environment.
 
-The documented WebView APIs MUST be used to control the page, such as evaluateJavaScript(), getHTML(), waitForLoad(), and the loading and presentation operations.
+The documented WebView APIs must be used to control the page, such as evaluateJavaScript(), getHTML(), waitForLoad(), and the loading and presentation operations.
 
 ### 7.3 Separation Rules
 
-1. MUST identify where each piece of code executes: Main Runtime or WebView.
-2. MUST NOT transfer DOM assumptions into Main Runtime.
+1. MUST identify where each piece of code executes: Scriptable Main Runtime or WebView Runtime.
+2. MUST NOT transfer DOM assumptions into Scriptable Main Runtime.
 3. MUST NOT consider WebView a replacement for FileManager.
 4. MUST test JavaScript within WebView independently from the primary script.
 5. MUST handle communication between the two contexts explicitly and validate the transferred data.
@@ -256,25 +256,25 @@ TypeScript is a development and static type-checking tool, not a native runtime 
 
 ### 8.2 Type Definitions
 
-The project may use @types/scriptable-ios, DefinitelyTyped, and type-definition generation projects, but these MUST be treated as unofficial supporting references.
+The project may use @types/scriptable-ios, DefinitelyTyped, and type-definition generation projects, but these must be treated as unofficial supporting references.
 
 The definitions MUST be compared against the official Scriptable documentation.
 
-The following types of definitions MUST be recorded:
+The following definition statuses MUST be recorded:
 
 - Correct.
 - Missing.
-- Excess.
+- Extra.
 - Conflicting.
 - Unverified.
 
 ### 8.3 Type-Checking Configuration
 
-The target, lib, and types settings MUST be configured to suit the target runtime environment.
+The target, lib, and types settings must be configured to suit the target runtime environment.
 
-DOM definitions MUST NOT be loaded automatically into Main Runtime type checking if doing so would permit the use of APIs that do not exist in that environment.
+DOM definitions must not be loaded automatically into Scriptable Main Runtime type checking if doing so would permit the use of APIs that do not exist in that environment.
 
-The following MUST be distinguished:
+The following must be distinguished:
 
 - TypeScript Declaration.
 - JavaScript Output.
@@ -303,7 +303,7 @@ Any new library requires review before approval.
 
 ### 9.2 Review Criteria
 
-The following MUST be examined:
+The following must be examined:
 
 - Source and trustworthiness.
 - License.
@@ -320,7 +320,7 @@ The following MUST be examined:
 
 Successful installation, compilation, or static analysis does not establish library compatibility with the Runtime.
 
-A library MUST NOT be approved until its compatibility has been established in the target context, or it has been documented as unverified with operational use prohibited.
+A library must not be approved until its compatibility has been established in the target context, or it has been documented as unverified with operational reliance prohibited.
 
 ## 10. Project Architecture and Organization
 
@@ -359,7 +359,7 @@ Every public module MUST specify:
 
 ### 11.1 Data
 
-All data originating from the network, files, the user, or the execution context MUST be considered data that requires validation.
+All data originating from the network, files, the user, or the execution context require validation.
 
 MUST:
 
@@ -368,7 +368,7 @@ MUST:
 - Handle missing values explicitly.
 - Distinguish between null and undefined.
 - Validate types and ranges.
-- Not consider successful loading as evidence that the data is valid.
+- Do not consider successful loading as evidence that the data is valid.
 
 ### 11.2 Errors
 
@@ -377,11 +377,11 @@ MUST:
 - Handle expected errors using try/catch.
 - Handle Promise rejections.
 - Record useful diagnostic information.
-- Not silently suppress errors.
+- Do not silently suppress errors.
 - Establish a retry policy.
 - Prevent the repetition of operations that may produce duplicate data or transactions without appropriate protection.
 
-The system state MUST remain clear when a failure occurs, and a failure MUST NOT be converted into a false success result.
+The system state must remain clear when a failure occurs, and a failure must not be converted into a false success result.
 
 ## 12. Security, Privacy, and Reliability
 
@@ -413,9 +413,9 @@ MUST retain backups when needed, particularly before deletion, moving, or replac
 
 ### 12.4 Privacy
 
-The minimum permissions necessary to access location, photos, contacts, and calendars MUST be requested.
+The minimum permissions necessary to access location, photos, contacts, and calendars must be requested.
 
-Permission denial MUST be handled explicitly, without assuming that the operation succeeded.
+Permission denial must be handled explicitly, without assuming that the operation succeeded.
 
 ### 12.5 External Code
 
@@ -431,9 +431,9 @@ MUST:
 - Account for memory constraints in Widgets.
 - Avoid heavy operations in short-lived contexts.
 - Use caching when appropriate.
-- Not assume that a Widget will refresh immediately after a refresh request.
+- Do not assume that a Widget will refresh immediately after a refresh request.
 
-Performance MUST be evaluated according to the actual context, not solely according to script execution within the application.
+Performance must be evaluated according to the actual context, not solely according to script execution within the application.
 
 ## 14. Target Execution Contexts
 
@@ -458,7 +458,7 @@ MUST NOT consider successful script execution within the application as evidence
 
 ### 15.1 Testing Layers
 
-Separate verification layers MUST be adopted:
+Separate verification layers must be adopted:
 
 1. Syntax: Syntax correctness.
 2. Static Analysis: Code analysis and issue detection.
@@ -472,9 +472,9 @@ Separate verification layers MUST be adopted:
 
 ### 15.2 Tool Limitations
 
-- ESLint does not establish the existence of a native API.
+- ESLint does not establish the existence of a Scriptable API.
 - TypeScript does not create Runtime APIs.
-- Test262 does not test native Scriptable APIs.
+- Test262 does not test Scriptable APIs.
 - Successful execution in Node.js does not establish Scriptable compatibility.
 - A successful build does not establish successful execution on iPhone.
 - Successful static analysis does not replace actual application testing.
@@ -490,11 +490,11 @@ The following tools may be used:
 - Fallow.
 - Actual Scriptable tests on the device.
 
-The tool MUST be selected according to the type of verification required, and it MUST NOT be given authority to establish anything it does not test.
+The tool must be selected according to the type of verification required, and it must not be given authority to establish anything it does not test.
 
 ### 15.4 Compatibility Matrix
 
-Every test MUST record:
+Every test must record:
 
 - API or feature name.
 - Scriptable version.
@@ -509,7 +509,7 @@ Every test MUST record:
 
 ### 15.5 Compatibility Statuses
 
-The following statuses MUST be distinguished:
+The following statuses must be distinguished:
 
 - Documented.
 - Tested.
@@ -517,7 +517,7 @@ The following statuses MUST be distinguished:
 - Incompatible.
 - Unverified.
 
-The phrase “fully compatible” MUST NOT be used without specifying the scope and providing evidence of the required tests.
+The phrase “fully compatible” must not be used without specifying the scope and providing evidence of the required tests.
 
 ### 15.6 JavaScript Feature Verification
 
@@ -536,7 +536,7 @@ A test result establishes behavior only in the environment in which the test was
 
 ### 16.1 Order of Authorities
 
-The following hierarchy MUST be adopted:
+The following hierarchy must be adopted:
 
 1. The project’s approved constitution and specifications.
 2. The policies, procedures, and standards subordinate to them.
@@ -547,7 +547,7 @@ The following hierarchy MUST be adopted:
 7. Community definitions, repositories, and examples as supporting references.
 8. Actual testing to establish behavior in the target runtime environment.
 
-A source of lower authority MUST NOT override a higher-level rule.
+A source of lower authority must not override a higher-level rule.
 
 ### 16.2 Normative Language
 
@@ -567,7 +567,7 @@ The following terms are used:
 
 ### 16.4 Rule Definition
 
-Every normative rule MUST include:
+Every normative rule must include:
 
 - A stable identifier.
 - Name.
@@ -587,7 +587,7 @@ MUST NOT reuse identifiers of retired rules.
 
 An exception is not a means of bypassing rules without documentation.
 
-An exception MUST include:
+An exception must include:
 
 - The rule being exempted.
 - Reason for the exception.
@@ -597,7 +597,7 @@ An exception MUST include:
 - Start and end dates.
 - The person responsible for approving it.
 
-An open-ended exception MUST NOT be allowed.
+An open-ended exception must not be allowed.
 
 ### 17.2 Exception Lifecycle
 
@@ -605,7 +605,7 @@ Proposed → Reviewed → Approved → Active → Expired / Revoked
 
 ### 17.3 Risk Assessment
 
-The following MUST be assessed:
+The following must be assessed:
 
 - Probability of failure.
 - Severity of impact.
@@ -615,15 +615,15 @@ The following MUST be assessed:
 
 Detected → Classified → Assigned → Remediated / Exception Requested → Verified → Closed
 
-Violations, evidence, and corrective actions MUST be recorded. A violation MUST NOT be closed before the remediation has been verified.
+Violations, evidence, and corrective actions must be recorded. A violation must not be closed before the remediation has been verified.
 
 ## 18. GitHub, CI, and Change Management
 
 ### 18.1 Automated Checks
 
-GitHub Actions MUST be used to run checks appropriate to the project.
+GitHub Actions are used to run checks appropriate to the project.
 
-Depending on the project scope, the checks MUST include:
+Depending on the project scope, the checks must include:
 
 - Syntax.
 - Static Analysis.
@@ -635,15 +635,15 @@ Depending on the project scope, the checks MUST include:
 
 ### 18.2 Main Branch Protection
 
-The main branch MUST be protected, and Pull Requests and required checks MUST be adopted before merging.
+The main branch must be protected, and Pull Requests and required checks must be adopted before merging.
 
-Merging MUST NOT be allowed when a mandatory check fails.
+Merging must not be allowed when a mandatory check fails.
 
-A failed or unavailable checking tool does not mean that the check has passed; its status MUST be recorded as BLOCKED or INDETERMINATE, depending on the reason.
+A failure of the checking tool does not mean that the check has passed; its status must be recorded as BLOCKED or INDETERMINATE, depending on the reason.
 
 ### 18.3 Normative Change Management
 
-Any amendment to the specifications MUST go through the following stages:
+Any amendment to the specifications goes through the following stages:
 
 1. Propose the change.
 2. Analyze the impact.
@@ -654,13 +654,13 @@ Any amendment to the specifications MUST go through the following stages:
 
 ### 18.4 Versions
 
-Semantic Versioning MUST be adopted:
+The project adopts Semantic Versioning:
 
 - Major: A breaking change or a substantial normative restructuring.
 - Minor: A compatible addition of new rules or requirements.
 - Patch: A correction that does not change the fundamental normative meaning.
 
-The history of versions, decisions, and previous evidence MUST be retained.
+The history of versions, decisions, and previous evidence must be retained.
 
 ## 19. Governance Documentation Organization
 
@@ -672,7 +672,7 @@ Documents are divided into the following layers:
 4. Registers.
 5. References.
 
-The following MUST be observed:
+The following must be observed:
 
 - Separate human-readable documents from structured data.
 - Define a central source for each piece of information.
@@ -681,11 +681,11 @@ The following MUST be observed:
 - Do not add a mandatory CI check without a clear governance reference.
 - Preserve old and conflicting evidence; do not delete it merely because newer evidence has appeared.
 
-English MUST be used for normative terms, rule names, and technical field names.
+English is used for normative terms, rule names, and technical field names.
 
 ## 20. Compatibility Review and Governance Continuity
 
-Reverification MUST be performed whenever a material change occurs in any of the following:
+Reverification must be performed whenever a material change occurs in any of the following:
 
 - Scriptable version.
 - iOS version.
@@ -698,7 +698,7 @@ Reverification MUST be performed whenever a material change occurs in any of the
 - Architecture.
 - Security threat model.
 
-Any discrepancy between documentation, implementation, and tests MUST be recorded as a matter requiring investigation. It MUST NOT be concealed or assumed to have no impact.
+Any discrepancy between documentation, implementation, and tests must be recorded as a matter requiring investigation. It must not be concealed or assumed to have no impact.
 
 ## 21. Approved Reference Sources
 
@@ -726,7 +726,7 @@ Important references:
 
 https://developer.apple.com/documentation/javascriptcore
 
-A reference for understanding the JavaScriptCore engine and its components, not evidence that Apple native APIs are directly available within Scriptable.
+A reference for understanding the JavaScriptCore engine and its components, not evidence that Native iOS APIs are directly available within Scriptable.
 
 ### Level Three: ECMAScript
 
@@ -750,20 +750,20 @@ Used as a development aid after being reviewed against the official documentatio
 
 https://github.com/tc39/test262
 
-ECMAScript conformance tests; they do not replace testing of native Scriptable APIs.
+ECMAScript conformance tests; they do not replace testing of Scriptable APIs.
 
 ## 22. Central Governing Rule
 
-No API, feature, or library MUST be approved merely because it appears in an example or TypeScript definition, or because it works in Node.js or a web browser.
+An API, feature, or library must not be approved solely because it appears in an example or TypeScript definition, or because it works in Node.js or a web browser.
 
-Four independent matters MUST be established:
+Four independent matters must be established:
 
 1. Language Compatibility: Compatibility of JavaScript syntax and standard features with the engine.
 2. Host API Compatibility: The existence of the API in Scriptable documentation and the correctness of its use.
 3. Context Compatibility: Its operation in the intended execution context.
 4. Device Verification: Successful testing on the target iPhone and the targeted Scriptable and iOS versions.
 
-Any point for which sufficient evidence is unavailable MUST be recorded as unverified. It MUST NOT be converted into an approved fact through assumption.
+Any point for which sufficient evidence is unavailable is recorded as unverified. It must not be converted into an approved fact through assumption.
 
 ## 23. Conditions for Approving the Specifications
 
@@ -783,7 +783,7 @@ This document does not become the final approved reference until the following c
 
 ## 24. Complete Reference List
 
-This section is a reference addition to the specifications. It contains the complete URLs of the technical sources that have been identified. URL addresses MUST remain visible exactly as they are and MUST NOT be replaced by reference names alone or hidden behind clickable text.
+This section is a reference addition to the specifications. It contains the complete URLs of the technical sources that have been identified. URL addresses must remain visible exactly as they are and must not be replaced by reference names alone or hidden behind clickable text.
 
 ### 24.1 Scriptable Official Documentation
 
@@ -823,7 +823,7 @@ https://docs.scriptable.app/webview/#-present
 
 https://docs.scriptable.app/webview/#-waitforload
 
-**Note:** The validity of the internal section identifiers ending in -1 has not been verified as standalone URLs. If they cannot be accessed, the main WebView reference and its internal index MUST be used.
+**Note:** The validity of the internal section identifiers ending in -1 has not been verified as standalone URLs. If they cannot be accessed, the main WebView reference and its internal index must be used.
 
 ### 24.2 Apple JavaScriptCore Documentation
 
@@ -871,7 +871,7 @@ Package page:
 
 https://www.npmjs.com/package/@types/scriptable-ios
 
-Package information MUST be used to verify the published version and its metadata, without treating it as a replacement for the official documentation.
+Package information is used to verify the published version and its metadata, without treating it as a replacement for the official documentation.
 
 ### 24.6 ios-scriptable-types
 
@@ -899,7 +899,7 @@ https://github.com/schl3ck/ios-scriptable-types/tree/master/dist
 
 https://github.com/schl3ck/ios-scriptable-types/blob/master/LICENSE
 
-**Warning:** This generated project is not the same as the DefinitelyTyped package. The version, license, and source of the files MUST be verified before relying on any of them.
+**Warning:** This generated project is not the same as the DefinitelyTyped package. The version, license, and source of the files must be verified before relying on any of them.
 
 ### 24.7 TypeScript Official Documentation
 
@@ -931,7 +931,7 @@ Official ECMAScript test repository:
 
 https://github.com/tc39/test262
 
-It is used to test JavaScript behavior for conformance with the specification, and does not establish compatibility with native Scriptable APIs.
+It is used to test JavaScript behavior for conformance with the specification, and does not establish compatibility with Scriptable APIs.
 
 ## 25. Rules for Using the Reference List
 
