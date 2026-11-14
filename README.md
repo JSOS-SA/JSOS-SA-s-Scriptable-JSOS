@@ -6,6 +6,7 @@ Scriptable application source and project governance.
 
 - [Project Constitution](CONSTITUTION.md)
 - [Project Glossary](GLOSSARY.md)
+- [Terminology Control Addendum 01](docs/governance/terminology-control-addendum-01.md)
 - [Policy Rule Catalogue](docs/governance/policy-rules.md)
 - [Policies](docs/governance/policies/README.md)
 - [Standards](docs/governance/standards/README.md)
