@@ -1281,7 +1281,7 @@ Acceptance MUST be based on the relevant data contract, validation rules, error 
 
 ## 12. Security, Privacy, and Reliability
 
-Security and privacy requirements apply to data regardless of its JavaScript representation. Relevant values include primitive values (`String`, `Number`, `Boolean`, `BigInt`, `Symbol`, `undefined`, and `null`), `Object` values (including arrays and plain objects), `Function` values, `Class` constructors and instances, and objects exposed by Scriptable or other host APIs. A value's type does not determine whether it is sensitive; its content, origin, purpose, and permitted use do.
+Security and privacy requirements apply to data regardless of its JavaScript representation. Relevant values include primitive values (`String`, `Number`, `Boolean`, `Symbol`, `undefined`, and `null`, with `BigInt` included only when verified on the target Scriptable runtime), `Object` values (including arrays and plain objects), `Function` values, `Class` constructors and instances, and objects exposed by Scriptable or other host APIs. A value's type does not determine whether it is sensitive; its content, origin, purpose, and permitted use do.
 
 ### 12.1 Secrets
 
