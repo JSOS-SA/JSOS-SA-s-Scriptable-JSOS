@@ -1468,15 +1468,21 @@ The tool MUST be selected according to the verification claim and MUST NOT be gi
 
 #### 15.3.1 JavaScript Value and Object Coverage
 
-Where a module accepts, returns, transforms, stores, serializes, or transfers JavaScript values, its test plan MUST cover the value categories the interface claims to support. Consider and mark each category supported, unsupported, or not applicable:
+Where a module accepts, returns, transforms, compares, serializes, persists, or transfers JavaScript values, its approved test plan MUST identify the value categories within the module contract. Each category MUST be marked Supported, Unsupported, Not Applicable, or Not Verified. A category MUST NOT be treated as supported merely because the language or a type declaration can represent it.
 
-- Primitive values: string, number, boolean, undefined, null, bigint, and symbol. BigInt MUST remain unverified until demonstrated in the target Scriptable runtime; the documented ECMAScript 6 baseline does not establish support for later language features.
-- Function values: named, anonymous, and arrow functions where relevant. Distinguish callable behavior from attempts to serialize or persist a function as data.
-- Objects: plain objects, arrays, nested objects, and relevant built-ins such as Date, Map, Set, Error, and Promise, only where the interface claims support.
-- Class declarations and instances: a class declaration defines a constructor function and an instance is an object. Class MUST NOT be described as a separate ECMAScript primitive type.
-- Scriptable host objects and explicit persistence/transport representations, including JSON-compatible values, Keychain strings, and Data, where relevant.
+The value inventory MUST distinguish the following:
 
-Tests MUST NOT assume JSON serialization preserves functions, Symbols, undefined object properties, class prototypes, or host-object behavior. Keychain stores strings; any encoding scheme MUST define and test its supported value domain and failure behavior. A passing test for one value category MUST NOT be generalized to untested categories.
+- **Primitive values:** `undefined`, `null`, Boolean, String, and Number. Number cases SHOULD include ordinary finite values and relevant edge values such as `NaN`, positive and negative infinity, positive zero, and negative zero. `Symbol` and `BigInt` MUST be tracked separately because support at a language level does not prove that a particular Scriptable API, serializer, storage layer, or transport boundary accepts them. BigInt MUST remain Not Verified for the documented ES6 baseline until it is demonstrated in the target Scriptable runtime.
+- **Function objects:** ordinary functions, arrow functions, closures, and bound functions where the interface uses them. A function is an object with callable behavior, not a primitive value. Tests MUST distinguish invocation and identity behavior from serialization or persistence, which generally cannot preserve executable function behavior.
+- **Ordinary object values:** plain objects, nested objects, arrays, sparse arrays, and objects with relevant property shapes. Include built-ins such as Date, RegExp, Error, Map, Set, and Promise only when the interface claims to accept or produce them and the target runtime supports the required behavior.
+- **Class constructors and instances:** a class declaration creates a constructor function; an instance is an object. `Class` MUST NOT be described as a separate ECMAScript primitive type. Where class instances cross a module, persistence, or transport boundary, verify prototype-dependent behavior and the explicitly supported representation.
+- **Scriptable host objects:** documented host objects and values such as `Data`, `Request`, `FileManager` results, `Image`, and other Scriptable APIs only when they are part of the module contract. The applicable Scriptable documentation and actual execution context determine the supported surface.
+- **WebView and context-bound values:** values passed between Main Runtime and WebView, or between a script and Widget, Shortcut, or Share Sheet contexts, only where the project has an explicit interface for that transfer. These are distinct host boundaries and MUST NOT be assumed to share globals or object identity.
+- **Persistence and transport representations:** JSON-compatible data, strings stored through Keychain, file content, and network payloads. The test plan MUST define the encoding, decoding, validation, and failure behavior for each supported representation.
+
+Value-boundary cases SHOULD include missing properties versus explicit `undefined` and `null`, empty values, invalid types, nested and sparse structures, repeated references, circular references, numeric edge cases, and conversion failures where relevant. Tests MUST NOT assume JSON serialization preserves functions, Symbols, `undefined` object properties, class prototypes, circular references, or Scriptable host-object behavior. Keychain values are strings; any encoding scheme MUST explicitly define its supported value domain and error behavior.
+
+A passing test for one category or boundary MUST NOT be generalized to untested categories, APIs, devices, Scriptable versions, or execution contexts. The language-level distinction between primitive and object values MUST follow the ECMAScript specification: https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values.
 
 ### 15.4 Compatibility Matrix
 
@@ -1521,6 +1527,28 @@ When approving a new feature:
 6. Record the result, versions, and date.
 
 A test result establishes behavior only in the environment in which the test was executed.
+
+### 15.7 Approved Verification Catalogue
+
+The project MUST maintain an approved catalogue of verification cases. This requirement defines and documents the test coverage expected by approved interfaces; it does not require creating a test implementation for a category that is outside the approved project scope or cannot be executed in the available environment.
+
+The catalogue SHOULD select applicable cases from these distinct test classes:
+
+1. **Syntax and language-feature tests:** parse the declared JavaScript baseline and verify individual language features that the project explicitly approves. Parser success alone does not prove runtime support.
+2. **Unit tests:** verify deterministic module logic, transformations, calculations, and error handling independently of Scriptable host APIs where practical.
+3. **Contract tests:** verify module inputs, outputs, invariants, state transitions, serialization formats, and documented failure behavior.
+4. **Value-category tests:** exercise the primitive, function, object, class, host-object, and persistence/transport categories declared by the interface.
+5. **API compatibility tests:** verify Scriptable API names, signatures, parameters, return values, and documented availability. Static allowlists are supporting checks, not proof of runtime behavior.
+6. **Integration tests:** verify interactions between modules and Scriptable services such as Request, FileManager, Keychain, and other host APIs used by the feature.
+7. **Runtime tests:** execute the relevant code in the actual Scriptable app on the approved target device and record the exact environment.
+8. **Context tests:** separately verify each intended context, including Main Runtime, WebView, Widget, Shortcuts, and Share Sheet where applicable.
+9. **Negative and boundary tests:** verify invalid inputs, missing data, rejected permissions, unavailable resources, timeouts, malformed responses, and recovery paths where relevant.
+10. **Security and privacy tests:** verify secret handling, data minimization, permission behavior, untrusted input handling, and absence of sensitive data in logs.
+11. **Performance and resource tests:** assess execution time, memory, payload size, and resource limits when the feature's risk or operational profile makes them material.
+
+Each catalogue entry MUST include a stable Test ID, covered Rule ID or contract, objective, test class, scope, preconditions, input or sanitized fixture reference, expected result, verification method, required environment, owner, approval record, and evidence location. Approval status and execution result MUST be separate fields.
+
+The catalogue lifecycle SHOULD distinguish Proposed, Reviewed, Approved, Implemented, and Retired. Execution outcomes MUST distinguish Passed, Failed, Blocked, Indeterminate, and Not Run. Not Applicable requires a recorded rationale. An approved case is not evidence that it has been implemented or executed; a test plan is not a test result. No test code or runtime execution is implied by documenting or approving a catalogue entry.
 
 ## 16. Governance and Normative Rules
 
@@ -1595,105 +1623,188 @@ The project MUST maintain traceability between normative rules, implementation s
 
 ## 17. Exceptions, Risks, and Violations
 
-### 17.1 Exception
+### 17.1 Exception Governance
 
-An exception is not a means of bypassing rules without documentation.
+An exception is a formally approved, narrowly scoped, time-bounded deviation from a specific project requirement. It is not an informal waiver, a substitute for remediation, or a mechanism for overriding an external platform limitation.
 
-An exception MUST include:
+An exception MUST identify:
 
-- The rule being exempted.
-- Reason for the exception.
-- Its scope.
-- Risks.
-- Alternative controls.
-- Start and end dates.
-- The person responsible for approving it.
+- A unique Exception ID and the exact Rule ID and requirement being excepted.
+- The requester, affected owner, affected components, files, APIs, data classes, environments, and execution contexts.
+- A specific justification, the constraint that prevents compliance, and alternatives considered.
+- The risk assessment, linked Risk ID where a risk register entry exists, and the expected residual risk.
+- Compensating controls, their owners, their verification method, and the evidence that they are operating.
+- The approving person or role and the authority under which approval is granted. The requester MUST NOT approve their own exception.
+- A start date, a fixed expiry date, and any earlier review trigger.
+- A remediation or exit plan, including rollback or containment steps where applicable.
+- Supporting evidence and the canonical register location.
 
-An open-ended exception MUST NOT be allowed.
+An exception MUST be limited to the minimum scope and duration necessary. An open-ended exception, automatic renewal, or approval without a named accountable owner MUST NOT be allowed. Extension requires a new assessment and approval before the current expiry; it MUST be recorded as a new decision linked to the previous Exception ID.
+
+An exception MAY only waive a project rule that explicitly permits exceptions. It MUST NOT authorize unlawful conduct, defeat a non-waivable security prohibition, fabricate platform capabilities, bypass external service terms, or override GitHub permissions and repository protections. An approved exception does not amend the underlying rule and does not erase a violation that occurred before approval.
 
 ### 17.2 Exception Lifecycle
 
-Proposed → Reviewed → Approved → Active → Expired / Revoked
+The normal lifecycle is:
+
+`Proposed → Reviewed → Approved → Active → Expired / Revoked`
+
+Rejected requests MUST be retained as decision records. An exception becomes Active only after approval and on or after its approved start date. At expiry it MUST cease authorizing the deviation. Revocation MUST record the reason, effective time, and required containment or remediation. An expired or revoked exception MUST NOT be treated as active because implementation work remains incomplete.
+
+A renewal or material scope change returns through review and approval as a new decision. The exception register MUST preserve the complete history, including rejected, expired, revoked, and superseded records.
 
 ### 17.3 Risk Assessment
 
-The following MUST be assessed:
+A material exception, violation, or normative change MUST receive a documented risk assessment proportionate to its scope and impact. At minimum, assess:
 
-- Probability of failure.
-- Severity of impact.
-- Difficulty of detecting the failure.
+- **Likelihood:** probability of the relevant failure, threat event, or adverse condition within the stated scope and period.
+- **Impact:** severity and extent of consequences to functionality, data integrity, confidentiality, availability, users, operations, and dependent components.
+- **Detectability:** how likely the condition is to be detected before material harm, considering monitoring, observability, and verification coverage.
 
-### 17.4 Violation Lifecycle
+Likelihood and impact are core risk-assessment dimensions reflected in NIST risk guidance. Detectability is an additional project engineering factor and MUST NOT be presented as a verbatim NIST requirement. Where relevant, the assessment SHOULD also consider exposure duration, exploitability, dependency reach, reversibility, and blast radius.
 
-Detected → Classified → Assigned → Remediated / Exception Requested → Verified → Closed
+The assessment MUST state its assumptions, evidence, risk owner, treatment decision, and residual risk after controls. A numeric score MAY be used only when the scoring scale, thresholds, and interpretation are documented. A score MUST NOT replace a reasoned assessment or an authorized risk-acceptance decision. Risk acceptance MUST identify the person authorized to accept the residual risk.
 
-Violations, evidence, and corrective actions MUST be recorded. A violation MUST NOT be closed before the remediation has been verified.
+### 17.4 Violation Lifecycle and Closure
+
+The normal violation lifecycle is:
+
+`Detected → Classified → Assigned → Remediated / Exception Requested → Verified → Closed`
+
+Each violation MUST record:
+
+- A unique Violation ID and the violated Rule ID.
+- Detection source, date, affected commit or artifact, component, API, data, and execution context.
+- Classification, severity, impact, and risk assessment.
+- An accountable remediation owner and target date.
+- Corrective action, containment, and prevention measures.
+- Related Exception ID, if one is requested or approved.
+- Verification criteria, verifier, result, date, and evidence.
+
+A request for an exception does not close, suspend, or erase the violation. Approval of a prospective exception does not retroactively make earlier non-compliance compliant. A violation MUST NOT be closed until remediation has been verified against explicit acceptance criteria. If remediation is not performed and a permitted exception is approved, the violation record MUST remain linked to that exception and reflect the accepted residual risk rather than being falsely marked as remediated. Closure evidence MUST be retained.
 
 ## 18. GitHub, CI, and Change Management
 
-### 18.1 Automated Checks
+### 18.1 Automated Checks and Applicability
 
-GitHub Actions are used to run checks appropriate to the project.
+GitHub Actions and other approved automation MAY enforce repository checks. Every mandatory check MUST map to one or more Rule IDs, have a defined scope and owner, and produce evidence appropriate to the claim it makes. The applicable check set MUST be determined by the changed files, language, dependencies, interfaces, risk, and execution context.
 
-Depending on the project scope, the checks MUST include:
+The project MUST maintain a scope-based check matrix and MUST select all applicable checks from the categories below. A category MAY be marked Not Applicable only when the reason is recorded:
 
-- Syntax.
-- Static Analysis.
-- Type Checking.
-- Dependency checks.
-- Secret and security checks.
-- Governance rule checks.
-- Logic and contract tests.
+- Syntax and language-baseline validation, including the project's declared ECMAScript compatibility target.
+- Static analysis and repository hygiene.
+- Type checking when TypeScript or JSDoc type contracts are part of the project.
+- Dependency inventory, update, and vulnerability checks when external dependencies are present.
+- Secret scanning and applicable security analysis.
+- Governance rule, register, schema, and traceability validation.
+- Unit, contract, serialization, and integration tests for approved behavior within the CI environment.
+- Scriptable Runtime and execution-context verification when a supported device-based runner or documented manual evidence procedure is available.
 
-### 18.2 Main Branch Protection
+A check MUST NOT be required merely because a tool exists. A check MUST NOT claim to validate Scriptable Runtime, iOS permissions, WebView behavior, or device-specific behavior unless it actually executes and observes that target. Node.js parsing or tests, TypeScript, ESLint, CodeQL, and Test262 each have bounded scopes; their results MUST be described only within those scopes.
 
-The main branch MUST be protected, and Pull Requests and required checks MUST be adopted before merging.
+The check catalogue MUST record the check name, Rule IDs, trigger conditions, scope, tool and version, expected output, owner, required or advisory status, failure semantics, and evidence location. If a check is not applicable, record `N/A` with a reason. If a required check cannot run, its result MUST NOT be represented as Passed.
 
-Merging MUST NOT be allowed when a mandatory check fails.
+### 18.2 Main Branch Protection and Merge Requirements
 
-A failure or outage of the checking tool does not mean that the check has passed; its status MUST be recorded as BLOCKED or INDETERMINATE, depending on the reason.
+The default branch, currently `main`, MUST be protected by repository rules or branch protection settings. Changes MUST enter the protected branch through a Pull Request unless an explicitly authorized emergency procedure applies and is itself recorded.
+
+The protection configuration MUST define, as applicable:
+
+- Required Pull Requests and the required number or role of approvals. If the approval count is zero because the repository has only one qualified maintainer, document that limitation and reassess it when the maintainer model changes.
+- Required status checks, their trusted source, and whether the branch must be up to date with the base branch.
+- Dismissal or re-review behavior for stale approvals after material changes.
+- Conversation resolution, code-owner review where appropriate, and the treatment of administrator or bypass permissions.
+- Restrictions on force pushes and branch deletion.
+
+A required check MUST report success for the latest commit SHA that GitHub evaluates for the merge. Required check names SHOULD be unique across workflows, and the expected check source SHOULD be restricted to the approved GitHub App or integration where supported. The repository MUST account for GitHub's documented check semantics: `success`, `neutral`, and `skipped` may be treated as successful conclusions for merge requirements. A required workflow or job MUST therefore be designed so that path filters, conditional jobs, or skipped dependencies cannot silently satisfy a control that was expected to run.
+
+A failed, timed-out, action-required, or otherwise unsuccessful required check MUST block merge. Queued, requested, expected, pending, waiting, or in-progress checks are not completed success. If a tool outage or execution failure prevents a required check from producing valid evidence, the project record MUST classify it as `BLOCKED` or `INDETERMINATE` with the reason. These are project evidence labels, not GitHub-native check conclusions. The change MUST remain unmergeable until the required evidence is obtained or a separately authorized and documented exception applies. A tool outage MUST NOT be converted into a successful result.
+
+Administrator bypass MUST be disabled or tightly controlled and audited. Any emergency bypass MUST identify the actor, reason, affected checks, risk acceptance, compensating controls, and follow-up verification. A bypass MUST NOT silently rewrite a failed check as passed.
 
 ### 18.3 Normative Change Management
 
-Any amendment to the specifications goes through the following stages:
+Every change to the Constitution, policy, standards, procedures, rule catalogue, or mandatory CI controls MUST follow a recorded lifecycle:
 
-1. Propose the change.
-2. Analyze the impact.
-3. Review.
-4. Approve.
-5. Update the version.
-6. Preserve the decision record and evidence.
+1. Propose the change and identify its owner and purpose.
+2. Identify affected Rule IDs, documents, code, APIs, tests, CI checks, registers, evidence, and dependent projects.
+3. Assess compatibility, security, privacy, operational impact, risks, and rollback or transition needs.
+4. Review the proposed text and supporting evidence.
+5. Approve the change through the defined authority.
+6. Update the canonical source, version, decision record, and affected references.
+7. Verify required documentation, schema, CI, and runtime consequences within their applicable scopes.
+8. Publish the approved revision and retain prior versions and evidence.
+
+A proposed or reviewed change MUST NOT be represented as approved or effective. A file edit or Pull Request merge alone MUST NOT replace a required approval record. Changes to mandatory CI checks MUST identify the governing Rule ID, rationale, expected enforcement level, and failure behavior before the check becomes required.
 
 ### 18.4 Versions
 
-The project adopts Semantic Versioning:
+The project adopts Semantic Versioning (`MAJOR.MINOR.PATCH`) as its versioning convention for the published Constitution and normative specification. The project MUST define and maintain the public normative contract to which the version applies.
 
-- Major: A breaking change or a substantial normative restructuring.
-- Minor: A compatible addition of new rules or requirements.
-- Patch: A correction that does not change the fundamental normative meaning.
+- **MAJOR:** an incompatible change to the existing normative contract, including a rule change that invalidates prior conformance assumptions or makes previously conforming implementations non-conforming.
+- **MINOR:** a backward-compatible addition of rules, requirements, clarifications, or capabilities that does not invalidate existing conformance.
+- **PATCH:** editorial, typographical, reference, or explanatory corrections that do not change normative meaning or conformance obligations.
 
-The history of versions, decisions, and previous evidence MUST be retained.
+A substantial rewrite alone MUST NOT trigger a MAJOR version unless it changes normative compatibility. If a change cannot be classified confidently, the decision and rationale MUST be recorded before release. The published version, release date, approver, change summary, and related decision record MUST be identifiable from the canonical source or release metadata.
+
+The project MUST retain prior published versions, decision records, and historical evidence. A published version MUST NOT be silently overwritten as though it had never existed; corrections MUST be issued as a new version or a clearly recorded revision according to the project's release policy.
 
 ## 19. Governance Documentation Organization
 
-Documents are divided into the following layers:
+### 19.1 Document Layers
 
-1. Constitution.
-2. Policies.
-3. Standards and Procedures.
-4. Registers.
-5. References.
+Governance documentation is organized into these layers, each with a distinct purpose:
 
-The following MUST be observed:
+1. **Constitution:** top-level normative authority defining scope, principles, governance roles, and mandatory project-wide obligations.
+2. **Policies:** binding subject-specific requirements that implement the Constitution and define decision authority and control expectations.
+3. **Standards and Procedures:** technical rules, operational methods, verification procedures, and repeatable instructions for satisfying policies.
+4. **Registers:** structured records of decisions, rules, risks, exceptions, violations, compatibility results, and evidence.
+5. **References:** external standards, official platform documentation, specifications, tool documentation, and supporting research used to substantiate requirements.
 
-- Separate human-readable documents from structured data.
-- Define a central source for each piece of information.
-- Link rules to implementation, checks, evidence, and exceptions.
-- Preserve the record of decisions and changes.
-- MUST NOT add a mandatory CI check without a clear governance reference.
-- MUST preserve old and conflicting evidence; MUST NOT delete it merely because newer evidence has appeared.
+Lower-level documents MUST remain consistent with the Constitution. A conflict MUST be recorded and resolved through the defined change process; a lower-level document MUST NOT silently override a higher-level rule.
 
-English is used for normative terms, rule names, and technical field names.
+### 19.2 Canonical Sources and Data Separation
+
+Each governed fact or record type MUST have one designated canonical source. Other documents SHOULD link to that source rather than maintain competing copies. The canonical source and its owner MUST be identifiable.
+
+Human-readable policy, rationale, procedures, and decision explanations SHOULD be maintained in Markdown or another reviewable document format. Structured records intended for validation or automation SHOULD be maintained in a machine-readable format such as JSON. The two representations MUST have a defined relationship and MUST NOT be allowed to drift silently. Where both human-readable and structured forms exist, the project MUST state which one is authoritative for each field and how consistency is verified.
+
+Secrets, access tokens, private personal data, and credentials MUST NOT be copied into governance documents, registers, test fixtures, or evidence artifacts. Use sanitized evidence and access-controlled references where necessary.
+
+### 19.3 Traceability
+
+Every normative Rule ID MUST be traceable, where applicable, to:
+
+- Its canonical definition and governing policy.
+- The affected implementation, module, API, or repository path.
+- Approved verification cases and their execution evidence.
+- Applicable CI checks and their enforcement level.
+- Related decisions, risks, exceptions, violations, and remediation records.
+- Applicable external references and their authority or evidence role.
+
+Missing links MUST be recorded as traceability gaps. A rule MUST NOT be described as automated or enforced merely because a document mentions a tool or workflow.
+
+### 19.4 Records, History, and Evidence Retention
+
+Decision records, approved and rejected exceptions, violations, failed and successful verification results, and conflicting evidence MUST be retained according to the project's retention and access-control policy. Newer evidence does not automatically invalidate or erase older evidence. Superseded evidence MUST remain identifiable, with the reason and date of supersession and a link to the evidence that supersedes it.
+
+Records SHOULD be append-oriented: corrections and status changes SHOULD preserve the previous value, actor, timestamp, reason, and reference where the record system supports history. Evidence references MUST be stable enough to support later review. Retention MUST balance auditability with privacy, security, and applicable legal obligations.
+
+### 19.5 Governance and CI Alignment
+
+A mandatory CI check MUST have a clear governance reference, an owner, an applicability rule, and an explicit pass/fail/blocked interpretation. The CI workflow MUST NOT become an independent source of policy. When a rule changes, the project MUST review the affected check implementation and its evidence mapping. A CI check that no longer enforces an active rule MUST be corrected, replaced, or retired through change control.
+
+Normative terms, Rule IDs, and technical field names are maintained in English for consistency across code, CI, registers, and technical references. Explanatory documentation MAY provide translations, but translations MUST preserve the meaning of the approved normative text.
+
+### 19.6 Primary Governance References
+
+- NIST Cybersecurity Framework 2.0, including ID.RA-07, for management, risk assessment, recording, and tracking of changes and exceptions: https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf
+- NIST SP 800-30 Rev. 1, Guide for Conducting Risk Assessments: https://csrc.nist.gov/pubs/sp/800/30/r1/final
+- GitHub Docs, About protected branches: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
+- GitHub Docs, Status checks: https://docs.github.com/en/pull-requests/reference/status-checks
+- Semantic Versioning 2.0.0: https://semver.org/spec/v2.0.0.html
+- IETF RFC 2119 and RFC 8174 for normative language: https://www.rfc-editor.org/rfc/rfc2119.html and https://www.rfc-editor.org/rfc/rfc8174.html
+- Test262, ECMAScript conformance test suite and execution requirements: https://github.com/tc39/test262/ and https://github.com/tc39/test262/blob/main/INTERPRETING.md
 
 ## 20. Compatibility Review and Governance Continuity
 
