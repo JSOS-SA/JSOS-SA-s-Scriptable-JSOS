@@ -31,3 +31,7 @@ Scriptable application source and project governance.
 - [Evidence records](docs/governance/records/evidence-records.json)
 - [Exception records](docs/governance/records/exception-register.json)
 - [Violation records](docs/governance/records/violation-register.json)
+
+## English translation
+
+- [Unified Scriptable Engineering Constitution & Technical Standards, English draft](translations/UNIFIED_SCRIPTABLE_SPECIFICATIONS_EN_DRAFT.md) (unapproved translation draft; Arabic source remains authoritative)
