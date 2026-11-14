@@ -84,27 +84,122 @@ Every approval, review, test result, and deployment operation MUST be attributab
 
 ## 3. Technical Model and Runtime Layers
 
+Scriptable MUST be understood as a host application that executes JavaScript and exposes application-specific interfaces. It is not equivalent to a web browser, Node.js, or an unrestricted native iOS application. Correct engineering decisions depend on identifying which layer owns a language feature, API, or behavior and which execution context is expected to provide it.
+
+### 3.1 Layer Model
+
 The following layers MUST be distinguished and MUST NOT be treated as a single environment:
 
-| Layer | Responsibility |
+| Layer | Responsibility and boundary |
 |---|---|
-| JavaScript | Programming language |
-| ECMAScript | The standard that defines the language’s rules and behavior |
-| JavaScriptCore | JavaScript execution engine |
-| Scriptable | Host Application and its Scriptable APIs |
-| Scriptable Main Runtime | Primary script execution context |
-| WebView Runtime | Web page execution context |
-| TypeScript | Type checking and development tools |
-| Native iOS APIs | Apple’s native iOS APIs; their existence does not establish their direct availability within Scriptable |
+| JavaScript | The programming language used to express program logic, values, objects, functions, and control flow. |
+| ECMAScript | The language specification that defines JavaScript syntax and semantics, including standardized built-in objects and operations. It does not define Scriptable-specific or browser-specific APIs. |
+| JavaScriptCore | Apple's JavaScript engine. Scriptable's official documentation identifies JavaScriptCore as its JavaScript engine. The engine's native integration APIs are not automatically Scriptable script globals. |
+| Scriptable (Host Application) | The application that hosts script execution and exposes Scriptable APIs, module loading, execution behavior, and integrations with iOS. |
+| Scriptable Main Runtime | The primary script execution context provided by Scriptable. This is a project-defined architectural term, not a separately named Apple framework. |
+| WebView Runtime | The web-page execution context hosted by Scriptable's WebView. This is a project-defined architectural term for the page context, not a claim about the internal engine implementation. |
+| TypeScript | A development-time type system and compiler toolchain. Its declarations and compiler settings do not create APIs or runtime capabilities. |
+| Native iOS APIs | APIs provided by Apple frameworks. Their existence on iOS does not establish that Scriptable exposes them directly to JavaScript. |
 
-### 3.1 Rule for Separating Layers
+### 3.2 Conceptual Execution Model
+
+A useful conceptual model for a Scriptable script is:
+
+```text
+JavaScript source
+       |
+       v
+JavaScriptCore execution engine
+       |
+       v
+Scriptable-provided host interfaces
+       |
+       v
+Supported iOS services and capabilities
+       |
+       v
+Script output and integrations
+```
+
+This model describes responsibility boundaries. It is not an official diagram of Scriptable's internal implementation, and it MUST NOT be used to infer undocumented implementation details.
+
+### 3.3 JavaScript and ECMAScript Boundary
+
+JavaScript is the language used by the script. ECMAScript is the standard that specifies the language's syntax and behavior. Standard language features and built-in objects belong to this layer; APIs for files, Keychain, location, widgets, and other application services belong to a host environment.
+
+Scriptable's official documentation states that the application uses JavaScriptCore and supports ECMAScript 6. This is the documented baseline for this project. It does not, by itself, prove that every later ECMAScript feature is supported or that every feature introduced after ES6 is unavailable. Feature compatibility MUST be established for the target Scriptable and iOS versions.
+
+### 3.4 JavaScriptCore Boundary
+
+JavaScriptCore is Apple's framework for evaluating JavaScript within applications. Its native interfaces include types such as `JSContext`, `JSValue`, `JSVirtualMachine`, `JSManagedValue`, and `JSExport`. These interfaces are intended for native application developers integrating JavaScriptCore with Swift, Objective-C, or C-based code.
+
+The existence of a JavaScriptCore type or function does not establish that the same name is available inside a Scriptable script. In particular, these native integration types MUST NOT be treated as Scriptable globals unless Scriptable documentation explicitly exposes them.
+
+### 3.5 Scriptable Host Application Boundary
+
+The Scriptable application determines which host APIs are made available to scripts and how those APIs interact with iOS. Examples include `FileManager`, `Request`, `Keychain`, `Location`, `ListWidget`, `Calendar`, and `Reminder`.
+
+These APIs are not defined by ECMAScript. Their names, properties, parameters, return values, asynchronous behavior, availability, and restrictions MUST be established from the official Scriptable documentation and verified in the target context when runtime behavior matters.
+
+### 3.6 Scriptable Main Runtime and WebView Runtime
+
+**Scriptable Main Runtime** is the primary context in which a Scriptable script executes. Scriptable host APIs are available there according to the application's documented interface. The primary script environment is not a browser environment; browser objects such as `window`, `document`, and the DOM MUST NOT be assumed to exist there.
+
+**WebView Runtime** is the page context hosted by a Scriptable `WebView`. A loaded web page can provide HTML, CSS, JavaScript, and browser-page facilities such as `window`, `document`, and the DOM, subject to the page and WebView environment.
+
+The two contexts MUST be treated as separate execution contexts. Code that succeeds in WebView does not thereby become valid in Scriptable Main Runtime. The project MUST NOT assume that the contexts share global objects, JavaScript heaps, module resolution, host APIs, permissions, or lifecycle behavior. Communication between them MUST use the documented WebView mechanisms, such as `evaluateJavaScript()`, with transferred data handled explicitly.
+
+The fact that Scriptable uses JavaScriptCore for its primary script environment MUST NOT be used to infer which engine or internal implementation is used by WebView. That implementation detail requires its own authoritative evidence.
+
+### 3.7 TypeScript Boundary
+
+TypeScript provides development-time type checking and can transform TypeScript source into JavaScript. A declaration describes what a compiler or editor should expect; it does not implement the declared function, object, or property in the runtime.
+
+The `target` compiler option controls aspects of the JavaScript output, while `lib` controls the standard library declarations available to the type checker. Neither setting installs runtime features. DOM declarations can make browser names type-check even when those names are unavailable in Scriptable Main Runtime.
+
+Type definitions for Scriptable are supporting development references. They MUST be checked against official Scriptable documentation, and the generated JavaScript MUST be tested in its intended Scriptable context.
+
+### 3.8 Native iOS API Boundary
+
+An API documented by Apple for an iOS framework is a native platform API. Its availability on iOS does not mean that JavaScript running in Scriptable can call it directly. Scriptable must expose an appropriate wrapper or documented bridge before a script can rely on that capability.
+
+The existence of a native framework, class, method, entitlement, or capability MUST NOT be treated as proof of Scriptable access. The exposed Scriptable interface and any relevant iOS permission or availability constraints remain the controlling boundary.
+
+### 3.9 API Ownership and Evidence
+
+| Item being evaluated | Primary authority | What that authority can establish |
+|---|---|---|
+| JavaScript syntax and standardized behavior | ECMAScript specification | Language rules and standardized semantics. |
+| JavaScriptCore engine behavior and native integration types | Apple JavaScriptCore documentation and suitable engine tests | Engine and framework behavior, not Scriptable host exposure. |
+| Scriptable APIs | Official Scriptable documentation | Documented application interfaces and their documented behavior. |
+| Web page APIs | Applicable web-platform documentation and tests in the target WebView | Page-context behavior, not Main Runtime availability. |
+| Native iOS APIs | Apple platform documentation | Native platform availability, not direct Scriptable exposure. |
+| TypeScript declarations and compiler behavior | TypeScript documentation and the relevant definition package | Static type-checking and transformation behavior, not runtime implementation. |
+
+Evidence labels used in technical records MUST distinguish the following meanings:
+
+| Label | Meaning |
+|---|---|
+| `DOCUMENTED` | The claim is explicitly supported by an identified authoritative document. |
+| `CONFIRMED` | The claim has been reproduced by a test in the named target environment, with the environment and evidence recorded. |
+| `INFERRED` | The claim is a reasoned interpretation of available evidence, but is not directly stated or demonstrated. |
+| `Not Verified` | Available evidence is insufficient to establish the claim. |
+| `UNSUPPORTED` | Authoritative documentation or a suitable target-environment test establishes that the capability is not supported in the stated scope. |
+
+`Not Verified` MUST NOT be treated as `UNSUPPORTED`. The absence of a statement in documentation, by itself, does not prove that a capability is unavailable. These evidence labels describe the strength or nature of a claim; they do not replace the compatibility outcomes defined in Section 15.5.
+
+### 3.10 Rules for Separating Layers
 
 1. The existence of a feature in ECMAScript does not establish its existence in every runtime environment.
-2. The existence of an API in JavaScriptCore does not establish that it is directly available to the script.
+2. The existence of an API in JavaScriptCore does not establish that it is directly available to a Scriptable script.
 3. The existence of a TypeScript definition does not create a Runtime API.
 4. Successful execution of code in Node.js does not establish its compatibility with Scriptable.
 5. Successful execution of code in WebView does not establish its compatibility with Scriptable Main Runtime.
-6. The layer and context MUST be identified before any API or feature is approved.
+6. The existence of a Native iOS API does not establish that Scriptable exposes it to scripts.
+7. Similar names across JavaScript, JavaScriptCore, Web APIs, Scriptable APIs, and Native iOS APIs MUST NOT be treated as proof of equivalent behavior.
+8. Global objects and available interfaces MUST be evaluated in the execution context in which the code actually runs.
+9. The responsible layer and execution context MUST be identified before an API or feature is approved for use.
+10. Compatibility claims MUST be limited to the versions, device, and execution context covered by the available documentation and test evidence.
 
 ## 4. JavaScript and ECMAScript Standard
 
