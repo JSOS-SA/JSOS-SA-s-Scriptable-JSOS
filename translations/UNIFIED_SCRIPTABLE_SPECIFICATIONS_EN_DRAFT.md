@@ -334,48 +334,92 @@ Empirical studies of code readability and identifier naming provide supporting c
 
 ## 5. Scriptable APIs
 
-### 5.1 Source of Truth
+This section defines the project's verification policy for Scriptable host APIs. It distinguishes documented API existence from runtime availability on a particular Scriptable release, iOS version, device, and execution context. The API-family list in 5.2 is an organizational index, not a complete or self-validating API specification.
 
-The official Scriptable documentation is the primary reference for establishing the existence of application APIs.
+### 5.1 Source of Truth and API Verification
 
-Before using any API, MUST verify:
+The official Scriptable documentation is the primary product-specific source for determining which host APIs Scriptable documents and exposes. The documentation describes Scriptable's JavaScript environment and individual API types, properties, constructors, methods, parameters, return values, behavior, and limitations.
 
-1. That the API exists in the official documentation.
-2. The correct API name.
-3. Property and method names.
-4. Parameter types.
-5. The return value.
-6. Asynchronous behavior, where applicable.
-7. Restrictions, warnings, and deprecated properties.
-8. The execution context in which it is used.
-9. Restrictions associated with the Scriptable and iOS versions.
+The official documentation MUST be consulted before an API is introduced, recommended, or used in project code. However, documentation presence alone MUST NOT be treated as proof that the API works in every installed Scriptable version or execution context. The documentation can be incomplete, ambiguous, or out of sync with implementation, as empirical API-documentation research has demonstrated [24.12.1] [24.12.2] [24.12.3]. Where the documentation does not state a version or context constraint, record that fact as unspecified and verify the target runtime instead of inferring support.
+
+For each API used or proposed, the reviewer MUST verify and record, where applicable:
+
+1. **Existence and ownership:** the exact documented API/type name, its owning namespace or type, and whether it is a global, constructor, static member, instance member, callback, or returned object.
+2. **Exact member names:** spelling and casing of every property and method, including whether a member is read-only, writable, optional, or deprecated.
+3. **Signature:** parameter order, types, accepted values, optional parameters, defaults, nullability, callback signatures, and any required object shape.
+4. **Return and completion behavior:** return type, returned object shape, whether the operation is synchronous or Promise-based, when the Promise settles, and documented rejection or error behavior.
+5. **Side effects and permissions:** user prompts, privacy permissions, access requirements, network activity, persistent changes, destructive operations, and other observable effects.
+6. **Execution context:** whether the API is supported in the Scriptable app, action extension, Siri or Shortcuts, Home Screen or Lock Screen widget, notification flow, or another documented context. WebView JavaScript runs in a web-content environment and MUST NOT be confused with Scriptable host globals.
+7. **Version constraints:** the minimum or affected Scriptable app version and iOS/iPadOS version, where documented. If no version requirement is published, mark it as **not specified by the documentation** and test the actual target. Do not infer a minimum version from the date of an example or from the current documentation page.
+8. **Lifecycle status:** deprecation notices, version of deprecation, replacement API, behavioral changes, warnings, and documented limitations.
+9. **Target-runtime evidence:** where runtime behavior matters, test the exact target tuple and record the device, iOS/iPadOS version, Scriptable version, and execution context. A result from one tuple MUST NOT be generalized to other tuples without evidence.
+10. **Traceability:** retain the official documentation URL and relevant page or section, the date checked, and the evidence status used by the project.
+
+The documentation itself demonstrates why version and context checks matter. For example, `args.length` and `args.all` are marked deprecated since Scriptable 1.3; `args.siriShortcutArguments` is marked deprecated since 1.4; and `Contact.note` is unavailable starting with Scriptable 1.7.5. The `ListWidget.addAccessoryWidgetBackground` property is documented as available starting with iOS 16, while `Device.isUsingDarkAppearance` is documented as unsupported in widgets. These are API-specific constraints, not general assumptions about every Scriptable API. See the official references in Section 24.11.
+
+The source hierarchy MUST be applied according to the question being answered:
+
+- **Scriptable API existence and host behavior:** official Scriptable API documentation is the primary product-specific reference.
+- **Scriptable app-version changes:** official Scriptable release notes or version-specific product documentation, where available.
+- **iOS framework behavior:** Apple documentation explains the underlying Apple framework, but does not prove that Scriptable exposes that framework's classes or members to scripts.
+- **JavaScript language behavior:** the ECMAScript specification and JavaScriptCore documentation apply to language/runtime questions, not to the existence of Scriptable-specific host APIs.
+- **Type definitions, package metadata, examples, forum posts, and tutorials:** secondary discovery or corroboration material only. They MUST NOT override the official Scriptable documentation or establish runtime availability by themselves.
+- **Actual runtime behavior:** a reproducible test on the declared target tuple is required when the claim concerns execution compatibility, permissions, context, or version-specific behavior.
+
+If authoritative sources conflict, or the documented API cannot be confirmed on the target, the implementation MUST be marked unresolved and MUST NOT silently select the most convenient interpretation.
 
 ### 5.2 API Families
 
-The API families that SHOULD be organized and reviewed include:
+The following families provide an initial, non-exhaustive index of documented Scriptable APIs. The names below are included for organization and navigation only. They do not imply that every member, property, method, or execution context has been verified for every Scriptable or iOS version.
 
-- Execution, input, and output: args, config, and Script.
-- Files and storage: FileManager, Keychain, Data, and Path.
-- Networking: Request.
-- Device services: Device, Location, Photos, and Contacts.
-- Calendar and reminders: Calendar, CalendarEvent, and Reminder.
-- User interfaces: Alert, DatePicker, TextField, and UITable.
-- Web: WebView and Safari.
-- Widgets: ListWidget and its components.
-- Drawing and images: DrawContext, Image, Color, and Font.
-- Date, audio, messaging, and parsing: DateFormatter, Speech, Mail, XMLParser, and others.
+- **Execution, invocation, and script output:** `args`, `config`, and `Script`.
+- **Files, data, and credential storage:** `FileManager`, `Data`, and `Keychain`.
+- **HTTP networking:** `Request`.
+- **Device and location services:** `Device` and `Location`.
+- **Photos and image acquisition:** `Photos` and `Image`.
+- **Contacts and address-book records:** `Contact`, `ContactsContainer`, and `ContactsGroup`. The documented contact type is `Contact`; do not invent or substitute a `Contacts` class name.
+- **Calendars, events, reminders, and recurrence:** `Calendar`, `CalendarEvent`, `Reminder`, and `RecurrenceRule`.
+- **Interactive user interfaces:** `Alert`, `DatePicker`, `TextField`, and `UITable`, together with their documented row, cell, and element types. `TextField` is used through an `Alert`; it is not documented as a separately constructed input view.
+- **Web content and external browsing:** `WebView` and `Safari`. WebView page JavaScript and Scriptable host APIs are distinct execution surfaces.
+- **Widgets and widget elements:** `ListWidget`, `WidgetStack`, and documented widget element types such as `WidgetText`, `WidgetDate`, and `WidgetImage`.
+- **Drawing and graphics:** `DrawContext`, `Path`, `Color`, `Font`, and `Image`. In this family, `Path` represents a geometric drawing path used with `DrawContext`; it is not a filesystem-path or storage API.
+- **Date and time formatting:** `DateFormatter`.
+- **Speech and messaging:** `Speech` and `Mail`.
+- **Structured text parsing:** `XMLParser`.
 
-These are family names used for organization. They do not independently establish the existence of every property or method within those families.
+The index MUST be expanded only when the relevant type is present in the official Scriptable documentation. Similar names in Apple frameworks, JavaScript standards, npm packages, or community examples do not establish a Scriptable API. Family placement is an organizational choice and MUST NOT be interpreted as a runtime dependency or guarantee.
 
 ### 5.3 Prohibition of Assumptions
 
-MUST NOT:
+The following practices are prohibited:
 
-- Invent undocumented APIs or properties.
-- Rely on internet examples without verification.
-- Assume that all Apple APIs are directly available.
-- Assume that all npm libraries work within Scriptable.
-- Use a TypeScript definition alone to establish the existence of an API.
+- **Undocumented API invention:** MUST NOT invent, infer, or fabricate Scriptable globals, classes, constructors, properties, methods, parameter names, return values, or callback behavior.
+- **Unverified examples:** MUST NOT treat an internet example, code snippet, forum post, generated answer, or tutorial as authoritative evidence. Examples may be outdated, incomplete, context-specific, or incorrect. They may guide discovery only; verify every API claim against the official documentation and the target runtime where required [24.12.6].
+- **Apple framework exposure:** MUST NOT assume that an Apple framework API is directly accessible from Scriptable merely because Apple documents it. Scriptable exposes a product-specific host surface; Apple framework documentation describes the underlying platform, not necessarily Scriptable's JavaScript bridge.
+- **npm and third-party package compatibility:** MUST NOT assume that a package works in Scriptable because it is published on npm or works in Node.js, a browser, or another JavaScript runtime. Review its module format, dependency graph, native bindings, runtime globals, platform assumptions, network and filesystem requirements, and build or bundling requirements. Verify the resulting code in the target Scriptable runtime. Runtime-environment compatibility is a separate engineering problem from package availability [24.12.9].
+- **Type declarations as runtime proof:** MUST NOT use TypeScript declarations, DefinitelyTyped packages, generated declarations, editor autocomplete, or successful type checking as sole evidence that an API exists or is implemented at runtime. Type declarations describe a static type surface; they do not install or implement the corresponding runtime object.
+- **Compilation as runtime proof:** MUST NOT treat successful compilation, transpilation, linting, or static analysis as proof that a Scriptable API is available, that permissions are granted, or that an operation behaves correctly in a particular execution context.
+- **Cross-context assumptions:** MUST NOT transfer browser DOM, Node.js, native iOS, or Scriptable Main Runtime behavior to another context without explicit documentation or a target-specific test.
+- **Version assumptions:** MUST NOT infer support or deprecation solely from a sample's publication date, package version, or the fact that an API is still callable. Check the current official documentation and the relevant version history.
+
+API misuse can cause functional and security defects, and empirical studies show that API usage constraints and examples can be incorrect or misunderstood [24.12.3] [24.12.5] [24.12.6]. These findings support the prohibitions as engineering policy; they are not Scriptable-specific measurements.
+
+### 5.4 API Verification Record
+
+Every non-trivial API dependency introduced into a maintained project component SHOULD have a traceable verification record. At minimum, record:
+
+- API/type and exact member names.
+- Official Scriptable documentation URL and relevant section.
+- Scriptable app version and iOS/iPadOS version relevant to the claim, or an explicit note that the documentation does not specify them.
+- Execution context and any permission, storage, network, or resource constraints.
+- Signature and return/completion behavior relied upon by the implementation.
+- Deprecation or replacement status.
+- Runtime test evidence and the exact target tuple, when runtime support is claimed.
+- Verification date and a clear status separating **documented**, **runtime verified for the stated target**, **not verified**, and **deprecated**.
+
+A documented API MUST NOT automatically be labelled runtime verified. A runtime test on one target MUST NOT automatically establish support on another target. Where evidence is missing, retain the unresolved status and state what remains to be verified.
+
+Research cited in Section 24.12 supports maintaining explicit interface descriptions, checking API constraints, and guarding against documentation drift. The studies concern other APIs and software ecosystems; they provide rationale for the process, not proof of Scriptable-specific behavior.
 
 ## 6. Module and Import System
 
@@ -1184,6 +1228,136 @@ https://dl.acm.org/doi/10.1145/3711901
 Sedano (2016), Code Readability Testing, an Empirical Study:
 
 https://doi.org/10.1109/cseet.2016.36
+
+### 24.11 Scriptable Official API References
+
+The following official Scriptable API pages support the API-family examples and version/context qualifications in Section 5. The main documentation index remains the primary entry point:
+
+https://docs.scriptable.app/
+
+Execution and invocation:
+
+https://docs.scriptable.app/args/
+
+https://docs.scriptable.app/config/
+
+https://docs.scriptable.app/script/
+
+Files, data, and credentials:
+
+https://docs.scriptable.app/filemanager/
+
+https://docs.scriptable.app/data/
+
+https://docs.scriptable.app/keychain/
+
+Networking:
+
+https://docs.scriptable.app/request/
+
+Device, location, photos, and contacts:
+
+https://docs.scriptable.app/device/
+
+https://docs.scriptable.app/location/
+
+https://docs.scriptable.app/photos/
+
+https://docs.scriptable.app/contact/
+
+https://docs.scriptable.app/contactscontainer/
+
+https://docs.scriptable.app/contactsgroup/
+
+Calendars and reminders:
+
+https://docs.scriptable.app/calendar/
+
+https://docs.scriptable.app/calendarevent/
+
+https://docs.scriptable.app/reminder/
+
+https://docs.scriptable.app/recurrencerule/
+
+User interfaces:
+
+https://docs.scriptable.app/alert/
+
+https://docs.scriptable.app/datepicker/
+
+https://docs.scriptable.app/textfield/
+
+https://docs.scriptable.app/uitable/
+
+Web and widgets:
+
+https://docs.scriptable.app/webview/
+
+https://docs.scriptable.app/safari/
+
+https://docs.scriptable.app/listwidget/
+
+https://docs.scriptable.app/widgetstack/
+
+Drawing, date formatting, speech, mail, and parsing:
+
+https://docs.scriptable.app/drawcontext/
+
+https://docs.scriptable.app/path/
+
+https://docs.scriptable.app/image/
+
+https://docs.scriptable.app/color/
+
+https://docs.scriptable.app/font/
+
+https://docs.scriptable.app/dateformatter/
+
+https://docs.scriptable.app/speech/
+
+https://docs.scriptable.app/mail/
+
+https://docs.scriptable.app/xmlparser/
+
+### 24.12 Empirical Research on API Documentation, API Misuse, and Compatibility
+
+The following studies provide engineering rationale for documentation verification, explicit API constraints, and compatibility checks. They do not study Scriptable itself and MUST NOT be cited as evidence that a particular Scriptable API exists or behaves in a particular way.
+
+24.12.1 Uddin and Robillard (2015), "How API Documentation Fails", *IEEE Software* 32, 68-75. The study reports recurring API-documentation problems including ambiguity, incompleteness, and incorrectness.
+
+https://doi.org/10.1109/MS.2014.80
+
+24.12.2 Zhou et al. (2020), "Automatic Detection and Repair Recommendation of Directive Defects in Java API Documentation", *IEEE Transactions on Software Engineering* 46, 1004-1023. The study evaluates automated detection of defective API-documentation directives, including parameter constraints and exception-handling declarations.
+
+https://doi.org/10.1109/TSE.2018.2872971
+
+24.12.3 Zhou et al. (2017), "Analyzing APIs Documentation and Code to Detect Directive Defects", *ICSE Companion*. The study compares API documentation constraints with code to detect defective directives.
+
+https://doi.org/10.1109/ICSE.2017.11
+
+24.12.4 Theunissen, Hoppenbrouwers, and Overbeek (2022), "Approaches for Documentation in Continuous Software Development", *Complex Systems Informatics and Modeling Quarterly* 32, 1-27. This work examines documentation approaches and the risk of documentation becoming out of sync with implementation.
+
+https://doi.org/10.7250/csimq.2022-32.01
+
+24.12.5 Wang and Zhao (2023), "APICAD: Augmenting API Misuse Detection through Specifications from Code and Documents", *ICSE Companion*. This work uses API specifications from code and documentation to support API-misuse detection.
+
+https://doi.org/10.1109/ICSE48619.2023.00032
+
+24.12.6 Ren et al. (2020), "Demystify Official API Usage Directives with Crowdsourced API Misuse Scenarios, Erroneous Code Examples and Patches", *ICSE Companion*. This work examines erroneous examples and API-misuse scenarios as a means of clarifying official API directives.
+
+https://doi.org/10.1145/3377811.3380430
+
+24.12.7 Dietrich, Ježek, and Brada (2015), "What Java Developers Know about Compatibility, and Why This Matters", *Empirical Software Engineering* 21, 1371-1396. The study distinguishes source, binary, and behavioral compatibility and reports gaps in developers' knowledge of compatibility rules.
+
+https://doi.org/10.1007/s10664-015-9389-1
+
+24.12.8 Xavier et al. (2017), "Historical and Impact Analysis of API Breaking Changes: A Large-Scale Study", *SANER*. This study analyzes the frequency and impact of API-breaking changes in software ecosystems.
+
+https://doi.org/10.1109/SANER.2017.7884616
+
+24.12.9 Cheng, Zhu, and Hu (2022), "Conflict-Aware Inference of Python Compatible Runtime Environments with Domain Knowledge Graph", *ICSE Companion*. This work concerns the difficulty of reconstructing compatible runtime environments and dependency sets. Its Python-specific results are contextual evidence only, not direct evidence about Scriptable or JavaScript packages.
+
+https://doi.org/10.1145/3510003.3510078
 
 ## 25. Rules for Using the Reference List
 
