@@ -91,7 +91,7 @@ No translation query remains open in this review. This does not constitute appro
 - Both lifecycle sequences are preserved exactly.
 - The Arabic source file was not modified.
 - `git diff --check` passed after the final edits on 2026-11-14.
-- All four GitHub check runs completed successfully for the final PR head `a3b0fb450a34fff83a7c2535e0261a2a6e21615f` on 2026-11-14: CodeQL, quality-gates, Analyze (javascript-typescript), and Analyze (actions).
+- All four GitHub check runs completed successfully for the final PR head `e40b36cc50797fb8c20b5275f4491244d7ea8171` on 2026-11-14: CodeQL, quality-gates, Analyze (javascript-typescript), and Analyze (actions).
 
 ## Approval boundary
 
