@@ -91,12 +91,13 @@ No translation query remains open in this review. This does not constitute appro
 - Both lifecycle sequences are preserved exactly.
 - The Arabic source file was not modified.
 - `git diff --check` passed after the final edits on 2026-11-14.
-- Pull-request checks passed for commit `8442e04` after the final translation correction.
+- All four GitHub check runs completed successfully for the final PR head `a3b0fb450a34fff83a7c2535e0261a2a6e21615f` on 2026-11-14: CodeQL, quality-gates, Analyze (javascript-typescript), and Analyze (actions).
 
 ## Approval boundary
 
 - All nine units have completed this second linguistic and semantic review.
 - No unit is marked `Approved` by this audit.
 - The English specification remains a draft.
-- PR #28 must remain a Draft until the owner explicitly approves the final translation.
-- No merge into `main` is authorized by this audit.
+- On 2026-11-14, the owner explicitly authorized merging this reviewed revision into `main`.
+- This authorization permits publication of the current draft revision only; it does not approve the English translation as final.
+- The English specification remains a draft and must retain its `Not approved` translation status until the owner separately approves the final text.

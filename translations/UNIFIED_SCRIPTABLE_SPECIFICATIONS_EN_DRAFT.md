@@ -339,7 +339,7 @@ MUST separate responsibilities, prevent duplication, and minimize coupling and c
 | Data | Validation, transformation, contracts, and schemas |
 | Features | Business logic and user-facing functions |
 | UI | Lists, tables, interfaces, and widgets |
-| Scriptable Host APIs | Integration with Scriptable APIs |
+| Scriptable APIs | Integration with Scriptable APIs |
 | Tests | Logic, contract, and Runtime tests |
 
 This is a reference architectural division, not a fixed structure that is mandatory for every small project.
