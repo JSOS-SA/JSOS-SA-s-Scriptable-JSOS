@@ -453,7 +453,7 @@
       "runtimeTest": {
         "compatibilityRecordId": "COMP-DEV-IPHONE-15-PRO-MAX-27-MAIN-RUNTIME",
         "component": "Scriptable main runtime",
-        "apiOrFeature": "Device API surface and ECMAScript 2015 built-ins",
+        "apiOrFeature": "Scriptable Device API surface and selected ECMAScript 2015/2016 built-ins",
         "scriptableVersion": "1.7.12",
         "osVersion": "iOS 27.2",
         "device": "iPhone 15 Pro Max",

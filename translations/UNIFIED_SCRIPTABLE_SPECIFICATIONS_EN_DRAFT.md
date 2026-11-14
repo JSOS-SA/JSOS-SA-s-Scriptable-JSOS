@@ -84,61 +84,253 @@ Every approval, review, test result, and deployment operation MUST be attributab
 
 ## 3. Technical Model and Runtime Layers
 
+Scriptable MUST be understood as a host application that executes JavaScript and exposes application-specific interfaces. It is not equivalent to a web browser, Node.js, or an unrestricted native iOS application. Correct engineering decisions depend on identifying which layer owns a language feature, API, or behavior and which execution context is expected to provide it.
+
+### 3.1 Layer Model
+
 The following layers MUST be distinguished and MUST NOT be treated as a single environment:
 
-| Layer | Responsibility |
+| Layer | Responsibility and boundary |
 |---|---|
-| JavaScript | Programming language |
-| ECMAScript | The standard that defines the language’s rules and behavior |
-| JavaScriptCore | JavaScript execution engine |
-| Scriptable | Host Application and its Scriptable APIs |
-| Scriptable Main Runtime | Primary script execution context |
-| WebView Runtime | Web page execution context |
-| TypeScript | Type checking and development tools |
-| Native iOS APIs | Apple’s native iOS APIs; their existence does not establish their direct availability within Scriptable |
+| JavaScript | The programming language used to express program logic, values, objects, functions, and control flow. |
+| ECMAScript | The language specification that defines JavaScript syntax and semantics, including standardized built-in objects and operations. It does not define Scriptable-specific or browser-specific APIs. |
+| JavaScriptCore | Apple's JavaScript engine. Scriptable's official documentation identifies JavaScriptCore as its JavaScript engine. The engine's native integration APIs are not automatically Scriptable script globals. |
+| Scriptable (Host Application) | The application that hosts script execution and exposes Scriptable APIs, module loading, execution behavior, and integrations with iOS. |
+| Scriptable Main Runtime | The primary script execution context provided by Scriptable. This is a project-defined architectural term, not a separately named Apple framework. |
+| WebView Runtime | The web-page execution context hosted by Scriptable's WebView. This is a project-defined architectural term for the page context, not a claim about the internal engine implementation. |
+| TypeScript | A development-time type system and compiler toolchain. Its declarations and compiler settings do not create APIs or runtime capabilities. |
+| Native iOS APIs | APIs provided by Apple frameworks. Their existence on iOS does not establish that Scriptable exposes them directly to JavaScript. |
 
-### 3.1 Rule for Separating Layers
+### 3.2 Conceptual Execution Model
+
+A useful conceptual model for a Scriptable script is:
+
+```text
+JavaScript source
+       |
+       v
+JavaScriptCore execution engine
+       |
+       v
+Scriptable-provided host interfaces
+       |
+       v
+Supported iOS services and capabilities
+       |
+       v
+Script output and integrations
+```
+
+This model describes responsibility boundaries. It is not an official diagram of Scriptable's internal implementation, and it MUST NOT be used to infer undocumented implementation details.
+
+### 3.3 JavaScript and ECMAScript Boundary
+
+JavaScript is the language used by the script. ECMAScript is the standard that specifies the language's syntax and behavior. Standard language features and built-in objects belong to this layer; APIs for files, Keychain, location, widgets, and other application services belong to a host environment.
+
+Scriptable's official documentation states that the application uses JavaScriptCore and supports ECMAScript 6. This is the documented baseline for this project. It does not, by itself, prove that every later ECMAScript feature is supported or that every feature introduced after ES6 is unavailable. Feature compatibility MUST be established for the target Scriptable and iOS versions.
+
+### 3.4 JavaScriptCore Boundary
+
+JavaScriptCore is Apple's framework for evaluating JavaScript within applications. Its native interfaces include types such as `JSContext`, `JSValue`, `JSVirtualMachine`, `JSManagedValue`, and `JSExport`. These interfaces are intended for native application developers integrating JavaScriptCore with Swift, Objective-C, or C-based code.
+
+The existence of a JavaScriptCore type or function does not establish that the same name is available inside a Scriptable script. In particular, these native integration types MUST NOT be treated as Scriptable globals unless Scriptable documentation explicitly exposes them.
+
+### 3.5 Scriptable Host Application Boundary
+
+The Scriptable application determines which host APIs are made available to scripts and how those APIs interact with iOS. Examples include `FileManager`, `Request`, `Keychain`, `Location`, `ListWidget`, `Calendar`, and `Reminder`.
+
+These APIs are not defined by ECMAScript. Their names, properties, parameters, return values, asynchronous behavior, availability, and restrictions MUST be established from the official Scriptable documentation and verified in the target context when runtime behavior matters.
+
+### 3.6 Scriptable Main Runtime and WebView Runtime
+
+**Scriptable Main Runtime** is the primary context in which a Scriptable script executes. Scriptable host APIs are available there according to the application's documented interface. The primary script environment is not a browser environment; browser objects such as `window`, `document`, and the DOM MUST NOT be assumed to exist there.
+
+**WebView Runtime** is the page context hosted by a Scriptable `WebView`. A loaded web page can provide HTML, CSS, JavaScript, and browser-page facilities such as `window`, `document`, and the DOM, subject to the page and WebView environment.
+
+The two contexts MUST be treated as separate execution contexts. Code that succeeds in WebView does not thereby become valid in Scriptable Main Runtime. The project MUST NOT assume that the contexts share global objects, JavaScript heaps, module resolution, host APIs, permissions, or lifecycle behavior. Communication between them MUST use the documented WebView mechanisms, such as `evaluateJavaScript()`, with transferred data handled explicitly.
+
+The fact that Scriptable uses JavaScriptCore for its primary script environment MUST NOT be used to infer which engine or internal implementation is used by WebView. That implementation detail requires its own authoritative evidence.
+
+### 3.7 TypeScript Boundary
+
+TypeScript provides development-time type checking and can transform TypeScript source into JavaScript. A declaration describes what a compiler or editor should expect; it does not implement the declared function, object, or property in the runtime.
+
+The `target` compiler option controls aspects of the JavaScript output, while `lib` controls the standard library declarations available to the type checker. Neither setting installs runtime features. DOM declarations can make browser names type-check even when those names are unavailable in Scriptable Main Runtime.
+
+Type definitions for Scriptable are supporting development references. They MUST be checked against official Scriptable documentation, and the generated JavaScript MUST be tested in its intended Scriptable context.
+
+### 3.8 Native iOS API Boundary
+
+An API documented by Apple for an iOS framework is a native platform API. Its availability on iOS does not mean that JavaScript running in Scriptable can call it directly. Scriptable must expose an appropriate wrapper or documented bridge before a script can rely on that capability.
+
+The existence of a native framework, class, method, entitlement, or capability MUST NOT be treated as proof of Scriptable access. The exposed Scriptable interface and any relevant iOS permission or availability constraints remain the controlling boundary.
+
+### 3.9 API Ownership and Evidence
+
+| Item being evaluated | Primary authority | What that authority can establish |
+|---|---|---|
+| JavaScript syntax and standardized behavior | ECMAScript specification | Language rules and standardized semantics. |
+| JavaScriptCore engine behavior and native integration types | Apple JavaScriptCore documentation and suitable engine tests | Engine and framework behavior, not Scriptable host exposure. |
+| Scriptable APIs | Official Scriptable documentation | Documented application interfaces and their documented behavior. |
+| Web page APIs | Applicable web-platform documentation and tests in the target WebView | Page-context behavior, not Main Runtime availability. |
+| Native iOS APIs | Apple platform documentation | Native platform availability, not direct Scriptable exposure. |
+| TypeScript declarations and compiler behavior | TypeScript documentation and the relevant definition package | Static type-checking and transformation behavior, not runtime implementation. |
+
+Evidence labels used in technical records MUST distinguish the following meanings:
+
+| Label | Meaning |
+|---|---|
+| `DOCUMENTED` | The claim is explicitly supported by an identified authoritative document. |
+| `CONFIRMED` | The claim has been reproduced by a test in the named target environment, with the environment and evidence recorded. |
+| `INFERRED` | The claim is a reasoned interpretation of available evidence, but is not directly stated or demonstrated. |
+| `Not Verified` | Available evidence is insufficient to establish the claim. |
+| `UNSUPPORTED` | Authoritative documentation or a suitable target-environment test establishes that the capability is not supported in the stated scope. |
+
+`Not Verified` MUST NOT be treated as `UNSUPPORTED`. The absence of a statement in documentation, by itself, does not prove that a capability is unavailable. These evidence labels describe the strength or nature of a claim; they do not replace the compatibility outcomes defined in Section 15.5.
+
+### 3.10 Rules for Separating Layers
 
 1. The existence of a feature in ECMAScript does not establish its existence in every runtime environment.
-2. The existence of an API in JavaScriptCore does not establish that it is directly available to the script.
+2. The existence of an API in JavaScriptCore does not establish that it is directly available to a Scriptable script.
 3. The existence of a TypeScript definition does not create a Runtime API.
 4. Successful execution of code in Node.js does not establish its compatibility with Scriptable.
 5. Successful execution of code in WebView does not establish its compatibility with Scriptable Main Runtime.
-6. The layer and context MUST be identified before any API or feature is approved.
+6. The existence of a Native iOS API does not establish that Scriptable exposes it to scripts.
+7. Similar names across JavaScript, JavaScriptCore, Web APIs, Scriptable APIs, and Native iOS APIs MUST NOT be treated as proof of equivalent behavior.
+8. Global objects and available interfaces MUST be evaluated in the execution context in which the code actually runs.
+9. The responsible layer and execution context MUST be identified before an API or feature is approved for use.
+10. Compatibility claims MUST be limited to the versions, device, and execution context covered by the available documentation and test evidence.
 
 ## 4. JavaScript and ECMAScript Standard
 
-### 4.1 Baseline
+### 4.1 Language Baseline and Compatibility Contract
 
-1. MUST adopt ECMAScript 2015 (ES6) as the project’s documented baseline.
-2. MUST NOT adopt newer features automatically.
-3. MUST verify newer features through actual testing within Scriptable.
-4. MUST distinguish language syntax compatibility from compatibility with standard objects and functions.
-5. MUST NOT consider successful compilation or static analysis as evidence of runtime compatibility.
+1. The project MUST adopt ECMAScript 2015 (ES6) as its documented language baseline. This is the project's approved baseline decision (Q1) and matches Scriptable's official statement that its JavaScript environment uses Apple JavaScriptCore and supports ECMAScript 6.
+2. The ES2015 baseline MUST be interpreted as the project's conservative documented baseline. It MUST NOT be interpreted as proof that Scriptable supports no later feature, nor as a guarantee that every ES2015 feature behaves identically on every supported device, Scriptable release, iOS release, or execution context.
+3. Features standardized after ES2015 MUST NOT be adopted automatically. They require feature-specific evidence for every required target tuple and execution context before they become an approved project dependency.
+4. The project MUST distinguish at least the following compatibility dimensions:
+   - **Syntax compatibility:** whether the target runtime can parse the source syntax.
+   - **Standard built-in compatibility:** whether the required standard objects, constructors, methods, and properties exist.
+   - **Runtime-semantics compatibility:** whether those features behave as required, including asynchronous behavior, errors, iteration, coercion, and edge cases.
+   - **Host API compatibility:** whether Scriptable exposes the required application API and whether it behaves as documented.
+   - **Execution-context compatibility:** whether the feature and host API work in the intended Main Runtime, WebView, Widget, or other declared context.
+5. A feature MUST be assessed against the exact target tuple: iPhone model, iOS version, installed Scriptable version, and execution context. Results MUST NOT be generalized to another tuple without evidence.
+6. A successful compilation, type check, lint run, static analysis, or transpilation MUST NOT be treated as proof of runtime compatibility. These checks remain useful supporting evidence for the properties they actually examine.
 
-### 4.2 Modern Features
+Scriptable's official JavaScript Environment statement is available at:
 
-Any feature whose compatibility with the baseline or target device has not been established is treated as unverified until it has been tested.
+https://docs.scriptable.app/
 
-This includes, for example, features introduced after ES2015, such as async/await, BigInt, and modern array features.
+The official page documents JavaScriptCore and ECMAScript 6. It does not publish a complete per-feature compatibility matrix or identify an exact JavaScriptCore build for every Scriptable/iOS combination. The project MUST NOT invent such a mapping. When the exact engine build is not independently established, record it as Not Verified and rely on reproducible tests in the named target environment.
 
-Support for these features MUST NOT be assumed merely because they exist in a recent version of JavaScriptCore or in TypeScript.
+### 4.2 Newer ECMAScript Features and Runtime Evidence
+
+A feature introduced after ES2015 MUST remain Not Verified for a target until the required evidence has been recorded. The fact that a feature appears in a later ECMA-262 edition, a recent JavaScriptCore release, TypeScript declarations, Node.js, Safari, or another JavaScript engine MUST NOT be treated as proof that it is available in the target Scriptable runtime.
+
+The following examples illustrate why features MUST be identified individually rather than grouped under a vague label such as "modern JavaScript":
+
+| Feature | ECMAScript edition | Project evidence and required interpretation |
+|---|---|---|
+| Selected ES2015 built-ins (Promise, Object.assign(), Map, Set, and String.prototype.includes()) | ES2015 | Evidence E-056 records user-reported successful presence checks for these built-ins on iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12 in the in-app Main Runtime. The result was not independently reproduced and does not establish general compatibility. |
+| Array.prototype.includes() | ES2016 | Evidence E-056 records a user-reported successful presence check on iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12 in the in-app Main Runtime. It was not independently reproduced by maintainers; the result does not establish general compatibility. |
+| Async functions and await | ES2017 | Evidence E-057 records a user-reported successful probe on iPhone 15 Pro Max / iOS 27.2 / Scriptable 1.7.12 in the in-app Main Runtime. The probe covered async-function parsing, Promise.all(), and rejection handling. It was not independently reproduced by maintainers and does not establish support for every async pattern or target. |
+| Array.prototype.flat() and Array.prototype.flatMap() | ES2019 | No target-specific result is established by the current evidence register. Treat as Not Verified. |
+| BigInt | ES2020 | No target-specific result is established by the current evidence register. Treat as Not Verified. |
+| Array.prototype.at() | ES2022 | No target-specific result is established by the current evidence register. Treat as Not Verified. |
+| Array.prototype.toSorted(), toReversed(), toSpliced(), and with() | ES2023 | No target-specific result is established by the current evidence register. Treat as Not Verified. |
+
+The edition assignments above are language-standard facts. The test outcomes are project evidence with narrower scope. In particular, E-056 and E-057 are user-reported observations for one device, one iOS version, one Scriptable version, and one execution context. The compatibility register currently retains the overall compatibility status as Not Verified and the support decision as Pending. A recorded test result MUST NOT be silently promoted to a project-wide compatibility decision.
+
+The project MUST NOT infer that async functions are unavailable merely because they were standardized after ES2015. Conversely, the reported E-057 result MUST NOT be generalized beyond the exact tested tuple. The same rule applies to every newer syntax feature and built-in method.
+
+The project MUST distinguish a syntax probe from a built-in probe. For example, successfully parsing an async function does not prove that every Promise combinator, asynchronous iterator, host API, or execution context works. Checking that typeof Array.prototype.toSorted === "function" is useful for detecting the method's presence, but it does not prove the method's complete semantics or the behavior of application code that depends on it.
+
+TypeScript settings MUST be interpreted correctly:
+
+- target controls which JavaScript syntax TypeScript transforms or leaves in the emitted output. It does not establish what the Scriptable runtime can execute.
+- lib supplies type declarations for standard JavaScript APIs and selected host-environment APIs, such as DOM declarations when configured. Scriptable-specific declarations are supplied separately by Scriptable type-definition packages. The lib option does not install APIs, implement missing methods, or polyfill the runtime.
+- DOM declarations can make names such as window and document type-check even when they are not available in Scriptable Main Runtime.
+- A transpiler may transform some syntax while leaving calls to newer built-in methods in the output. A successful build therefore does not prove that those methods exist at runtime.
+
+Official TypeScript references:
+
+https://www.typescriptlang.org/tsconfig/target
+
+https://www.typescriptlang.org/tsconfig/lib
+
+ECMAScript edition snapshots MUST be used to identify when a feature became part of the standard. The current specification is useful for current semantics, but it MUST NOT replace the edition history when classifying when a feature was introduced.
+
+The project MUST use the feature-verification procedure in Section 15.6 and record the result in the canonical compatibility and evidence registers. The result MUST distinguish Documented, Tested, Compatible, Incompatible, and Not Verified. Not Verified MUST NOT be interpreted as Incompatible, and Tested MUST NOT automatically be interpreted as Compatible.
+
+Test262 may be used as a language-conformance reference or as a source of focused test cases. Passing a Test262 test or a local engine test does not establish Scriptable host API compatibility, execution-context compatibility, or support on every target iPhone.
 
 ### 4.3 Code Quality
 
-MUST:
+The following requirements are project engineering policy. They are not additional ECMAScript syntax requirements, and they MUST NOT be presented as rules imposed by the JavaScript language specification. Their purpose is to make project code easier to understand, test, review, and maintain within Scriptable's documented runtime and host-API boundaries.
 
-- Use const and let in new code as appropriate.
-- Avoid var unless there is a clear necessity.
-- Use explicit comparisons.
-- Handle null and undefined explicitly.
-- Handle expected errors.
-- Avoid oversized functions and functions with multiple responsibilities.
-- Minimize duplication.
-- Use clear names.
-- Avoid magic values and magic strings.
-- Document complex logic and the reason for its existence.
-- Separate business logic from system access as far as practicable.
+1. **Variable declarations**
+   - New code MUST use const when a binding is not reassigned.
+   - New code MUST use let when reassignment is required.
+   - New code SHOULD NOT use var. A documented legacy, interoperability, or narrowly justified compatibility requirement MAY permit it.
+   - Developers MUST remember that const prevents rebinding; it does not make an object or array deeply immutable.
+
+2. **Comparisons**
+   - Code MUST use strict equality (===) and strict inequality (!==) by default.
+   - Coercive equality (== or !=) MAY be used only when type coercion is intentional, understood, and documented.
+   - Conditions MUST make the intended comparison clear. Truthiness checks MUST NOT replace explicit checks when 0, false, or an empty string are valid values with distinct meanings.
+
+3. **null, undefined, and missing values**
+   - Input and data contracts MUST state when a value may be absent, null, or undefined.
+   - Code MUST validate optional or untrusted values at the boundary where they enter the application, before relying on their shape or type.
+   - Code MUST preserve the distinction between a missing property, an explicitly undefined value, and null when that distinction affects behavior.
+   - Code MUST NOT add redundant checks for values that are guaranteed by a validated contract. Defensive checks SHOULD be placed at trust boundaries rather than repeated indiscriminately throughout internal logic.
+
+4. **Expected errors and rejected Promises**
+   - Code MUST handle failures that are expected at its operational boundaries, including network requests, file access, parsing, permissions, and asynchronous operations.
+   - A catch handler MUST recover, translate the error, add useful context, perform required cleanup, or deliberately report and terminate the operation. It MUST NOT silently swallow an error.
+   - Errors that cannot be handled meaningfully at the current layer SHOULD propagate to a layer that can apply the correct failure policy.
+   - Retry behavior MUST account for whether the operation is safe to repeat. Non-idempotent operations MUST NOT be retried automatically without appropriate safeguards.
+   - Error reports MUST contain useful diagnostic context without exposing credentials, tokens, or private data.
+
+5. **Function size and responsibility**
+   - Functions MUST have a clear, cohesive purpose and a comprehensible contract.
+   - Functions SHOULD separate unrelated responsibilities, such as input validation, business decisions, system access, transformation, and presentation.
+   - Functions SHOULD be split when doing so creates a meaningful boundary that improves understanding, testing, reuse, or change isolation.
+   - The project MUST NOT impose an arbitrary line-count limit as a substitute for reviewing cohesion and complexity.
+
+6. **Duplication and abstraction**
+   - Repeated business rules, validation rules, and transformations SHOULD be centralized when they represent the same concept and are expected to change together.
+   - Developers MUST avoid copying logic in ways that allow equivalent rules to drift apart.
+   - Developers SHOULD NOT create premature abstractions for coincidental similarities. A small amount of local duplication MAY be clearer and safer than a shared abstraction that couples unrelated behavior.
+
+7. **Names**
+   - Variables, functions, modules, and constants MUST use clear, consistent, intention-revealing names.
+   - Names SHOULD use the project's established domain vocabulary and MUST NOT conceal side effects or misleadingly imply stronger guarantees than the code provides.
+   - Abbreviations SHOULD be avoided unless they are established domain terms or widely understood technical names.
+
+8. **Magic values and strings**
+   - Unexplained values that encode business rules, thresholds, timeouts, limits, protocol identifiers, storage keys, or repeated configuration MUST be replaced with named constants or a clearly defined configuration source.
+   - A constant MUST communicate the meaning and, where useful, the unit or scope of the value.
+   - Developers SHOULD NOT create constants for every trivial literal when doing so adds indirection without clarifying meaning.
+
+9. **Comments and rationale**
+   - Comments MUST explain non-obvious reasons, assumptions, invariants, constraints, workarounds, or security and compatibility decisions.
+   - Comments SHOULD explain why the code exists or why a less obvious approach is required, rather than merely restating what the code already says.
+   - Comments and references MUST be updated when the underlying behavior or rationale changes. Stale comments MUST NOT be retained as evidence of current behavior.
+
+10. **Business logic and system access**
+    - Business rules and data transformations SHOULD be separated from direct Scriptable system access as far as practicable.
+    - Calls to Scriptable host APIs such as Request, FileManager, Keychain, Location, Calendar, and Reminder SHOULD be kept behind clear service functions or narrow adapters where that separation improves testability or change isolation.
+    - Pure transformation and decision logic SHOULD be kept independent of I/O when practical, so it can be tested with controlled inputs.
+    - This rule MUST NOT lead to unnecessary layers or wrappers around every API call. The architecture SHOULD remain proportionate to the script's size, risk, and actual maintenance needs.
+
+The no-var and eqeqeq ESLint rules provide practical, configurable enforcement examples for variable declarations and strict comparisons. They are style-tool policies, not ECMAScript conformance requirements:
+
+https://eslint.org/docs/latest/rules/no-var
+
+https://eslint.org/docs/latest/rules/eqeqeq
+
+Empirical studies of code readability and identifier naming provide supporting context for clear names and understandable structure. They do not prove that one style rule guarantees maintainability or that every duplication is harmful. The project MUST treat these studies as supporting evidence, not as substitutes for project decisions and code review.
 
 ## 5. Scriptable APIs
 
@@ -911,6 +1103,12 @@ Compiler options:
 
 https://www.typescriptlang.org/tsconfig/
 
+Specific compiler options relevant to runtime compatibility:
+
+https://www.typescriptlang.org/tsconfig/target
+
+https://www.typescriptlang.org/tsconfig/lib
+
 ### 24.8 ECMAScript Official Specification
 
 Official specification:
@@ -925,6 +1123,36 @@ ECMAScript development process:
 
 https://tc39.es/process-document/
 
+Edition snapshots used to identify when features entered the standard:
+
+ECMAScript 2015 (6th Edition):
+
+https://262.ecma-international.org/6.0/
+
+ECMAScript 2016 (7th Edition):
+
+https://262.ecma-international.org/7.0/
+
+ECMAScript 2017 (8th Edition):
+
+https://262.ecma-international.org/8.0/
+
+ECMAScript 2019 (10th Edition):
+
+https://262.ecma-international.org/10.0/
+
+ECMAScript 2020 (11th Edition):
+
+https://262.ecma-international.org/11.0/
+
+ECMAScript 2022 (13th Edition):
+
+https://262.ecma-international.org/13.0/
+
+ECMAScript 2023 (14th Edition):
+
+https://262.ecma-international.org/14.0/
+
 ### 24.9 Test262
 
 Official ECMAScript test repository:
@@ -932,6 +1160,30 @@ Official ECMAScript test repository:
 https://github.com/tc39/test262
 
 It is used to test JavaScript behavior for conformance with the specification, and does not establish compatibility with Scriptable APIs.
+
+### 24.10 JavaScript Style and Software Engineering Research
+
+ESLint rule for preferring const and let over var:
+
+https://eslint.org/docs/latest/rules/no-var
+
+ESLint rule for preferring strict equality comparisons:
+
+https://eslint.org/docs/latest/rules/eqeqeq
+
+Empirical research on identifier naming and code readability. These papers provide supporting context for maintainability practices; they do not define ECMAScript requirements or prove that a single style rule guarantees quality:
+
+Gresta, Durelli, and Cirilo (2023), Naming Practices in Object-oriented Programming: An Empirical Study:
+
+https://doi.org/10.5753/jserd.2023.2582
+
+Kim et al. (2025), How Are We Detecting Inconsistent Method Names? An Empirical Study from Code Review Perspective:
+
+https://dl.acm.org/doi/10.1145/3711901
+
+Sedano (2016), Code Readability Testing, an Empirical Study:
+
+https://doi.org/10.1109/cseet.2016.36
 
 ## 25. Rules for Using the Reference List
 
