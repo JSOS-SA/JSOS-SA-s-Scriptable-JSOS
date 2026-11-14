@@ -64,6 +64,8 @@ A descriptive term for APIs provided directly by the Scriptable application.
 
 Programming interfaces provided by iOS or Apple’s native frameworks. Their existence does not establish that Scriptable exposes them directly to scripts.
 
+**Source wording alias:** `Apple Native APIs` appears as an existing source label for this concept. Use `Native iOS APIs` as the canonical English term in translated prose.
+
 **Avoid:** Scriptable APIs, Scriptable Native APIs unless the distinction is explicitly explained.
 
 **Execution Context**
@@ -980,6 +982,7 @@ Evidence that the feature was tested on the target device, application version, 
 | غير متوافق | Incompatible |
 | متوافق جزئياً | Partially Compatible |
 | متوافق وفق الاختبار | Verified Compatible |
+| غير متحقق | Not Verified |
 | غير مثبت التوافق | Compatibility Not Established |
 | مدعوم رسمياً | Officially Supported |
 | موثق | Documented |
@@ -995,7 +998,7 @@ Evidence that the feature was tested on the target device, application version, 
 | سجل التوافق | Compatibility Record |
 | نطاق التوافق | Compatibility Scope |
 
-**Mandatory wording rule:** Never translate an untested feature as Supported or Compatible. Use Not Tested or Compatibility Not Established where appropriate.
+**Mandatory wording rule:** Never translate an untested feature as Supported or Compatible. Use Not Verified for `غير متحقق`, and reserve Compatibility Not Established for `غير مثبت التوافق`. Use Not Tested when the source specifically means that no test has been run.
 
 ---
 

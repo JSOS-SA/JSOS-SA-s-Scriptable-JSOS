@@ -14,8 +14,7 @@
 | ECMAScript 2015 / ES6 | ECMAScript 2015 / ES6 | The standardized 2015 edition commonly referred to as ES6. Both labels identify the same edition and must not become separate entries. |
 | Runtime Environment | بيئة التشغيل | The environment in which a program executes, including the engine and host-provided facilities. |
 | JavaScript Execution Environment | بيئة تنفيذ JavaScript | Apple's descriptive wording for the environment represented by JSContext. It does not establish Scriptable API exposure. |
-| Host APIs | واجهات البيئة المضيفة | APIs supplied by the host environment. Do not automatically equate them with Scriptable APIs or Apple Native APIs. |
-| Apple Native APIs | واجهات Apple الأصلية | APIs provided by Apple's native platforms or frameworks. Their existence does not prove direct exposure to Scriptable scripts. |
+| Host APIs | واجهات البيئة المضيفة | APIs supplied by the host environment. Do not automatically equate them with Scriptable APIs or Native iOS APIs. |
 | Standard Built-in Objects | الكائنات القياسية المضمنة | Objects defined by the ECMAScript language specification and made available by a conforming implementation. |
 | Language Feature | ميزة لغوية | A capability defined by the JavaScript language specification, distinct from a host-provided API. |
 | Defined Value | قيمة معرّفة | A value specified or established in the relevant context. Do not use it as a synonym for a truthy value. |
